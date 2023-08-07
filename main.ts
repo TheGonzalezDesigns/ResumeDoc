@@ -1,15 +1,14 @@
 import { OpenAI } from "langchain/llms/openai";
 
 const llm = new OpenAI({
-  openAIApiKey: process.env.OPENAI_API_KEY
+  openAIApiKey: process.env.OPENAI_API_KEY,
+  temperature: 0.9,
+  frequencyPenalty: 0.5,
+  presencePenalty: 0.5
 });
-console.info(llm)
 
 // Create a function that takes in a string and returns a response from the OpenAI language model
-const talkToLlm = async (input: string) => {
-  const response = await llm.query(input);
-  return response.data.choices[0].text;
-};
+const talkToLlm = async (input: string) => await llm.predict(input);
 
 
 // Use the talkToLlm function to create a conversation loop
