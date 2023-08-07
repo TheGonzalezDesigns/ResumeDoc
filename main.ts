@@ -1,54 +1,36 @@
-// Import the ChatGPT wrapper from LangChain
 import { OpenAI } from "langchain/llms/openai";
 
-console.log(OpenAI)
-
-/*
-// Initialize the wrapper with your OpenAI API key and other optional arguments
-const model = new ChatGPT({
-  openAIApiKey: process.env.OPENAI_API_KEY,
-  temperature: 0.9,
-  frequencyPenalty: 0.5,
-  presencePenalty: 0.5,
+const llm = new OpenAI({
+  openAIApiKey: process.env.OPENAI_API_KEY
 });
+console.info(llm)
 
-// Define a prompt template for your app
-const template = "This is a chat app powered by ChatGPT and LangChain.\n\nYou: {message}\nChatGPT:";
-
-// Define a function to format the prompt with user input
-const formatPrompt = (message) => {
-  return template.replace("{message}", message);
+// Create a function that takes in a string and returns a response from the OpenAI language model
+const talkToLlm = async (input: string) => {
+  const response = await llm.query(input);
+  return response.data.choices[0].text;
 };
 
-// Define a function to call the model on the prompt and get a response
-const getResponse = async (prompt) => {
-  const res = await model.call(prompt);
-  return res.res;
+
+// Use the talkToLlm function to create a conversation loop
+const conversationLoop = async () => {
+  let input = '';
+
+  const readline = async (): void => {
+      let input = prompt("Please enter your input: ");
+      return input;
+  };
+
+  while (input !== 'exit') {
+    console.log('Say something:');
+    input = await readline();
+
+    if (input !== 'exit') {
+      const response = await talkToLlm(input);
+      console.log(response);
+    }
+  }
 };
 
-// Define a function to simulate a chat session with the user
-const chat = async () => {
-  // Get user input from stdin
-  const readline = require("readline").createInterface({
-    input: process.stdin,
-    output: process.stdout,
-  });
+conversationLoop();
 
-  readline.question("You: ", async (message) => {
-    // Format the prompt with user input
-    const prompt = formatPrompt(message);
-
-    // Call the model on the prompt and get a response
-    const response = await getResponse(prompt);
-
-    // Print the response
-    console.log("ChatGPT:", response);
-
-    // Close the readline interface
-    readline.close();
-  });
-};
-
-// Run the chat function
-chat();
-*/
