@@ -13,6 +13,6 @@ export function validateContentType(contentType: ContentType): string {
         case ContentType.TechnicalSkillList:
             return 'Technical Skill List';
         default:
-            return 'No contentType selected.';
+            throw 'No contentType selected.';
     }
 }
