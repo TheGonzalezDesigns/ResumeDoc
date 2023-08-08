@@ -1,25 +1,20 @@
 import fs from 'fs';
 import path from 'path';
+import os from 'os';
 
 export class Document {
   private filePath: string;
 
   constructor(filePath: string) {
     this.filePath = this.normalizePath(filePath);
-    this.checkIfFileExists();
+    //this.checkIfFileExists();
   }
 
   private normalizePath(filePath: string): string {
-    return path.normalize(filePath);
-  }
-
-  private checkIfFileExists(): void {
-    if (!fs.existsSync(this.filePath)) {
-      fs.writeFile(`${this.filePath}`, '', (err) => {
-        if (err) throw err;
-        console.log(`${this.filePath} created successfully.\n`);
-      });
-    }
+      if (filePath.startsWith("~")) {
+          filePath = path.join(os.homedir(), filePath.slice(1));
+      }
+      return path.normalize(filePath);
   }
 
   public readFile(): string {
