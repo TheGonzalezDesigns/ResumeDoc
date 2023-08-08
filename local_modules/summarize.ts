@@ -7,11 +7,16 @@ export async function summarize(filepath: string): Promise<string> {
   // In this example, we use a `MapReduceDocumentsChain` specifically prompted to summarize a set of documents.
   const text = fs.readFileSync(filepath, "utf8");
   const model = new OpenAI({ temperature: .5 });
-  const textSplitter = new RecursiveCharacterTextSplitter({ chunkSize: 1000 });
+  const textSplitter = new RecursiveCharacterTextSplitter({ chunkSize: 4000 });
   const docs = await textSplitter.createDocuments([text]);
 
+  const params = {
+    type: "map_reduce" as const, 
+    length: 2000 
+  }
+
   // This convenience function creates a document chain prompted to summarize a set of documents.
-  const chain = loadSummarizationChain(model, { type: "map_reduce" });
+  const chain = loadSummarizationChain(model, params);
   const res = await chain.call({
     input_documents: docs,
   });
