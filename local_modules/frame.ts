@@ -1,13 +1,17 @@
 import { PromptTemplate } from "langchain/prompts";
 
-const template = "Tell me a {adjective} joke about {content}.";
+export async function frame(directive: string, context: string, query: string): Promise<string> {
+  const template = "{directive} {context} {query}.";
 
-const promptTemplate = PromptTemplate.fromTemplate(template);
-console.log(promptTemplate.inputVariables);
-// ['adjective', 'content']
-const formattedPromptTemplate = await promptTemplate.format({
-  adjective: "funny",
-  content: "chickens",
-});
-console.log(formattedPromptTemplate);
-// "Tell me a funny joke about chickens."
+  const promptTemplate = PromptTemplate.fromTemplate(template);
+  console.log(promptTemplate.inputVariables);
+  // ['adjective', 'content']
+  const formattedPromptTemplate = await promptTemplate.format({
+    directive,
+    context,
+    query
+  });
+
+  return formattedPromptTemplate;
+}
+
