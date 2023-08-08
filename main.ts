@@ -26,15 +26,25 @@ async function main(): Promise<void> {
   contentType = cType(2);
   
   directive = `You are a resume expert. You will use the given context to answer the given query. Do not hallucinate, only use the facts given to you in this prompt. Answer in the first person as if you were Hugo Gonzalez.` 
-  frameQuery = `Generate a ${contentType} for the job listing based on the professional background that makes me look a senior engineer in the field. Please format your response in unordered latex bullet points`;
+  frameQuery = `Generate a ${contentType} for the job listing based on the professional background that makes me look a senior engineer in the field. Please format your response as an array of at least 10 skills. Each skill listed should be verbose and related to the job listing. Each skill should be impressive and prove I am a competent expert in the relevant field. Make sure the list is a javascript array`;
   
   const skillListPrompt = await frame(directive, professionalBackground, jobProfile, frameQuery);
   
+  directive = `You are a resume expert. You will use the given context to answer the given query. Do not hallucinate, only use the facts given to you in this prompt.` 
+  frameQuery = `Extract the name of the company from the job listing. Replace any space with hyphens. If you cannot find the name of the compnay, use the title of the job role instead. Only return the company name or the job role. Place the name or role in quoation marks.`;
+  
+  const companyNamePrompt = await frame(directive, "Irrelevant", jobProfile, frameQuery);
+  
 
-  const [professionalSummary, coverletterContent, skillList ] = await Promise.all([query(resumePrompt), query(coverletterPrompt), query(skillListPrompt)]);
+  const [professionalSummary, coverletterContent, skillList, companyName ] = await Promise.all([query(resumePrompt), query(coverletterPrompt), query(skillListPrompt), query(companyNamePrompt)]);
 
   //console.info(`Prompt: ${prompt}`);
   //console.info(`Response: ${res}`);
+  
+  const extractText = (str: string) => str.match(/("[^"]*"|'[^']*')/g);
+  const fileName = extractText(companyName)
+  console.info(`All documents for ${fileName} is ready.\n`)
+  console.info(`------------------------------------------\n`)
 
   const resumeFilePath = "~/Documents/Resumes/Tests/ProfessionalSummary.txt"
   const resume = new Document(resumeFilePath);
