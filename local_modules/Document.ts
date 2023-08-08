@@ -15,7 +15,10 @@ export class Document {
 
   private checkIfFileExists(): void {
     if (!fs.existsSync(this.filePath)) {
-      throw new Error(`File not found: ${this.filePath}`);
+      fs.writeFile(`${this.filePath}`, '', (err) => {
+        if (err) throw err;
+        console.log(`${this.filePath} created successfully.\n`);
+      });
     }
   }
 
