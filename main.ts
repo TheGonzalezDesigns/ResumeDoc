@@ -1,7 +1,6 @@
 import { OpenAI } from "langchain/llms/openai";
 
 const llm = new OpenAI({
-  openAIApiKey: process.env.OPENAI_API_KEY,
   temperature: 0.9,
   frequencyPenalty: 0.5,
   presencePenalty: 0.5
@@ -15,9 +14,9 @@ const talkToLlm = async (input: string) => await llm.predict(input);
 const conversationLoop = async () => {
   let input = '';
 
-  const readline = async (): void => {
+  const readline = async (): Promise<string> => {
       let input = prompt("Please enter your input: ");
-      return input;
+      return input ? input : "No response";
   };
 
   while (input !== 'exit') {
