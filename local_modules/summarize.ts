@@ -5,6 +5,7 @@ import * as fs from "fs";
 
 export async function summarize(filepath: string): Promise<string> {
   // In this example, we use a `MapReduceDocumentsChain` specifically prompted to summarize a set of documents.
+  filepath = `${filepath}/profile.txt`;
   const text = fs.readFileSync(filepath, "utf8");
   const model = new OpenAI({ temperature: .5 });
   const textSplitter = new RecursiveCharacterTextSplitter({ chunkSize: 4000 });
