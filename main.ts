@@ -2,9 +2,9 @@ import { summarize } from "./local_modules/summarize";
 import { frame } from "./local_modules/frame";
 import { query } from "./local_modules/query"
 import { validateContentType as cType } from "./local_modules/contentType"
+import { Document } from "./local_modules/Document"
 
-
-async function main(): Promise<string> {
+async function main(): Promise<void> {
   console.time('mainExecution');
   const professionalBackground = await summarize("./context/professional");
   const jobProfile = await summarize("./context/jobs");
@@ -17,8 +17,11 @@ async function main(): Promise<string> {
   //console.info(`Prompt: ${prompt}`);
   //console.info(`Response: ${res}`);
 
+  const resumeFilePath = "~/Documents/Resumes/Tests/ProfessionalSummary.txt"
+  const Resume = new Document(resumeFilePath)
+  Resume.writeFile(res);
+
   console.timeEnd('mainExecution');
-  return res;
 }
 main();
 
