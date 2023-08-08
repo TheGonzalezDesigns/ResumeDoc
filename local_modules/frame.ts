@@ -4,7 +4,6 @@ export async function frame(directive: string, professionalBackground: string, j
   const template = "Directive: {directive}\n Professional Background: {professionalBackground}\n Job profile: {jobProfile} \n Query: {query}";
 
   const promptTemplate = PromptTemplate.fromTemplate(template);
-  console.log(promptTemplate.inputVariables);
 
   const formattedPromptTemplate = await promptTemplate.format({
     directive,
