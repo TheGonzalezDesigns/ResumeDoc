@@ -51,15 +51,10 @@ async function main(): Promise<void> {
 
   const extractText = (str: string): string => {
     let matches = str.match(/("[^"]*"|'[^']*')/g);
-    console.info("M-1:", str)
-    console.info("M0:", matches)
     if (!matches) return "";
-    console.info("M1:", matches[0])
     matches = matches[0].match(/^\"(.*?)\"$/);
     if (!matches) return "";
-    console.info("M2:", matches[0])
     const extractedText = removeQuotes(matches[0])
-    console.info("M3:", extractedText);
     return extractedText; 
   }
 
@@ -80,11 +75,15 @@ async function main(): Promise<void> {
     fileName: extractedCompanyName
   } as const;
 
-  console.info(content);
   if (content.skillList.length < 5 || content.fileName == "") throw Error("Incomplete Generation.");
-
-  //console.info(`All documents for ${content.fileName} is ready.\n`)
+  
+  console.info(`All content for ${content.fileName} is ready.\n`)
   console.info(`------------------------------------------\n`)
+  let latexCode = "";
+  content.skillList.forEach(item => {
+      latexCode += `\\larrow{sectcol}  ${item}\\\\[6pt]\n`;
+  });
+  console.log("Skill List in latex:\n", latexCode);
 /*
   const resumeFilePath = "~/Documents/Resumes/Tests/ProfessionalSummary.txt"
   const resume = new Document(resumeFilePath);
