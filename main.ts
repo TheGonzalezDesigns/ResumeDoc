@@ -44,15 +44,37 @@ async function main(): Promise<void> {
   interface GeneratedContent {
       professionalSummary: string;
       coverletterContent: string;
-      skillList: string;
+      skillList: [];
       companyName: string;
   }
 
   const extractText = (str: string) => str.match(/("[^"]*"|'[^']*')/g);
-  const fileName = extractText(companyName)
-  console.info(`All documents for ${fileName} is ready.\n`)
-  console.info(`------------------------------------------\n`)
+  const extractedCompanyName = extractText(companyName)
+  const extractJSONArray = (str: string): any[] => {
+      const regex = /^\[(.*)\]$/s;
+      const matches = str.trim().match(regex);
 
+      if (matches) {
+        console.log(`Parsing content: ${matches[1]}`);
+        return JSON.parse(`[${matches[1]}]`);
+      }
+      throw Error(`Could not extract skill list from input string:\n${str}\nOriginal skillList:\n${skillList}`);
+  };
+  console.log(skillList);
+  const extractedSkillList = extractJSONArray(skillList);
+
+/*
+  const contentTypeent: GeneratedContent = {
+    professionalSummary,
+    coverletterContent,
+    skillList: extractedSkillList,
+    fileName: extractedCompanyName
+  } as const;
+*/
+  console.info(extractedSkillList);
+  //console.info(`All documents for ${content.fileName} is ready.\n`)
+  console.info(`------------------------------------------\n`)
+/*
   const resumeFilePath = "~/Documents/Resumes/Tests/ProfessionalSummary.txt"
   const resume = new Document(resumeFilePath);
   resume.writeFile(professionalSummary);
@@ -64,7 +86,7 @@ async function main(): Promise<void> {
   const coverletterFilePath = "~/Documents/Coverletters/Tests/Letter.txt";
   const coverletter = new Document(coverletterFilePath);
   coverletter.writeFile(coverletterContent);
-
+*/
   console.timeEnd('mainExecution');
 }
 main();
