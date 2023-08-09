@@ -81,7 +81,7 @@ async function main(): Promise<void> {
   console.info(`------------------------------------------\n`)
   let latexCode = "";
   content.skillList.forEach(item => {
-      latexCode += `\\larrow{sectcol}  ${item}\\\\[6pt]\n`;
+      latexCode += `{${item}}`;
   });
   console.log("Skill List in latex:\n", latexCode);
 /*
