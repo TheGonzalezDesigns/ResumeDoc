@@ -69,11 +69,9 @@ async function main(): Promise<void> {
     skillList: extractedSkillList,
     fileName: extractedCompanyName
   } as const;
-  
 
+  if (content.skillList.length < 5 || content.fileName == "") throw Error("Incomplete Generation.");
 
-
-      //throw Error(`Could not extract skill list.`);
   console.info(content);
   //console.info(`All documents for ${content.fileName} is ready.\n`)
   console.info(`------------------------------------------\n`)
