@@ -43,14 +43,24 @@ async function main(): Promise<void> {
  
   interface GeneratedContent {
       professionalSummary: string;
-      coverletterContent: string;
       skillList: string[];
+      coverletterContent: string;
       fileName: string;
   }
+  const removeQuotes = (str: string) => str.replace(/['"]+/g, '');
 
   const extractText = (str: string): string => {
-    const matches = str.match(/("[^"]*"|'[^']*')/g);
-    return matches ? matches[0] : "";
+    let matches = str.match(/("[^"]*"|'[^']*')/g);
+    console.info("M-1:", str)
+    console.info("M0:", matches)
+    if (!matches) return "";
+    console.info("M1:", matches[0])
+    matches = matches[0].match(/^\"(.*?)\"$/);
+    if (!matches) return "";
+    console.info("M2:", matches[0])
+    const extractedText = removeQuotes(matches[0])
+    console.info("M3:", extractedText);
+    return extractedText; 
   }
 
   const extractedCompanyName = extractText(companyName)
@@ -65,14 +75,14 @@ async function main(): Promise<void> {
 
   const content: GeneratedContent = {
     professionalSummary,
-    coverletterContent,
     skillList: extractedSkillList,
+    coverletterContent,
     fileName: extractedCompanyName
   } as const;
 
+  console.info(content);
   if (content.skillList.length < 5 || content.fileName == "") throw Error("Incomplete Generation.");
 
-  console.info(content);
   //console.info(`All documents for ${content.fileName} is ready.\n`)
   console.info(`------------------------------------------\n`)
 /*
