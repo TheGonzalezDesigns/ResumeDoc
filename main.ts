@@ -44,34 +44,37 @@ async function main(): Promise<void> {
   interface GeneratedContent {
       professionalSummary: string;
       coverletterContent: string;
-      skillList: [];
-      companyName: string;
+      skillList: string[];
+      fileName: string;
   }
 
-  const extractText = (str: string) => str.match(/("[^"]*"|'[^']*')/g);
-  const extractedCompanyName = extractText(companyName)
-  const extractJSONArray = (str: string): any[] => {
-      const regex = /^\[(.*)\]$/s;
-      const matches = str.trim().match(regex);
+  const extractText = (str: string): string => {
+    const matches = str.match(/("[^"]*"|'[^']*')/g);
+    return matches ? matches[0] : "";
+  }
 
-      if (matches) {
-        console.log(`Parsing content: ${matches[1]}`);
-        return JSON.parse(`[${matches[1]}]`);
-      }
-      throw Error(`Could not extract skill list from input string:\n${str}\nOriginal skillList:\n${skillList}`);
+  const extractedCompanyName = extractText(companyName)
+  const extractJSONArray = (str: string): string[] => {
+    const regex = /^\[(.*)\]$/s;
+    const matches = str.trim().match(regex);
+
+    return  matches ? JSON.parse(`[${matches[1]}]`) : [];
   };
-  console.log(skillList);
+  
   const extractedSkillList = extractJSONArray(skillList);
 
-/*
-  const contentTypeent: GeneratedContent = {
+  const content: GeneratedContent = {
     professionalSummary,
     coverletterContent,
     skillList: extractedSkillList,
     fileName: extractedCompanyName
   } as const;
-*/
-  console.info(extractedSkillList);
+  
+
+
+
+      //throw Error(`Could not extract skill list.`);
+  console.info(content);
   //console.info(`All documents for ${content.fileName} is ready.\n`)
   console.info(`------------------------------------------\n`)
 /*
