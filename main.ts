@@ -31,7 +31,7 @@ async function main(): Promise<void> {
   const skillListPrompt = await frame(directive, professionalBackground, jobProfile, frameQuery);
   
   directive = `You are a resume expert. You will use the given context to answer the given query. Do not hallucinate, only use the facts given to you in this prompt.` 
-  frameQuery = `Extract the name of the company from the job listing. Replace any space with hyphens. If you cannot find the name of the compnay, use the title of the job role instead. Only return the company name or the job role. Place the name or role in quoation marks.`;
+  frameQuery = `Extract the name of the company from the job listing. Replace any space with hyphens. If you cannot find the name of the compnay, use the title of the job role instead. Only return the company name or the job role. Place the name or role in quoation marks. Remove any special characters from the name except for hyphens.`;
   
   const companyNamePrompt = await frame(directive, "Irrelevant", jobProfile, frameQuery);
   
@@ -40,7 +40,14 @@ async function main(): Promise<void> {
 
   //console.info(`Prompt: ${prompt}`);
   //console.info(`Response: ${res}`);
-  
+ 
+  interface GeneratedContent {
+      professionalSummary: string;
+      coverletterContent: string;
+      skillList: string;
+      companyName: string;
+  }
+
   const extractText = (str: string) => str.match(/("[^"]*"|'[^']*')/g);
   const fileName = extractText(companyName)
   console.info(`All documents for ${fileName} is ready.\n`)
