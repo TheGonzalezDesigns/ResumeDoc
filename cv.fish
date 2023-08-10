@@ -9,23 +9,31 @@ echo "$jobProfile" > ~/projects/ResumeDoc/context/jobs/profile.txt
 bun run ./main.ts
 
 # Directory paths
-set html_dir "./src/html/"
-set pdf_dir "./src/pdfs/"
+set html_root "./src/html/"
+set pdf_root "./src/pdfs/"
 
-# Ensure pdf directory exists
-if not test -d $pdf_dir
-    mkdir -p $pdf_dir
-end
+# Sub directories
+set sub_dirs "coverletters" "resumes"
 
-# Iterate over each HTML file in the html directory
-for html_file in $html_dir*.html
-    # Derive the output PDF filename
-    set pdf_file (basename $html_file .html).pdf
+# Iterate over each sub-directory
+for dir in $sub_dirs
+    set html_dir $html_root$dir/
+    set pdf_dir $pdf_root$dir/
 
-    # Convert the HTML to PDF
-    python3 html2pdf.py $html_file $pdf_dir$pdf_file
+    # Ensure pdf sub directory exists
+    if not test -d $pdf_dir
+        mkdir -p $pdf_dir
+    end
 
-    # Remove the original HTML file
-    rm $html_file
-end
+    # Iterate over each HTML file in the sub-directory of html directory
+    for html_file in $html_dir*.html
+        # Derive the output PDF filename
+        set pdf_file (basename $html_file .html).pdf
 
+        # Convert the HTML to PDF
+        python3 html2pdf.py $html_file $pdf_dir$pdf_file
+
+        # Remove the original HTML file
+        rm $html_file
+    end
+  end
