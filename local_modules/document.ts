@@ -7,7 +7,6 @@ export class Document {
 
   constructor(filePath: string) {
     this.filePath = this.normalizePath(filePath);
-    //this.checkIfFileExists();
   }
 
   private normalizePath(filePath: string): string {
@@ -17,11 +16,11 @@ export class Document {
       return path.normalize(filePath);
   }
 
-  public readFile(): string {
+  public load(): string {
     return fs.readFileSync(this.filePath, 'utf-8');
   }
 
-  public writeFile(content: string): void {
+  public save(content: string): void {
     fs.writeFileSync(this.filePath, content, { encoding: 'utf-8' });
   }
 }
