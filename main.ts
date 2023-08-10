@@ -2,11 +2,8 @@ import { summarize } from "./local_modules/summarize";
 import { frame } from "./local_modules/frame";
 import { query } from "./local_modules/query"
 import { validateContentType as cType } from "./local_modules/contentType"
-import { Document } from "./local_modules/Document"
 import ejs from 'ejs';
 import fs from 'fs';
-import puppeteer from 'puppeteer';
-
 
 async function main(): Promise<void> {
   console.time('mainExecution');
@@ -42,9 +39,6 @@ async function main(): Promise<void> {
 
   const [professionalSummary, coverletterContent, skillList, companyName ] = await Promise.all([query(resumePrompt), query(coverletterPrompt), query(skillListPrompt), query(companyNamePrompt)]);
 
-  //console.info(`Prompt: ${prompt}`);
-  //console.info(`Response: ${res}`);
- 
   interface GeneratedContent {
       professionalSummary: string;
       skillList: string[];
@@ -106,45 +100,6 @@ async function main(): Promise<void> {
   console.info("populatedResume: ", populatedResume);
   console.info("populatedCoverLetter: ", populatedCoverLetter);
 
-  // The populatedResume and populatedCoverLetter now contain the HTML
-  // You can then use Puppeteer or similar tools to convert them to PDF
-
-
-  // ... [your existing code]
-
-  // Function to convert an HTML string to a PDF
-
-  async function htmlToPdf(html: string, outputPath: string) {
-    const browser = await puppeteer.launch({
-        executablePath: '/usr/bin/chromium-browser',
-        headless: 'new'
-    });
-    const page = await browser.newPage();
-    await page.setContent(html);
-    await page.pdf({ path: outputPath, format: 'A4' });
-    await browser.close();
-  }
-
-
-  // After populating the templates:
-  await htmlToPdf(populatedResume, `./sandbox/${content.fileName}_resume.pdf`);
-  await htmlToPdf(populatedCoverLetter, `./sandbox/${content.fileName}_coverletter.pdf`);
-
-
-
-  /*
-  const resumeFilePath = "~/Documents/Resumes/Tests/ProfessionalSummary.txt"
-  const resume = new Document(resumeFilePath);
-  resume.writeFile(professionalSummary);
-
-  const skillListFilePath = "~/Documents/Resumes/Tests/SkillList.txt"
-  const skillListFile = new Document(skillListFilePath);
-  skillListFile.writeFile(skillList);
-
-  const coverletterFilePath = "~/Documents/Coverletters/Tests/Letter.txt";
-  const coverletter = new Document(coverletterFilePath);
-  coverletter.writeFile(coverletterContent);
-*/
   console.timeEnd('mainExecution');
 }
 main();
