@@ -1,4 +1,5 @@
 import { summarize } from "./local_modules/summarize";
+import { Document as document } from "./local_modules/document";
 import { frame } from "./local_modules/frame";
 import { query } from "./local_modules/query"
 import { validateContentType as cType } from "./local_modules/contentType"
@@ -84,21 +85,24 @@ async function main(): Promise<void> {
   console.log("Skill List in latex:\n", latexCode);
 
   // Load the templates
-  const resumeTemplate = fs.readFileSync('./templates/resume.ejs', 'utf8');
-  const coverLetterTemplate = fs.readFileSync('./templates/coverletter.ejs', 'utf8');
+  const resumeTemplate = new document('./templates/resume.ejs');
+  const coverLetterTemplate = new document('./templates/coverletter.ejs');
 
   // Populate the templates
-  const populatedResume = ejs.render(resumeTemplate, {
+  const populatedResume = ejs.render(resumeTemplate.load(), {
       professionalSummary: content.professionalSummary,
       skillList: content.skillList
   });
 
-  const populatedCoverLetter = ejs.render(coverLetterTemplate, {
+  const populatedCoverLetter = ejs.render(coverLetterTemplate.load(), {
       coverletterContent: content.coverletterContent
   });
 
-  console.info("populatedResume: ", populatedResume);
-  console.info("populatedCoverLetter: ", populatedCoverLetter);
+  const resume = new document(`./src/html/resumes/Hugo_Gonzalez_Resume_${content.fileName}.html`);
+  const coverletter = new document(`./src/html/resumes/Hugo_Gonzalez_Cover-Letter_${content.fileName}.html`);
+
+  resume.save(populatedResume);
+  coverletter.save(populatedCoverLetter);
 
   console.timeEnd('mainExecution');
 }
