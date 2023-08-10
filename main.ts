@@ -3,6 +3,10 @@ import { frame } from "./local_modules/frame";
 import { query } from "./local_modules/query"
 import { validateContentType as cType } from "./local_modules/contentType"
 import { Document } from "./local_modules/Document"
+import ejs from 'ejs';
+import fs from 'fs';
+import puppeteer from 'puppeteer';
+
 
 async function main(): Promise<void> {
   console.time('mainExecution');
@@ -84,7 +88,51 @@ async function main(): Promise<void> {
       latexCode += `{${item}}`;
   });
   console.log("Skill List in latex:\n", latexCode);
-/*
+
+  // Load the templates
+  const resumeTemplate = fs.readFileSync('./templates/resume.ejs', 'utf8');
+  const coverLetterTemplate = fs.readFileSync('./templates/coverletter.ejs', 'utf8');
+
+  // Populate the templates
+  const populatedResume = ejs.render(resumeTemplate, {
+      professionalSummary: content.professionalSummary,
+      skillList: content.skillList
+  });
+
+  const populatedCoverLetter = ejs.render(coverLetterTemplate, {
+      coverletterContent: content.coverletterContent
+  });
+
+  console.info("populatedResume: ", populatedResume);
+  console.info("populatedCoverLetter: ", populatedCoverLetter);
+
+  // The populatedResume and populatedCoverLetter now contain the HTML
+  // You can then use Puppeteer or similar tools to convert them to PDF
+
+
+  // ... [your existing code]
+
+  // Function to convert an HTML string to a PDF
+
+  async function htmlToPdf(html: string, outputPath: string) {
+    const browser = await puppeteer.launch({
+        executablePath: '/usr/bin/chromium-browser',
+        headless: 'new'
+    });
+    const page = await browser.newPage();
+    await page.setContent(html);
+    await page.pdf({ path: outputPath, format: 'A4' });
+    await browser.close();
+  }
+
+
+  // After populating the templates:
+  await htmlToPdf(populatedResume, `./sandbox/${content.fileName}_resume.pdf`);
+  await htmlToPdf(populatedCoverLetter, `./sandbox/${content.fileName}_coverletter.pdf`);
+
+
+
+  /*
   const resumeFilePath = "~/Documents/Resumes/Tests/ProfessionalSummary.txt"
   const resume = new Document(resumeFilePath);
   resume.writeFile(professionalSummary);
