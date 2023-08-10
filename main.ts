@@ -78,11 +78,6 @@ async function main(): Promise<void> {
   
   console.info(`All content for ${content.fileName} is ready.\n`)
   console.info(`------------------------------------------\n`)
-  let latexCode = "";
-  content.skillList.forEach(item => {
-      latexCode += `{${item}}`;
-  });
-  console.log("Skill List in latex:\n", latexCode);
 
   // Load the templates
   const resumeTemplate = new document('./templates/resume.ejs');
@@ -99,7 +94,7 @@ async function main(): Promise<void> {
   });
 
   const resume = new document(`./src/html/resumes/Hugo_Gonzalez_Resume_${content.fileName}.html`);
-  const coverletter = new document(`./src/html/resumes/Hugo_Gonzalez_Cover-Letter_${content.fileName}.html`);
+  const coverletter = new document(`./src/html/coverletters/Hugo_Gonzalez_Cover-Letter_${content.fileName}.html`);
 
   resume.save(populatedResume);
   coverletter.save(populatedCoverLetter);
