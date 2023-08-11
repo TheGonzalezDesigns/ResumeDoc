@@ -3,16 +3,199 @@
 <html>
 <head>
     <title>Resume</title>
+    <style>
+      body {
+        height: 100%;
+        width: 100%;
+        min-height: 100vh;
+        min-width: 100vw;
+        margin: 0 !important;
+        padding: 0 !important;
+        background-image: url("https://images.unsplash.com/photo-1690735322802-f2ece8d3edce?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1887&q=80");
+        background-position: center center;
+        background-repeat: no-repeat;
+        background-color: green;
+      }
+      * {
+        overflow: hidden !important;
+      }
+    </style>
 </head>
 <body>
-    <h1>Professional Summary</h1>
-    <p><%= professionalSummary %></p>
-    
-    <h2>Skills</h2>
-    <ul>
+  <header>
+    <h1 id="Name">Hugo Gonzalez</h1>
+    <ul id="Info">
+      <li> 
+        <div class="Key">Email</div>
+        <div class="Value">thegonzalezdesigns@gmail.com</div>
+      </li>
+      <li> 
+        <div class="Key">Mobile</div>
+        <div class="Value">(747) 774-6859</div>
+      </li>
+      <li> 
+        <div class="Key">Location</div>
+        <div class="Value">West HIlls, CA 91304</div>
+      </li>
+      <li> 
+        <div class="Key">Github</div>
+        <div class="Value"> <a href="https://github.com/TheGonzalezDesigns">Profile</a></div>
+      </li>
+      <li> 
+        <div class="Key">LinkedIn</div>
+        <div class="Value"> <a href="https://www.linkedin.com/in/thegonzalezdesigns/">Profile</a></div>
+      </li>
+    </ul>
+  </header>
+  <main>
+    <section id="ProfesionalSummary">
+      <h2>Profesional Summary</h2>
+      <p><%= professionalSummary %></p>
+    </section>
+    <section id="Skills">
+      <h2>Skills</h2>
+      <ul>
         <% skillList.forEach(skill => { %>
             <li><%= skill %></li>
         <% }); %>
-    </ul>
+      </ul>
+    </section>
+    <section id="WorkHistory">
+      <h2>Work History</h2>
+      <ul></ul>
+      <li>
+        <div class="Position">
+          <div class="Title">Founder and Architect</div>
+          <div class="Company">
+            <div class="Name">Black Magic Money</div>
+            <div class="Location">Los Angeles, CA</div>
+          </div>
+          <div class="Date">
+            <div class="Start">05/2022</div>
+            <div class="End">Present</div>
+          </div>
+        </div>
+        <ul>
+          <li>Designed and built a proprietary blockchain trading platform that aggregates over $100M of liquidity from various sources in a given network using other aggregator APIs</li>
+          <li>Utilized the platform to execute swift and lucrative cross-chain arbitrage strategies with optimal trade sequences</li>
+          <li>Implemented a custom nonce management system that enables high scalability, automation and parallel transaction execution for up to 1000 transactions per second</li>
+          <li>Ensured zero loss by verifying prices and on-chain profitability that would revert if gas expenses exceeded profit.</li>
+          <li>Integrated technologies like Paraswap, Kyberswap, Matcha.xyz, Open Ocean etc. as well as various types of liquidity pools such as Curve, Uniswap V2, Uniswap V3 and Algebra Pools into the platform</li>
+          <li>Acquired valuable insights into the blockchain industry and its trends, challenges and opportunities, especially in the area of DeFi protocols for cross-network liquidity, liquidity optimization and risk-free profit correction.</li>
+          <li>Demonstrated deep understanding of automated market makers (AMMs) and the mathematical equations that govern their trading behavior and liquidity provision</li>
+        </ul>
+        <li>
+          <div class="Position"> 
+            <div class="Title">Lead UI/UX Designer</div>
+            <div class="Company"> 
+              <div class="Name">Educe Group,</div>
+              <div class="Location">Bethesda, MD</div>
+            </div>
+            <div class="Date">
+              <div class="Start">08/2021</div>
+              <div class="End">08/2022</div>
+            </div>
+          </div>
+          <ul>
+            <li>Lead designer for multimillion dollar projects sold to Ford and Johnson & Johnson, and the lead UI consultant for Lincoln automotive microapis</li>
+            <li>Spearheaded the UI/X design of several B2B projects using cutting-edge technologies such as Vue, Nuxt, Vuex, Node, MongoDB and WebPack</li>
+            <li>Leveraged my expertise in Photoshop and Illustrator to create custom icons, photos, logos and branding materials for various clients</li>
+            <li>Crafted and implemented user-friendly interfaces and interactions using HTML, CSS and JavaScript, following the best practices and standards</li>
+            <li>Applied Agile methodologies, Jira software and RESTful API designs to ensure efficient and effective project management and delivery</li>
+            <li>Associate and lead UI/UX consultant in an international firm of 100 employees, I provided guidance and support to junior front end developers</li>
+          </ul>
+        </li>
+        <li> 
+          <div class="Position"> 
+            <div class="Title">Fullstack Developer</div>
+            <div class="Company"> 
+              <div class="Name">Contracted</div>
+              <div class="Location">Los Angeles, CA</div>
+            </div>
+            <div class="Date"> 
+              <div class="Start">11/2015</div>
+              <div class="End">08/2021</div>
+            </div>
+          </div>
+          <ul>
+            <li>Designed and built web applications and content management systems for local businesses, marketing agencies, and remote contracts using Node.js, React, CSS, Laravel, MySQL, MongoDB, and Express.js.</li>
+            <li>Converted mockups and wireframes into SPAs with appropriate back-end architecture and optimized content delivery systems using Node.js and WebPack.</li>
+            <li>Upgraded obsolete web technology and outdated database models to meet the latest web standards and practices using RESTful APIs.</li>
+            <li>Updated older websites to mobile-friendly CSS standards using flex-box or the latest grid system design.</li>
+            <li>Aided multiple teams to meet development milestones and deadlines on a short term notice and multi-tasked across multiple functions and roles.</li>
+          </ul>
+        </li>
+        <li>
+          <div class="Position"> 
+            <div class="Title">Information Management and Technology Consultant</div>
+            <div class="Company"> 
+              <div class="Name">IShowcase Inc.</div>
+              <div class="Location">Woodland Hills, CA</div>
+            </div>
+            <div class="Date"> 
+              <div class="Start">08/2014</div>
+              <div class="End">10/2015</div>
+            </div>
+          </div>
+          <ul>
+            <li>Designed and implemented logical operational steps for various information systems using flowcharts and diagrams.</li>
+            <li>Evaluated and improved business functions and inefficiencies by monitoring and analyzing employee tasks and information processing.</li>
+            <li>Troubleshot and resolved system and program malfunctions in a timely and effective manner.</li>
+            <li>Developed and maintained reporting systems to provide updated information to customers and management.</li>
+          </ul>
+        </li>
+        <li>
+          <div class="Position"> 
+            <div class="Title">Graphic Designer</div>
+            <div class="Company"> 
+              <div class="Name">Herbal Tropics</div>
+              <div class="Location">Los Angeles, CA</div>
+            </div>
+            <div class="Date"> 
+              <div class="Start">11/2013</div>
+              <div class="End">07/2014</div>
+            </div>
+          </div>
+          <ul>
+            <li>Worked with clients to gather requirements and manage project milestones.</li>
+            <li>Employed design fundamentals in typography, composition, layout, and color.</li>
+          </ul>
+        </li>
+      </li>
+    </section>
+    <section id="Education">
+      <h2>Education</h2>
+      <ul>
+        <li>
+          <h4>California State University - Northridge</h4>
+          <p>Bachelor of Science, Computer Science, 2017</p>
+        </li>
+        <li>
+          <h4>Los Angeles Pierce College</h4>
+          <p>Associate of Science, Computer Science And Programming, 2013</p>
+          <p>Associate of Arts, French Language And Literature, 2013</p>
+          <p>Awarded Scholarship for Advanced Proficiency in the French Language</p>
+        </li>
+      </ul>
+    </section>
+    <section id="References">
+      <h2>References</h2>
+      <ul>
+        <li>
+          <h3>Educe Group:</h3>
+          <ul> 
+            <li>John Shahabian, Tech Lead, jshahabian@educegroup.com</li>
+            <li>Mo Makanjuola, CSM, CSPO, mo.makanjuola1@gmail.com</li>
+          </ul>
+        </li>
+        <li>
+          <h3>BuildMyHealth:</h3>
+          <ul> 
+            <li>Jonathan Kaplan, Founder/CEO, 415-295-6540, jonathan@buildmybod.com</li>
+          </ul>
+        </li>
+      </ul>
+    </section>
+  </main>
 </body>
 </html>
