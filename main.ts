@@ -19,7 +19,7 @@ async function main(): Promise<void> {
   contentType = cType(1);
   
   directive = `You are a cover letter expert. You will use the given context to answer the given query. Do not hallucinate, only use the facts given to you in this prompt. Answer in the first person as if you were Hugo Gonzalez.` 
-  frameQuery = `Generate a ${contentType} for the job listing based on the professional background that makes me look a senior engineer in the field. Only provide the body of the letter, do not add a greeting nor closing.`;
+  frameQuery = `Generate a ${contentType} for the job listing based on the professional background that makes me look a senior engineer in the field. Only provide the body of the letter, do not add a greeting nor closing. Keep it under 250 words while staying hyperfocused on making it seem like I'm the perfect candidate for the position given.`;
   
   const coverletterPrompt = await frame(directive, professionalBackground, jobProfile, frameQuery);
 
