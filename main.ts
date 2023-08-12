@@ -4,7 +4,6 @@ import { frame } from "./local_modules/frame";
 import { query } from "./local_modules/query"
 import { validateContentType as cType } from "./local_modules/contentType"
 import ejs from 'ejs';
-import fs from 'fs';
 
 async function main(): Promise<void> {
   console.time('mainExecution');
