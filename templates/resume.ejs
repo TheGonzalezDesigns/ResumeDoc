@@ -2,169 +2,413 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Resume</title>
-    <style>
-      body {
-        height: 100%;
-        width: 100%;
-        min-height: 100vh;
-        min-width: 100vw;
-        margin: 0 !important;
-        padding: 0 !important;
-        background-image: url("https://images.unsplash.com/photo-1690735322802-f2ece8d3edce?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1887&q=80");
-        background-position: center center;
-        background-repeat: no-repeat;
-        background-color: green;
-      }
-      * {
-        overflow: hidden !important;
-      }
-    </style>
+  <title>Resume</title>
+  <style>
+@import url("https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Orbitron&display=swap");
+body {
+  height: 100%;
+  width: 100%;
+  min-height: 100vh;
+  min-width: 100vw;
+  margin: 0 !important;
+  padding: 0 !important;
+  background-color: #000;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+* {
+  overflow: hidden auto;
+  font-family: 'Fira Code', monospace;
+  color: rgba(255,255,255,0.9);
+}
+*:before,
+*:after {
+  margin: 0;
+  padding: 0;
+}
+header {
+  margin: 0;
+  padding: 0;
+}
+header * {
+  overflow: hidden !important;
+}
+header #Name {
+  font-weight: 300;
+  font-family: 'Orbitron', sans-serif;
+  text-align: center;
+  background-color: #000;
+  text-shadow: 0px 2px 3px rgba(211,211,211,0.341);
+  -webkit-background-clip: text;
+          background-clip: text;
+  height: 1.75em;
+  font-size: 22pt;
+  margin-bottom: 1.75em;
+  padding-left: 1em;
+}
+header #Profile {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  height: 10em;
+  margin-bottom: 2em;
+}
+header #Profile #Picture {
+  flex: 0 0 35%;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  filter: drop-shadow(2px 4px 3px rgba(0,0,0,0.75));
+}
+header #Profile #Picture img {
+  width: auto;
+  height: 100%;
+  -webkit-clip-path: circle(50% at 50% 50%);
+          clip-path: circle(50% at 50% 50%);
+  opacity: 1;
+}
+#Info {
+  flex: 0 0 65%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+#Info .Key,
+#Info .Value {
+  display: inline-block;
+  padding: 0.075in;
+  margin: 0;
+  font-size: 10pt;
+}
+#Info .Key {
+  width: auto;
+  min-width: 5em;
+  font-weight: 700;
+}
+#Info .Value {
+  font-weight: 500;
+}
+#Info .Value:before {
+  content: '`${ ';
+}
+#Info .Value:after {
+  content: ' }`';
+}
+#Frame {
+  margin: 3em;
+  padding: 1.5em;
+  border: #fff;
+}
+body {
+  font-family: 'Roboto', sans-serif;
+  background-color: #0f0f0f;
+}
+#Frame {
+  position: relative;
+  width: 80%;
+  max-width: 800px;
+  margin: 50px auto;
+  padding: 30px;
+  background-color: #222;
+  color: #fff;
+  border: 2px solid #def3f3;
+  box-shadow: 0 0 10px 2px #def3f3;
+  overflow: hidden;
+}
+#Frame:before,
+#Frame:after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border: 2px solid #0ff;
+  box-shadow: 0 0 10px 2px #0ff;
+  z-index: -1;
+}
+#Frame:before {
+  top: -10px;
+  left: -10px;
+}
+#Frame:after {
+  bottom: -10px;
+  right: -10px;
+}
+section h2 {
+  font-weight: 300;
+  text-transform: lowercase;
+  text-align: right;
+  height: 2.5em;
+}
+section h2:before {
+  content: '> ';
+  opacity: 0.6;
+}
+section p {
+  font-size: 8pt;
+  text-align: justify;
+}
+section ul {
+  margin: 0;
+  padding: 0;
+  font-size: 8pt;
+  text-align: justify;
+}
+* ul {
+  list-style-type: none;
+}
+#ProfesionalSummary p {
+  line-height: 2.25em;
+  padding-left: 1em;
+  padding-right: 1em;
+  text-transform: uppercase;
+}
+#ProfesionalSummary p:before,
+#ProfesionalSummary ul:before {
+  content: '/*\A';
+  white-space: pre;
+  opacity: 0.3;
+}
+#ProfesionalSummary p:after,
+#ProfesionalSummary ul:after {
+  content: '\A*/';
+  white-space: pre;
+  opacity: 0.3;
+}
+main section h2 {
+  font-size: 16pt;
+  line-height: 1em;
+  margin: 0.5em 0;
+  padding: 0;
+  height: 1.2em;
+}
+main section h2 span {
+  opacity: 0.6;
+}
+main section h2 span.main {
+  opacity: 1 !important;
+}
+main section p,
+main section ul {
+  line-height: 2.25em;
+  padding-left: 1em;
+  padding-right: 1em;
+  text-transform: uppercase;
+  -webkit-margin-before: 0;
+          margin-block-start: 0;
+  -webkit-margin-after: 0;
+          margin-block-end: 0;
+}
+main section ul li {
+  text-align: left;
+}
+#Skills h2 {
+  margin-bottom: 2em;
+  margin-top: 1.5em;
+}
+#Skills ul li {
+  font-weight: 600;
+}
+#Skills ul li:before {
+  content: '// Info: ';
+  white-space: pre;
+  opacity: 0.3;
+  text-align: left;
+  font-weight: 500;
+}
+#WorkHistory h2 {
+  margin-bottom: 2em;
+  margin-top: 2em;
+}
+#WorkHistory .Position {
+  display: flex;
+  width: 100%;
+  justify-content: space-evenly;
+  font-weight: 600;
+  margin: 1.125em 0;
+}
+#WorkHistory .Position .Company {
+  display: flex;
+}
+#WorkHistory .Position .Company .Name:after {
+  content: ' · \A';
+  white-space: pre;
+}
+#WorkHistory .Position .Date {
+  display: flex;
+}
+#WorkHistory .Position .Date .Start:after {
+  content: ' · \A';
+  white-space: pre;
+}
+#WorkHistory ul li ul li {
+  line-height: 1.75em;
+  font-weight: 500;
+  text-transform: initial !important;
+  border-bottom: dotted 2px rgba(195,223,214,0.38);
+  margin-bottom: 0.5em;
+}
+#Education h2,
+#References h2 {
+  margin-top: 2em;
+}
+  </style>
 </head>
 <body>
+
+<div id="Frame">
   <header>
-    <h1 id="Name">Hugo Gonzalez</h1>
-    <ul id="Info">
-      <li> 
-        <div class="Key">Email</div>
-        <div class="Value">thegonzalezdesigns@gmail.com</div>
-      </li>
-      <li> 
-        <div class="Key">Mobile</div>
-        <div class="Value">(747) 774-6859</div>
-      </li>
-      <li> 
-        <div class="Key">Location</div>
-        <div class="Value">West HIlls, CA 91304</div>
-      </li>
-      <li> 
-        <div class="Key">Github</div>
-        <div class="Value"> <a href="https://github.com/TheGonzalezDesigns">Profile</a></div>
-      </li>
-      <li> 
-        <div class="Key">LinkedIn</div>
-        <div class="Value"> <a href="https://www.linkedin.com/in/thegonzalezdesigns/">Profile</a></div>
-      </li>
-    </ul>
+    <h1 id="Name">Hugo_González</h1>
+    <div id="Profile">
+      <ul id="Info">
+        <li> 
+          <div class="Key">Email</div>
+          <div class="Value">thegonzalezdesigns@gmail.com</div>
+        </li>
+        <li> 
+          <div class="Key">Mobile</div>
+          <div class="Value">(747) 774-6859</div>
+        </li>
+        <li> 
+          <div class="Key">Location</div>
+          <div class="Value">West HIlls, CA 91304</div>
+        </li>
+        <li> 
+          <div class="Key">Github</div>
+          <div class="Value"><a href="https://github.com/TheGonzalezDesigns">Profile</a></div>
+        </li>
+        <li> 
+          <div class="Key">LinkedIn</div>
+          <div class="Value"><a href="https://www.linkedin.com/in/thegonzalezdesigns/">Profile</a></div>
+        </li>
+      </ul>
+      <div class="image-container" id="Picture"><img src="https://lh3.googleusercontent.com/a-/AD_cMMTQtBO5wLb-gBbFR1PI0k5ls4AX0r_qu10aqCoTjxjwHuIH_QCEkaaUsbORWkRL4cZs6vg-_7BsF32ddHnldCUuMEZN4wlZt9dwMHZeZlJmoxDk8uqmRRwJznOHSsPEuEDL7prZftnZCZ0Nc_NvXbXXFtJVn5maC7yxSbxnyadfe4Mxa2Cm662FM1JJMkstpguIJ5OJU-7IzGD4Lf-XRF-SV44_W8gseUSGtmhscLsZ_GEWbJmwyXBIgJCIQEdSGFE3UYUTrDwhDtORbRJzjxj1zHKe6unKLRR_4j-bBiXMsjM6Kzph-Wncccvq6kcAyToY7JwGyHE9Ztuw6EB7kR1tAoELv4mMJwSI4tsLd1b_V0ujeLQ7c3QpyJ2e0srtgQ3NHf_fd8qgF8twzj16C4OX7DVVQj641gIANEQJBEZU_mY2rVoZ4xCVhWUmLXFy7SaDeEa5igF51AS3RfcIitPz5I69xyK12QHqUacdXY9voDJafrt_Vy7H75jnkUqINXioiSaKWM38UoHakdNQib1r9Yv40LALe0ln2zcGG7ACsQCVGwmvpEH5_3UT_e7S5JMh8AHED8HKmFxSOcfmnvLU93RB1G-eUVcAHYQ6gkVDg2Qx_Seq_i3d4U0qgqjHUoi-20aZkCg4SNGWtw396o_iRm5_7UGCfIfsht4Vs0qSn8U0zluuUiOSamZXv3ZnaYm78I5BDfHDBx-_DSb7r3xz_GOivMPPgNh1Vd1ikvt4bcWc-v35adJS2BKhNAv2LC5gU_53RrxzBnhqSLEYDqpDHe4-5T_vE_b4Z7ZfpxwwLFvv-1My7uBkX54vdW9QxS8hNdTvZFcS8ZzRXJMQmW1_O5gLlf5l1o3G8bm48dRbmuwOcz8QTewewj22Jt9KVPCqg9pRvUQvT0-X9XJ-0fRrORzaXsV0fjx8JBHKLgwpXpeHkymgZ0-7LMgj1m9fHv0=s360-c-no" alt=""/></div>
+    </div>
   </header>
   <main>
     <section id="ProfesionalSummary">
-      <h2>Profesional Summary</h2>
+      <h2> <span>cat ./</span><span class="main">Profesional</span><span>_</span><span class="main">Summary</span></h2>
       <p><%= professionalSummary %></p>
     </section>
     <section id="Skills">
-      <h2>Skills</h2>
+      <h2> <span>ps -ax | grep </span><span class="main">Skills</span></h2>
       <ul>
         <% skillList.forEach(skill => { %>
-            <li><%= skill %></li>
+          <li><%= skill %></li>
         <% }); %>
       </ul>
     </section>
     <section id="WorkHistory">
-      <h2>Work History</h2>
-      <ul></ul>
-      <li>
-        <div class="Position">
-          <div class="Title">Founder and Architect</div>
-          <div class="Company">
-            <div class="Name">Black Magic Money</div>
-            <div class="Location">Los Angeles, CA</div>
-          </div>
-          <div class="Date">
-            <div class="Start">05/2022</div>
-            <div class="End">Present</div>
-          </div>
-        </div>
-        <ul>
-          <li>Designed and built a proprietary blockchain trading platform that aggregates over $100M of liquidity from various sources in a given network using other aggregator APIs</li>
-          <li>Utilized the platform to execute swift and lucrative cross-chain arbitrage strategies with optimal trade sequences</li>
-          <li>Implemented a custom nonce management system that enables high scalability, automation and parallel transaction execution for up to 1000 transactions per second</li>
-          <li>Ensured zero loss by verifying prices and on-chain profitability that would revert if gas expenses exceeded profit.</li>
-          <li>Integrated technologies like Paraswap, Kyberswap, Matcha.xyz, Open Ocean etc. as well as various types of liquidity pools such as Curve, Uniswap V2, Uniswap V3 and Algebra Pools into the platform</li>
-          <li>Acquired valuable insights into the blockchain industry and its trends, challenges and opportunities, especially in the area of DeFi protocols for cross-network liquidity, liquidity optimization and risk-free profit correction.</li>
-          <li>Demonstrated deep understanding of automated market makers (AMMs) and the mathematical equations that govern their trading behavior and liquidity provision</li>
-        </ul>
+      <h2> <span>echo -e $</span><span class="main">Job</span><span>_</span><span class="main">History</span></h2>
+      <ul>
         <li>
-          <div class="Position"> 
-            <div class="Title">Lead UI/UX Designer</div>
-            <div class="Company"> 
-              <div class="Name">Educe Group,</div>
-              <div class="Location">Bethesda, MD</div>
+          <div class="Position">
+            <div class="Title">Founder and Architect</div>
+            <div class="Company">
+              <div class="Name">Black Magic Money</div>
+              <div class="Location">Los Angeles, CA</div>
             </div>
             <div class="Date">
-              <div class="Start">08/2021</div>
-              <div class="End">08/2022</div>
+              <div class="Start">05/22</div>
+              <div class="End">Present</div>
             </div>
           </div>
           <ul>
-            <li>Lead designer for multimillion dollar projects sold to Ford and Johnson & Johnson, and the lead UI consultant for Lincoln automotive microapis</li>
-            <li>Spearheaded the UI/X design of several B2B projects using cutting-edge technologies such as Vue, Nuxt, Vuex, Node, MongoDB and WebPack</li>
-            <li>Leveraged my expertise in Photoshop and Illustrator to create custom icons, photos, logos and branding materials for various clients</li>
-            <li>Crafted and implemented user-friendly interfaces and interactions using HTML, CSS and JavaScript, following the best practices and standards</li>
-            <li>Applied Agile methodologies, Jira software and RESTful API designs to ensure efficient and effective project management and delivery</li>
-            <li>Associate and lead UI/UX consultant in an international firm of 100 employees, I provided guidance and support to junior front end developers</li>
+            <li>Designed and built a proprietary blockchain trading platform that aggregates over $100M of liquidity from various sources in a given network using other aggregator APIs</li>
+            <li>Utilized the platform to execute swift and lucrative cross-chain arbitrage strategies with optimal trade sequences</li>
+            <li>Implemented a custom nonce management system that enables high scalability, automation and parallel transaction execution for up to 1000 transactions per second</li>
+            <li>Ensured zero loss by verifying prices and on-chain profitability that would revert if gas expenses exceeded profit.</li>
+            <li>Integrated technologies like Paraswap, Kyberswap, Matcha.xyz, Open Ocean etc. as well as various types of liquidity pools such as Curve, Uniswap V2, Uniswap V3 and Algebra Pools into the platform</li>
+            <li>Acquired valuable insights into the blockchain industry and its trends, challenges and opportunities, especially in the area of DeFi protocols for cross-network liquidity, liquidity optimization and risk-free profit correction.</li>
+            <li>Demonstrated deep understanding of automated market makers (AMMs) and the mathematical equations that govern their trading behavior and liquidity provision</li>
           </ul>
+          <li>
+            <div class="Position"> 
+              <div class="Title">Lead UI/UX Designer</div>
+              <div class="Company"> 
+                <div class="Name">Educe Group</div>
+                <div class="Location">Bethesda, MD</div>
+              </div>
+              <div class="Date">
+                <div class="Start">08/21</div>
+                <div class="End">08/22</div>
+              </div>
+            </div>
+            <ul>
+              <li>Lead designer for multimillion dollar projects sold to Ford and Johnson & Johnson, and the lead UI consultant for Lincoln automotive microapis</li>
+              <li>Spearheaded the UI/X design of several B2B projects using cutting-edge technologies such as Vue, Nuxt, Vuex, Node, MongoDB and WebPack</li>
+              <li>Leveraged my expertise in Photoshop and Illustrator to create custom icons, photos, logos and branding materials for various clients</li>
+              <li>Crafted and implemented user-friendly interfaces and interactions using HTML, CSS and JavaScript, following the best practices and standards</li>
+              <li>Applied Agile methodologies, Jira software and RESTful API designs to ensure efficient and effective project management and delivery</li>
+              <li>Associate and lead UI/UX consultant in an international firm of 100 employees, I provided guidance and support to junior front end developers</li>
+            </ul>
+          </li>
+          <li> 
+            <div class="Position"> 
+              <div class="Title">Fullstack Developer</div>
+              <div class="Company"> 
+                <div class="Name">Contracted</div>
+                <div class="Location">Los Angeles, CA</div>
+              </div>
+              <div class="Date"> 
+                <div class="Start">11/15</div>
+                <div class="End">08/21</div>
+              </div>
+            </div>
+            <ul>
+              <li>Designed and built web applications and content management systems for local businesses, marketing agencies, and remote contracts using Node.js, React, CSS, Laravel, MySQL, MongoDB, and Express.js.</li>
+              <li>Converted mockups and wireframes into SPAs with appropriate back-end architecture and optimized content delivery systems using Node.js and WebPack.</li>
+              <li>Upgraded obsolete web technology and outdated database models to meet the latest web standards and practices using RESTful APIs.</li>
+              <li>Updated older websites to mobile-friendly CSS standards using flex-box or the latest grid system design.</li>
+              <li>Aided multiple teams to meet development milestones and deadlines on a short term notice and multi-tasked across multiple functions and roles.</li>
+            </ul>
+          </li>
+          <li>
+            <div class="Position"> 
+              <div class="Title">Information Management and Technology Consultant</div>
+              <div class="Company"> 
+                <div class="Name">IShowcase Inc.</div>
+                <div class="Location">Woodland Hills, CA</div>
+              </div>
+              <div class="Date"> 
+                <div class="Start">08/14</div>
+                <div class="End">10/15</div>
+              </div>
+            </div>
+            <ul>
+              <li>Designed and implemented logical operational steps for various information systems using flowcharts and diagrams.</li>
+              <li>Evaluated and improved business functions and inefficiencies by monitoring and analyzing employee tasks and information processing.</li>
+              <li>Troubleshot and resolved system and program malfunctions in a timely and effective manner.</li>
+              <li>Developed and maintained reporting systems to provide updated information to customers and management.</li>
+            </ul>
+          </li>
+          <li>
+            <div class="Position"> 
+              <div class="Title">Graphic Designer</div>
+              <div class="Company"> 
+                <div class="Name">Herbal Tropics</div>
+                <div class="Location">Los Angeles, CA</div>
+              </div>
+              <div class="Date"> 
+                <div class="Start">11/13</div>
+                <div class="End">07/14</div>
+              </div>
+            </div>
+            <ul>
+              <li>Worked with clients to gather requirements and manage project milestones.</li>
+              <li>Employed design fundamentals in typography, composition, layout, and color.</li>
+            </ul>
+          </li>
         </li>
-        <li> 
-          <div class="Position"> 
-            <div class="Title">Fullstack Developer</div>
-            <div class="Company"> 
-              <div class="Name">Contracted</div>
-              <div class="Location">Los Angeles, CA</div>
-            </div>
-            <div class="Date"> 
-              <div class="Start">11/2015</div>
-              <div class="End">08/2021</div>
-            </div>
-          </div>
-          <ul>
-            <li>Designed and built web applications and content management systems for local businesses, marketing agencies, and remote contracts using Node.js, React, CSS, Laravel, MySQL, MongoDB, and Express.js.</li>
-            <li>Converted mockups and wireframes into SPAs with appropriate back-end architecture and optimized content delivery systems using Node.js and WebPack.</li>
-            <li>Upgraded obsolete web technology and outdated database models to meet the latest web standards and practices using RESTful APIs.</li>
-            <li>Updated older websites to mobile-friendly CSS standards using flex-box or the latest grid system design.</li>
-            <li>Aided multiple teams to meet development milestones and deadlines on a short term notice and multi-tasked across multiple functions and roles.</li>
-          </ul>
-        </li>
-        <li>
-          <div class="Position"> 
-            <div class="Title">Information Management and Technology Consultant</div>
-            <div class="Company"> 
-              <div class="Name">IShowcase Inc.</div>
-              <div class="Location">Woodland Hills, CA</div>
-            </div>
-            <div class="Date"> 
-              <div class="Start">08/2014</div>
-              <div class="End">10/2015</div>
-            </div>
-          </div>
-          <ul>
-            <li>Designed and implemented logical operational steps for various information systems using flowcharts and diagrams.</li>
-            <li>Evaluated and improved business functions and inefficiencies by monitoring and analyzing employee tasks and information processing.</li>
-            <li>Troubleshot and resolved system and program malfunctions in a timely and effective manner.</li>
-            <li>Developed and maintained reporting systems to provide updated information to customers and management.</li>
-          </ul>
-        </li>
-        <li>
-          <div class="Position"> 
-            <div class="Title">Graphic Designer</div>
-            <div class="Company"> 
-              <div class="Name">Herbal Tropics</div>
-              <div class="Location">Los Angeles, CA</div>
-            </div>
-            <div class="Date"> 
-              <div class="Start">11/2013</div>
-              <div class="End">07/2014</div>
-            </div>
-          </div>
-          <ul>
-            <li>Worked with clients to gather requirements and manage project milestones.</li>
-            <li>Employed design fundamentals in typography, composition, layout, and color.</li>
-          </ul>
-        </li>
-      </li>
+      </ul>
     </section>
     <section id="Education">
-      <h2>Education</h2>
+      <h2> <span>ls -la ~/</span><span class="main">Education</span></h2>
       <ul>
         <li>
           <h4>California State University - Northridge</h4>
@@ -179,7 +423,7 @@
       </ul>
     </section>
     <section id="References">
-      <h2>References</h2>
+      <h2> <span>git pull origin </span><span class="main">References</span></h2>
       <ul>
         <li>
           <h3>Educe Group:</h3>
@@ -197,5 +441,6 @@
       </ul>
     </section>
   </main>
+</div>
 </body>
 </html>
