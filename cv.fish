@@ -37,3 +37,11 @@ for dir in $sub_dirs
         rm $html_file
     end
   end
+
+for file in ./src/pdfs/resumes/*.pdf
+    mv $file /home/c43/Documents/Resumes/Polished/Tailored/
+end
+
+for file in ./src/pdfs/coverletters/*.pdf
+    mv $file /home/c43/Documents/Coverletters/Tailored/
+  end
