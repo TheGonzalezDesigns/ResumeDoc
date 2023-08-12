@@ -31,7 +31,7 @@ for dir in $sub_dirs
         set pdf_file (basename $html_file .html).pdf
 
         # Convert the HTML to PDF
-        python3 html2pdf.py $html_file $pdf_dir$pdf_file
+        python3 html2pdf.py $html_file $pdf_dir$pdf_file > /dev/null
 
         # Remove the original HTML file
         rm $html_file
