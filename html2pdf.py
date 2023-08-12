@@ -8,7 +8,8 @@ options = {
     'margin-bottom': '0mm',
     'margin-left': '0mm',
     'encoding': "UTF-8",
-    'no-outline': None
+    'no-outline': None,
+    'dpi': 300
 }
 
 def html_to_pdf(input_html_path, output_path):
