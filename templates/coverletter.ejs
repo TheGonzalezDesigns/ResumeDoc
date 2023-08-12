@@ -2,10 +2,239 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Cover Letter</title>
+  <title>Cover Letter</title>
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&display=swap");
+    @import url("https://fonts.googleapis.com/css2?family=Orbitron&display=swap");
+    body {
+      height: 100%;
+      width: 100%;
+      min-height: 100vh;
+      min-width: 100vw;
+      margin: 0 !important;
+      padding: 0 !important;
+      background-color: #fff;
+      background-position: center center;
+      background-repeat: no-repeat;
+      background-size: contain;
+    }
+    * {
+      overflow: hidden auto;
+      font-family: 'Fira Code', monospace;
+      color: rgba(255,255,255,0.9);
+    }
+    *:before,
+    *:after {
+      margin: 0;
+      padding: 0;
+    }
+    footer {
+      margin: 0;
+      padding: 0;
+    }
+    footer * {
+      overflow: hidden !important;
+    }
+    footer #Profile {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      height: 10em;
+      margin-bottom: 2em;
+      margin-top: 3em;
+    }
+    footer #Profile #Picture {
+      flex: 0 0 35%;
+      width: 100%;
+      height: 100%;
+      text-align: center;
+      filter: drop-shadow(2px 4px 3px rgba(0,0,0,0.75));
+    }
+    footer #Profile #Picture img {
+      width: auto;
+      height: 100%;
+      -webkit-clip-path: circle(50% at 50% 50%);
+              clip-path: circle(50% at 50% 50%);
+      opacity: 1;
+      filter: blur(4px) opacity(0.4);
+    }
+    #Info {
+      flex: 0 0 65%;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      flex-direction: column;
+    }
+    #Info .Key,
+    #Info .Value {
+      display: inline-block;
+      padding: 0.075in;
+      margin: 0;
+      font-size: 10pt;
+    }
+    #Info .Key {
+      width: auto;
+      min-width: 5em;
+      font-weight: 700;
+    }
+    #Info .Value {
+      font-weight: 500;
+    }
+    #Frame {
+      margin: 3em;
+      padding: 1.5em;
+      border: #fff;
+    }
+    #Frame {
+      position: relative;
+      width: 80%;
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 30px;
+      background-color: #222;
+      color: #fff;
+      border: 2px solid #def3f3;
+      box-shadow: 0 0 10px 2px #def3f3;
+      overflow: hidden;
+    }
+    #Frame:before,
+    #Frame:after {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border: 2px solid #0ff;
+      box-shadow: 0 0 10px 2px #0ff;
+      z-index: -1;
+    }
+    #Frame:before {
+      top: -10px;
+      left: -10px;
+    }
+    #Frame:after {
+      bottom: -10px;
+      right: -10px;
+    }
+    section h2 {
+      font-weight: 300;
+      text-transform: lowercase;
+      text-align: right;
+      height: 2.5em;
+    }
+    section h2:before {
+      content: '> ';
+      opacity: 0.6;
+    }
+    section p {
+      font-size: 8pt;
+      text-align: justify;
+    }
+    section ul {
+      margin: 0;
+      padding: 0;
+      font-size: 8pt;
+      text-align: justify;
+    }
+    * ul {
+      list-style-type: none;
+    }
+    #CoverLetter h2 {
+      font-size: 12pt;
+      margin-bottom: 3em;
+    }
+    #CoverLetter h3 {
+      font-size: 12pt;
+      margin-bottom: 2em;
+      margin-left: 0.75em;
+      font-weight: 600;
+      height: 1.5em;
+    }
+    #CoverLetter p {
+      line-height: 2.25em;
+      padding-left: 1em;
+      padding-right: 1em;
+      text-transform: initial;
+      font-size: 10pt;
+    }
+    main section h2 {
+      font-size: 16pt;
+      line-height: 1em;
+      margin: 0.5em 0;
+      padding: 0;
+      height: 1.2em;
+    }
+    main section h2 span {
+      opacity: 0.6;
+    }
+    main section h2 span.main {
+      opacity: 1 !important;
+    }
+    main section p,
+    main section ul {
+      line-height: 2.25em;
+      padding-left: 1em;
+      padding-right: 1em;
+      text-transform: uppercase;
+      -webkit-margin-before: 0;
+              margin-block-start: 0;
+      -webkit-margin-after: 0;
+              margin-block-end: 0;
+    }
+    main section ul li {
+      text-align: left;
+    }
+    .Name {
+      margin: 0;
+    }
+    .Bye {
+      margin: 2em 0 1.125em 0.75em !important;
+    }
+  </style>
 </head>
 <body>
-    <h1>Cover Letter</h1>
-    <p><%= coverletterContent %></p>
+  <div id="Frame">
+    <main>
+      <section id="CoverLetter">
+        <h2> <span>cat ./</span><span class="main">Cover</span><span>_</span><span class="main">Letter</span></h2>
+        <h3>Dear Hiring Team,</h3>
+        <p><%= coverletterContent %></p>
+        <h3 class="Bye">Sincerely,</h3>
+        <h3 class="Name">Hugo D. González R.</h3>
+      </section>
+    </main>
+    <footer>
+      <div id="Profile">
+        <ul id="Info">
+          <li> 
+            <div class="Key"> </div>
+          </li>
+          <li> 
+            <div class="Key">Email</div>
+            <div class="Value">thegonzalezdesigns@gmail.com</div>
+          </li>
+          <li> 
+            <div class="Key">Mobile</div>
+            <div class="Value">(747) 774-6859</div>
+          </li>
+          <li> 
+            <div class="Key">Location</div>
+            <div class="Value">West HIlls, CA 91304</div>
+          </li>
+          <li> 
+            <div class="Key">Github</div>
+            <div class="Value"><a href="https://github.com/TheGonzalezDesigns">Profile</a></div>
+          </li>
+          <li> 
+            <div class="Key">LinkedIn</div>
+            <div class="Value"><a href="https://www.linkedin.com/in/thegonzalezdesigns/">Profile</a></div>
+          </li>
+        </ul>
+        <div class="image-container" id="Picture"><img src="https://lh3.googleusercontent.com/a-/AD_cMMTQtBO5wLb-gBbFR1PI0k5ls4AX0r_qu10aqCoTjxjwHuIH_QCEkaaUsbORWkRL4cZs6vg-_7BsF32ddHnldCUuMEZN4wlZt9dwMHZeZlJmoxDk8uqmRRwJznOHSsPEuEDL7prZftnZCZ0Nc_NvXbXXFtJVn5maC7yxSbxnyadfe4Mxa2Cm662FM1JJMkstpguIJ5OJU-7IzGD4Lf-XRF-SV44_W8gseUSGtmhscLsZ_GEWbJmwyXBIgJCIQEdSGFE3UYUTrDwhDtORbRJzjxj1zHKe6unKLRR_4j-bBiXMsjM6Kzph-Wncccvq6kcAyToY7JwGyHE9Ztuw6EB7kR1tAoELv4mMJwSI4tsLd1b_V0ujeLQ7c3QpyJ2e0srtgQ3NHf_fd8qgF8twzj16C4OX7DVVQj641gIANEQJBEZU_mY2rVoZ4xCVhWUmLXFy7SaDeEa5igF51AS3RfcIitPz5I69xyK12QHqUacdXY9voDJafrt_Vy7H75jnkUqINXioiSaKWM38UoHakdNQib1r9Yv40LALe0ln2zcGG7ACsQCVGwmvpEH5_3UT_e7S5JMh8AHED8HKmFxSOcfmnvLU93RB1G-eUVcAHYQ6gkVDg2Qx_Seq_i3d4U0qgqjHUoi-20aZkCg4SNGWtw396o_iRm5_7UGCfIfsht4Vs0qSn8U0zluuUiOSamZXv3ZnaYm78I5BDfHDBx-_DSb7r3xz_GOivMPPgNh1Vd1ikvt4bcWc-v35adJS2BKhNAv2LC5gU_53RrxzBnhqSLEYDqpDHe4-5T_vE_b4Z7ZfpxwwLFvv-1My7uBkX54vdW9QxS8hNdTvZFcS8ZzRXJMQmW1_O5gLlf5l1o3G8bm48dRbmuwOcz8QTewewj22Jt9KVPCqg9pRvUQvT0-X9XJ-0fRrORzaXsV0fjx8JBHKLgwpXpeHkymgZ0-7LMgj1m9fHv0=s360-c-no" alt=""/></div>
+      </div>
+    </footer>
+  </div>
 </body>
 </html>
