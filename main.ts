@@ -4,6 +4,7 @@ import { frame } from "./local_modules/frame";
 import { query } from "./local_modules/query"
 import { validateContentType as cType } from "./local_modules/contentType"
 import ejs from 'ejs';
+import { exec } from 'child_process';
 
 async function main(): Promise<void> {
   console.time('mainExecution');
@@ -75,9 +76,6 @@ async function main(): Promise<void> {
 
   if (content.skillList.length < 5 || content.fileName == "") throw Error("Incomplete Generation.");
   
-  console.info(`All content for ${content.fileName} is ready.\n`)
-  console.info(`------------------------------------------\n`)
-
   // Load the templates
   const resumeTemplate = new document('./templates/resume.ejs');
   const coverLetterTemplate = new document('./templates/coverletter.ejs');
@@ -97,6 +95,18 @@ async function main(): Promise<void> {
 
   resume.save(populatedResume);
   coverletter.save(populatedCoverLetter);
+  
+  exec(`notify-send "ResumeDoc" "All content for ${content.fileName} is ready."`, (error, stdout, stderr) => {
+      if (error) {
+          console.log(`error: ${error.message}`);
+          return;
+      }
+      if (stderr) {
+          console.log(`stderr: ${stderr}`);
+          return;
+      }
+      console.log(`stdout: ${stdout}`);
+  });
 
   console.timeEnd('mainExecution');
 }
