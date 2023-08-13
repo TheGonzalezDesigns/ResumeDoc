@@ -5,8 +5,22 @@ import { query } from "./local_modules/query"
 import { validateContentType as cType } from "./local_modules/contentType"
 import ejs from 'ejs';
 import { exec } from 'child_process';
+import path from 'path';
+import os from 'os';
 
 async function main(): Promise<void> {
+  const iconPath = path.join(os.homedir(), 'Pictures/ApplicationIcons/icon');
+  exec(`notify-send -i "${iconPath}" "ResumeDoc" "The Doctor is ready."`, (error, stdout, stderr) => {
+      if (error) {
+          console.log(`error: ${error.message}`);
+          return;
+      }
+      if (stderr) {
+          console.log(`stderr: ${stderr}`);
+          return;
+      }
+      console.log(`stdout: ${stdout}`);
+  });
   console.time('mainExecution');
   const summaries = await Promise.all([summarize("./context/professional"), summarize("./context/jobs")]);
   const [ professionalBackground, jobProfile ]  = summaries;
@@ -96,7 +110,7 @@ async function main(): Promise<void> {
   resume.save(populatedResume);
   coverletter.save(populatedCoverLetter);
   
-  exec(`notify-send "ResumeDoc" "All content for ${content.fileName} is ready."`, (error, stdout, stderr) => {
+  exec(`notify-send -i "${iconPath}" "ResumeDoc" "All content for ${content.fileName} is ready."`, (error, stdout, stderr) => {
       if (error) {
           console.log(`error: ${error.message}`);
           return;
