@@ -10,7 +10,6 @@ export async function summarize(filepath: string): Promise<string> {
   const text = fs.readFileSync(filepath, "utf8");
   const model = new OpenAI({
     modelName: "gpt-3.5-turbo-16k-0613",
-    //modelName: "gpt-4",
     temperature: 0.5,
   });
   const textSplitter = new RecursiveCharacterTextSplitter({ chunkSize: 4000 });
