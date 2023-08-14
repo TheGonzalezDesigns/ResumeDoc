@@ -1,0 +1,97 @@
+import { summarize } from "./local_modules/summarize";
+import { frame } from "./local_modules/frame";
+import { validateContentType as cType } from "./local_modules/contentType";
+import { exec } from "child_process";
+import path from "path";
+import os from "os";
+declare module "clipboardy" {
+  export function writeSync(content: string): void;
+  export function readSync(): string;
+}
+
+import * as clipboardy from "clipboardy";
+
+async function main(): Promise<void> {
+  const iconPath = path.join(os.homedir(), "Pictures/ApplicationIcons/icon");
+  exec(
+    `notify-send -i "${iconPath}" "ResumeDoc" "The Doctor is ready."`,
+    (error, stdout, stderr) => {
+      if (error) {
+        console.log(`error: ${error.message}`);
+        return;
+      }
+      if (stderr) {
+        console.log(`stderr: ${stderr}`);
+        return;
+      }
+      console.log(`stdout: ${stdout}`);
+    }
+  );
+  console.time("mainExecution");
+
+  try {
+    const summaries = await Promise.all([
+      summarize("./context/professional"),
+      summarize("./context/queries"),
+    ]);
+    const [professionalBackground, careerQueryResponse] = summaries;
+    let contentType = cType(3);
+
+    let directive = `You are a resume expert. You will use the given context to answer the given query. Do not hallucinate, only use the facts given to you in this prompt. Answer in the first person as if you were Hugo Gonzalez.`;
+    let frameQuery = `Generate a ${contentType} for the query given based on the professional background that makes me look a senior engineer in the field. This should be as accurate as possible. Please put your response between two quotes`;
+
+    const careerQueryResponsePrompt = await frame(
+      directive,
+      professionalBackground,
+      careerQueryResponse,
+      frameQuery
+    );
+
+    const removeQuotes = (str: string) => str.replace(/['"]+/g, "");
+
+    const extractText = (str: string): string => {
+      let matches = str.match(/("[^"]*"|'[^']*')/g);
+      if (!matches) return "";
+      matches = matches[0].match(/^\"(.*?)\"$/);
+      if (!matches) return "";
+      const extractedText = removeQuotes(matches[0]);
+      return extractedText;
+    };
+
+    const answer = extractText(careerQueryResponse);
+
+    clipboardy.writeSync(answer);
+
+    exec(
+      `notify-send -i "${iconPath}" "ResumeDoc" "Your prescription is ready."`,
+      (error, stdout, stderr) => {
+        if (error) {
+          console.log(`error: ${error.message}`);
+          return;
+        }
+        if (stderr) {
+          console.log(`stderr: ${stderr}`);
+          return;
+        }
+        console.log(`stdout: ${stdout}`);
+      }
+    );
+  } catch (error) {
+    exec(
+      `notify-send -i "${iconPath}" "ResumeDoc" "The Doctor is ill."`,
+      (error, stdout, stderr) => {
+        if (error) {
+          console.log(`error: ${error.message}`);
+          return;
+        }
+        if (stderr) {
+          console.log(`stderr: ${stderr}`);
+          return;
+        }
+        console.log(`stdout: ${stdout}`);
+      }
+    );
+  }
+  console.timeEnd("mainExecution");
+}
+main();
