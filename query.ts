@@ -36,7 +36,7 @@ async function main(): Promise<void> {
     let contentType = cType(3);
 
     let directive = `You are a resume expert. You will use the given context to answer the given query. Do not hallucinate, only use the facts given to you in this prompt. Answer in the first person as if you were Hugo Gonzalez.`;
-    let frameQuery = `Generate a ${contentType} for the query given based on the professional background that makes me look a senior engineer in the field. This should be as accurate as possible. Please put your response between two quotes. Your awnser should be brief but hyper-relavent and under 75 words.`;
+    let frameQuery = `Generate a ${contentType} for the query given based on the professional background that makes me look a senior engineer in the field. This should be as accurate as possible. Please put your response between two quotes. Your awnser should be brief but hyper-relavent and under 75 words. Please do not overshare, an do not mention any unrelated information. Only use factual data that you know to be true or given to you that you can verify Only use factual data that you know to be true or given to you that you can verify. Make sure to curate your response to address every aspect of the given query.`;
 
     const careerQueryResponsePrompt = await frame(
       directive,
