@@ -5,12 +5,9 @@ import { query } from "./local_modules/query";
 import { exec } from "child_process";
 import path from "path";
 import os from "os";
-declare module "clipboardy" {
-  export function writeSync(content: string): void;
-  export function readSync(): string;
-}
 
-import * as clipboardy from "clipboardy";
+import clipboardy from "clipboardy";
+const clip = clipboardy;
 
 async function main(): Promise<void> {
   const iconPath = path.join(os.homedir(), "Pictures/ApplicationIcons/icon");
@@ -39,7 +36,7 @@ async function main(): Promise<void> {
     let contentType = cType(3);
 
     let directive = `You are a resume expert. You will use the given context to answer the given query. Do not hallucinate, only use the facts given to you in this prompt. Answer in the first person as if you were Hugo Gonzalez.`;
-    let frameQuery = `Generate a ${contentType} for the query given based on the professional background that makes me look a senior engineer in the field. This should be as accurate as possible. Please put your response between two quotes`;
+    let frameQuery = `Generate a ${contentType} for the query given based on the professional background that makes me look a senior engineer in the field. This should be as accurate as possible. Please put your response between two quotes. Your awnser should be brief but hyper-relavent and under 75 words.`;
 
     const careerQueryResponsePrompt = await frame(
       directive,
@@ -63,7 +60,9 @@ async function main(): Promise<void> {
 
     const extractedAnswer = extractText(answer);
 
-    clipboardy.writeSync(extractedAnswer);
+    console.info("Answer: ", extractedAnswer);
+
+    await clip.writeSync(extractedAnswer);
 
     exec(
       `notify-send -i "${iconPath}" "ResumeDoc" "Your prescription is ready."`,
@@ -94,6 +93,7 @@ async function main(): Promise<void> {
         console.log(`stdout: ${stdout}`);
       }
     );
+    console.error(error);
   }
   console.timeEnd("mainExecution");
 }
