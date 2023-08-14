@@ -10,5 +10,5 @@ echo "$query" > ~/projects/ResumeDoc/context/queries/profile.txt
 
 bun run ./query.ts
 
-echo $(xclip -o)
+echo "$(xclip -o)"
 
