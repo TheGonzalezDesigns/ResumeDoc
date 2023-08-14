@@ -33,6 +33,7 @@ async function main(): Promise<void> {
       summarize("./context/queries"),
     ]);
     const [professionalBackground, careerQueryResponse] = summaries;
+
     let contentType = cType(3);
 
     let directive = `You are a resume expert. You will use the given context to answer the given query. Do not hallucinate, only use the facts given to you in this prompt. Answer in the first person as if you were Hugo Gonzalez.`;
@@ -65,7 +66,7 @@ async function main(): Promise<void> {
     await clip.writeSync(extractedAnswer);
 
     exec(
-      `notify-send -i "${iconPath}" "ResumeDoc" "Your prescription is ready."`,
+      `notify-send -i "${iconPath}" "ResumeDoc" "Your prescription is ready 💊"`,
       (error, stdout, stderr) => {
         if (error) {
           console.log(`error: ${error.message}`);
