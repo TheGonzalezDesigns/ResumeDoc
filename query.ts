@@ -1,6 +1,7 @@
 import { summarize } from "./local_modules/summarize";
 import { frame } from "./local_modules/frame";
 import { validateContentType as cType } from "./local_modules/contentType";
+import { query } from "./local_modules/query";
 import { exec } from "child_process";
 import path from "path";
 import os from "os";
@@ -47,6 +48,8 @@ async function main(): Promise<void> {
       frameQuery
     );
 
+    const answer = await query(careerQueryResponsePrompt);
+
     const removeQuotes = (str: string) => str.replace(/['"]+/g, "");
 
     const extractText = (str: string): string => {
@@ -58,9 +61,9 @@ async function main(): Promise<void> {
       return extractedText;
     };
 
-    const answer = extractText(careerQueryResponse);
+    const extractedAnswer = extractText(answer);
 
-    clipboardy.writeSync(answer);
+    clipboardy.writeSync(extractedAnswer);
 
     exec(
       `notify-send -i "${iconPath}" "ResumeDoc" "Your prescription is ready."`,
