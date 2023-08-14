@@ -4,7 +4,7 @@
 
 set query (xclip -selection clipboard -o)
 
-echo "$query" > ~/projects/ResumeDoc/context/query/profile.txt
+echo "$query" > ~/projects/ResumeDoc/context/queries/profile.txt
 
 bun run ./query.ts
 
