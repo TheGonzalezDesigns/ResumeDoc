@@ -21,7 +21,7 @@ const profile_career_chunk = async (
   return extraction;
 };
 
-export const profile_career = async (): Promise<string> => {
+export const profile_career = async (): Promise<extraction[]> => {
   // In this example, we use a `MapReduceDocumentsChain` specifically prompted to summarize a set of documents.
   const filepath = "./context/professional/profile.txt";
   const text = await Bun.file(filepath).text();
@@ -41,5 +41,5 @@ export const profile_career = async (): Promise<string> => {
     return extraction;
   });
   console.info("extractions:", extractions);
-  return "juice!";
+  return profiled_career_chunks;
 };
