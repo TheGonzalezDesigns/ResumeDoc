@@ -1,7 +1,8 @@
 import { extract, extraction } from "./extract";
 
 export const profile_job = async (): Promise<extraction> => {
-  const description = await Bun.file("./context/jobs/profile.txt").text();
+  const filepath = "./context/jobs/profile.txt";
+  const description = await Bun.file(filepath).text();
   const extraction = await extract(
     [
       "job_title_string",
