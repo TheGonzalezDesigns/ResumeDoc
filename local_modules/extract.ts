@@ -1,11 +1,11 @@
 import { query } from "./query";
 
-type JsonObject = Record<string, any>;
+export type extraction = Record<string, any>;
 
 export const extract = async (
   extraction_args: string[],
   data: string
-): Promise<JsonObject> => {
+): Promise<extraction> => {
   const type_description = "We are only concerned with strings for types.";
   const format_instructions = "Format the response as a valid JSON object.";
   const encoding_instructions =
