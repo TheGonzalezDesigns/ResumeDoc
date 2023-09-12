@@ -1,4 +1,10 @@
-const matchSkills = (value, requiredSkill) => {
+import { extraction } from "./extract";
+export type entryObject = extraction;
+export type entryArray = entryObject[] | string[];
+export type entryText = string;
+export type entry = entryText | entryObject | entryArray;
+
+const matchSkills = (value: entry, requiredSkill: entryText) => {
   if (typeof value === "object") {
     if (Array.isArray(value)) {
       for (const element of value) {
@@ -14,8 +20,10 @@ const matchSkills = (value, requiredSkill) => {
       }
     }
   } else {
-    if (typeof value === "string" && value.includes(requiredSkill)) {
-      return true;
+    if (typeof value === "string") {
+      if (typeof value === "string" && value.includes(requiredSkill)) {
+        return true;
+      }
     }
   }
   return false;
