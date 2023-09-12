@@ -1,5 +1,5 @@
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
-import { extract, extraction } from "./extract";
+import { extract, extraction, extractions } from "./extract";
 
 const profile_career_chunk = async (
   career_chunk: string
@@ -14,11 +14,10 @@ const profile_career_chunk = async (
     ],
     career_chunk
   );
-  console.info(extraction);
   return extraction;
 };
 
-export const profile_career = async (): Promise<extraction[]> => {
+export const profile_career = async (): Promise<extractions> => {
   // In this example, we use a `MapReduceDocumentsChain` specifically prompted to summarize a set of documents.
   const filepath = "./context/professional/profile.txt";
   const text = await Bun.file(filepath).text();
