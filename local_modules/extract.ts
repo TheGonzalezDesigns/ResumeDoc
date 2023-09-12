@@ -1,9 +1,11 @@
 import { query } from "./query";
 
+type JsonObject = Record<string, any>;
+
 export const extract = async (
   extraction_args: string[],
   data: string
-): Promise<string> => {
+): Promise<JsonObject> => {
   const type_description = "We are only concerned with strings for types.";
   const format_instructions = "Format the response as a valid JSON object.";
   const encoding_instructions =
@@ -14,8 +16,8 @@ export const extract = async (
   `;
   const promptTemplate = `
     Your goal is to extract structured information from the user's input that matches the form described below.
-    When extracting information please make sure it matches the type information exactly.
-    Do not add any attributes that do not appear in the schema shown below.\n\n
+    When extracting information please make sure it matches the type information exactly.\n\n
+    Be extremely thorough in your extraction but do not add any attributes that do not appear in the schema shown below.\n\n
     Type Description: ${type_description}\n\n
     Format instructions: ${format_instructions}\n\n
     Encoding instructions: ${encoding_instructions}\n\n
@@ -40,5 +42,6 @@ export const extract = async (
   clean:
   ${clean}
   `;
-  return response;
+  const final_extraction = JSON.parse(clean);
+  return final_extraction;
 };
