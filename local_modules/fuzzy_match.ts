@@ -1,8 +1,12 @@
-import { extraction, extractions } from "./extract";
-export type entryArray = extractions | string[];
-export type entry = string | extraction | extractions;
+type Chunk = {
+  [key: string]: any;
+};
 
-const matchSkills = (value: entry, requiredSkill: string) => {
+const log = (msg: string): void => {
+  console.info(`EVENT: ${msg}\n`);
+};
+
+const matchSkills = (value: any, requiredSkill: string): boolean => {
   if (typeof value === "object") {
     if (Array.isArray(value)) {
       for (const element of value) {
@@ -17,36 +21,42 @@ const matchSkills = (value: entry, requiredSkill: string) => {
         }
       }
     }
-  } else {
-    if (typeof value === "string") {
-      if (typeof value === "string" && value.includes(requiredSkill)) {
-        return true;
-      }
+  } else if (typeof value === "string") {
+    if (value.toLowerCase().includes(requiredSkill.toLowerCase())) {
+      //log(`${value} === ${requiredSkill}`);
+      return true;
+    } else {
+      //log(`${value} !!! ${requiredSkill}`);
     }
   }
   return false;
 };
 
-export const search_career_chunk = (
-  career_chunk: extraction,
-  job_profile_key: string
+const searchCareerChunk = (
+  careerChunk: Chunk,
+  jobProfileKey: string
 ): boolean => {
-  for (const chunk_key in career_chunk)
-    if (matchSkills(career_chunk[chunk_key], job_profile_key)) return true;
+  for (const chunkKey in careerChunk) {
+    if (matchSkills(careerChunk[chunkKey], jobProfileKey)) {
+      return true;
+    }
+  }
   return false;
 };
-export const get_relevant_career_chunks = (
-  career_chunks: extractions,
-  job_profile_keys: string[]
-) => {
-  return [...career_chunks].filter((chunk) => {
-    for (const key in job_profile_keys)
-      if (search_career_chunk(chunk, key)) return true;
-    return false;
-  });
-};
 
-/*
- * const relevantCareers = getRelevantCareerProfiles(careerProfileArray, jobProfile);
- * console.log(relevantCareers);
- */
+export const getRelevantCareerChunks = (
+  careerChunks: Chunk[],
+  jobProfileKeys: string[]
+): Chunk[] => {
+  const results: Chunk[] = [];
+  for (const chunk of careerChunks) {
+    for (const asset of jobProfileKeys) {
+      //console.info(`chunk: ${JSON.stringify(chunk)} |>?<| key: ${asset}`);
+      if (searchCareerChunk(chunk, asset)) {
+        results.push(chunk);
+        break; // Move to the next chunk once a match is found
+      }
+    }
+  }
+  return results;
+};
