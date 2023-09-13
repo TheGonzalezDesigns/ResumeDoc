@@ -2,38 +2,38 @@ type Chunk = {
   [key: string]: any;
 };
 
-const matchSkills = (value: any, requiredSkill: string): boolean => {
+const match_skills = (value: any, requiredSkill: string): boolean => {
   if (typeof value === "string") {
     return value.toLowerCase().includes(requiredSkill.toLowerCase());
   }
 
   if (Array.isArray(value)) {
-    return value.some((element) => matchSkills(element, requiredSkill));
+    return value.some((element) => match_skills(element, requiredSkill));
   }
 
   if (typeof value === "object" && value !== null && value !== undefined) {
     return Object.values(value).some((subValue) =>
-      matchSkills(subValue, requiredSkill)
+      match_skills(subValue, requiredSkill)
     );
   }
 
   return false;
 };
 
-const searchCareerChunk = (
+const search_career_chunk = (
   careerChunk: Chunk,
   jobProfileKey: string
 ): boolean => {
   return Object.values(careerChunk).some((chunkValue) =>
-    matchSkills(chunkValue, jobProfileKey)
+    match_skills(chunkValue, jobProfileKey)
   );
 };
 
-export const getRelevantCareerChunks = (
+export const get_relevant_career_chunks = (
   careerChunks: Chunk[],
   jobProfileKeys: string[]
 ): Chunk[] => {
   return careerChunks.filter((chunk) =>
-    jobProfileKeys.some((key) => searchCareerChunk(chunk, key))
+    jobProfileKeys.some((key) => search_career_chunk(chunk, key))
   );
 };
