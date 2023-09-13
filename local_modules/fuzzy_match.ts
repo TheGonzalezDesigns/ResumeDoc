@@ -1,10 +1,8 @@
-import { extraction } from "./extract";
-export type entryObject = extraction;
-export type entryArray = entryObject[] | string[];
-export type entryText = string;
-export type entry = entryText | entryObject | entryArray;
+import { extraction, extractions } from "./extract";
+export type entryArray = extractions | string[];
+export type entry = string | extraction | extractions;
 
-const matchSkills = (value: entry, requiredSkill: entryText) => {
+const matchSkills = (value: entry, requiredSkill: string) => {
   if (typeof value === "object") {
     if (Array.isArray(value)) {
       for (const element of value) {
@@ -29,23 +27,23 @@ const matchSkills = (value: entry, requiredSkill: entryText) => {
   return false;
 };
 
-export const getRelevantCareerProfiles = (careerProfiles, jobRequirements) => {
-  const relevantProfiles = [];
-
-  function searchProfile(profile) {
-    for (const key in profile) {
-      if (matchSkills(profile[key], jobRequirements.skills_required)) {
-        relevantProfiles.push(profile);
-        break;
-      }
-    }
-  }
-
-  for (const profile of careerProfiles) {
-    searchProfile(profile);
-  }
-
-  return relevantProfiles;
+export const search_career_chunk = (
+  career_chunk: extraction,
+  job_profile_key: string
+): boolean => {
+  for (const chunk_key in career_chunk)
+    if (matchSkills(career_chunk[chunk_key], job_profile_key)) return true;
+  return false;
+};
+export const get_relevant_career_chunks = (
+  career_chunks: extractions,
+  job_profile_keys: string[]
+) => {
+  return [...career_chunks].filter((chunk) => {
+    for (const key in job_profile_keys)
+      if (search_career_chunk(chunk, key)) return true;
+    return false;
+  });
 };
 
 /*
