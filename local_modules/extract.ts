@@ -10,8 +10,8 @@ export const extract = async (
   const type_description = "We are only concerned with strings for types.";
   const format_instructions = "Format the response as a valid JSON object.";
   const encoding_instructions =
-    "Fncapsulate the response within a set of triple single quotation marks, e.g. ''' ... '''.";
-  const extraction_instructions = `Fxtract only data that is precisely related to [${[
+    "Encapsulate the response within a set of triple single quotation marks, e.g. ''' ... '''.";
+  const extraction_instructions = `Extract only data that is precisely related to [${[
     ...extraction_args,
   ].join(" | ")}].
   `;
@@ -33,6 +33,7 @@ export const extract = async (
   const clean = await query(
     `Please fix the following JSON if it is invalid, only respond with the json and nothing else: ${reply}`
   );
+  /*
   const response = `
   ${promptTemplate}
   -----------------------------------------------------------------------------------------------------------
@@ -43,6 +44,7 @@ export const extract = async (
   clean:
   ${clean}
   `;
+  */
   const final_extraction = JSON.parse(clean);
   return final_extraction;
 };
