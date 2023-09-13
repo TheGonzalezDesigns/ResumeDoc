@@ -1,6 +1,7 @@
 import { query } from "./query";
 
 export type extraction = Record<string, any>;
+export type extractions = extraction[];
 
 export const extract = async (
   extraction_args: string[],
