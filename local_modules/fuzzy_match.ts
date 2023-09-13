@@ -2,61 +2,55 @@ type Chunk = {
   [key: string]: any;
 };
 
-const log = (msg: string): void => {
-  console.info(`EVENT: ${msg}\n`);
-};
-
-const matchSkills = (value: any, requiredSkill: string): boolean => {
-  if (typeof value === "object") {
-    if (Array.isArray(value)) {
-      for (const element of value) {
-        if (matchSkills(element, requiredSkill)) {
-          return true;
-        }
-      }
-    } else {
-      for (const key in value) {
-        if (matchSkills(value[key], requiredSkill)) {
-          return true;
-        }
-      }
-    }
-  } else if (typeof value === "string") {
-    if (value.toLowerCase().includes(requiredSkill.toLowerCase())) {
-      //log(`${value} === ${requiredSkill}`);
-      return true;
-    } else {
-      //log(`${value} !!! ${requiredSkill}`);
-    }
+const matchSkills = async (
+  value: any,
+  requiredSkill: string
+): Promise<boolean> => {
+  if (typeof value === "string") {
+    return value.toLowerCase().includes(requiredSkill.toLowerCase());
   }
+
+  if (Array.isArray(value)) {
+    const results = await Promise.all(
+      value.map((element) => matchSkills(element, requiredSkill))
+    );
+    return results.some((res) => res);
+  }
+
+  if (typeof value === "object" && value !== null && value !== undefined) {
+    const results = await Promise.all(
+      Object.values(value).map((subValue) =>
+        matchSkills(subValue, requiredSkill)
+      )
+    );
+    return results.some((res) => res);
+  }
+
   return false;
 };
 
-const searchCareerChunk = (
+const searchCareerChunk = async (
   careerChunk: Chunk,
   jobProfileKey: string
-): boolean => {
-  for (const chunkKey in careerChunk) {
-    if (matchSkills(careerChunk[chunkKey], jobProfileKey)) {
-      return true;
-    }
-  }
-  return false;
+): Promise<boolean> => {
+  const results = await Promise.all(
+    Object.values(careerChunk).map((chunkValue) =>
+      matchSkills(chunkValue, jobProfileKey)
+    )
+  );
+  return results.some((res) => res);
 };
 
-export const getRelevantCareerChunks = (
+export const getRelevantCareerChunks = async (
   careerChunks: Chunk[],
   jobProfileKeys: string[]
-): Chunk[] => {
-  const results: Chunk[] = [];
-  for (const chunk of careerChunks) {
-    for (const asset of jobProfileKeys) {
-      //console.info(`chunk: ${JSON.stringify(chunk)} |>?<| key: ${asset}`);
-      if (searchCareerChunk(chunk, asset)) {
-        results.push(chunk);
-        break; // Move to the next chunk once a match is found
-      }
-    }
-  }
-  return results;
+): Promise<Chunk[]> => {
+  const chunkResults = await Promise.all(
+    careerChunks.map((chunk) =>
+      Promise.all(jobProfileKeys.map((key) => searchCareerChunk(chunk, key)))
+    )
+  );
+  return careerChunks.filter((_, index) =>
+    chunkResults[index].some((res) => res)
+  );
 };
