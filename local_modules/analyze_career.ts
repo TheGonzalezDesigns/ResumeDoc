@@ -1,12 +1,13 @@
-import { extractions } from "./extract";
+import { extraction, extractions } from "./extract";
 import { get_relevant_career_chunks } from "./fuzzy_match";
 import { profile_job } from "./profile_job";
 
-export const extract_career_chunks = async (): Promise<extractions> => {
+export const extract_career_chunks = async (
+  job_profile: extraction
+): Promise<extractions> => {
   const profiled_career_chunks = await Bun.file(
     "./context/professional/career_chunks.json"
   ).json();
-  const job_profile = await profile_job();
   const job_profile_keys = job_profile?.technical_skills_array;
 
   if (!Array.isArray(job_profile_keys) || job_profile_keys.length === 0)
