@@ -2,18 +2,18 @@ type Chunk = {
   [key: string]: any;
 };
 
-const match_skills = (value: any, requiredSkill: string): boolean => {
+const match_skills = (value: any, required_skill: string): boolean => {
   if (typeof value === "string") {
-    return value.toLowerCase().includes(requiredSkill.toLowerCase());
+    return value.toLowerCase().includes(required_skill.toLowerCase());
   }
 
   if (Array.isArray(value)) {
-    return value.some((element) => match_skills(element, requiredSkill));
+    return value.some((element) => match_skills(element, required_skill));
   }
 
   if (typeof value === "object" && value !== null && value !== undefined) {
     return Object.values(value).some((subValue) =>
-      match_skills(subValue, requiredSkill)
+      match_skills(subValue, required_skill)
     );
   }
 
