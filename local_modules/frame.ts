@@ -4,11 +4,12 @@ import { extraction } from "./extract";
 type profile = extraction | string;
 
 export async function frame(
-  directive: string,
+  legal_name: string,
   professional_background: profile,
   job_profile: profile,
   query: string
 ): Promise<string> {
+  const directive = `You are a resume expert. You will use the given context to answer the given query. Do not hallucinate, only use the facts given to you in this prompt. Answer in the first person as if you were ${legal_name}.`;
   const template =
     "Directive: {directive}\n Professional Background: {professional_background}\n Job profile: {job_profile} \n Query: {query}";
 
