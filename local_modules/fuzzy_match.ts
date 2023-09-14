@@ -30,10 +30,10 @@ const search_career_chunk = (
 };
 
 export const get_relevant_career_chunks = (
-  careerChunks: Chunk[],
-  jobProfileKeys: string[]
+  career_chunks: Chunk[],
+  job_profile_keys: string[]
 ): Chunk[] => {
-  return careerChunks.filter((chunk) =>
-    jobProfileKeys.some((key) => search_career_chunk(chunk, key))
+  return career_chunks.filter((chunk) =>
+    job_profile_keys.some((key) => search_career_chunk(chunk, key))
   );
 };
