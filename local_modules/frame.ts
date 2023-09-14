@@ -12,14 +12,14 @@ export async function frame(
   const template =
     "Directive: {directive}\n Professional Background: {professional_background}\n Job profile: {job_profile} \n Query: {query}";
 
-  const promptTemplate = PromptTemplate.fromTemplate(template);
+  const prompt_template = PromptTemplate.fromTemplate(template);
 
-  const formattedPromptTemplate = await promptTemplate.format({
+  const formatted_prompt_template = await prompt_template.format({
     directive,
     professional_background,
     job_profile,
     query,
   });
 
-  return formattedPromptTemplate;
+  return formatted_prompt_template;
 }
