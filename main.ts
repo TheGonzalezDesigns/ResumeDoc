@@ -1,109 +1,68 @@
-import { summarize } from "./local_modules/summarize";
-import { Document as document } from "./local_modules/document";
+import { profile_job } from "./local_modules/profile_job";
 import { frame } from "./local_modules/frame";
 import { query } from "./local_modules/query";
-import { validateContentType as cType } from "./local_modules/contentType";
+import { validate_content_type as cType } from "./local_modules/content_type";
 import ejs from "ejs";
-import { exec } from "child_process";
-import path from "path";
-import os from "os";
+import { notify } from "./local_modules/notify";
+import { extract_career_chunks } from "./local_modules/analyze_career";
 
 async function main(): Promise<void> {
-  const iconPath = path.join(os.homedir(), "Pictures/ApplicationIcons/icon");
-  exec(
-    `notify-send -i "${iconPath}" "ResumeDoc" "The Doctor is ready."`,
-    (error, stdout, stderr) => {
-      if (error) {
-        console.log(`error: ${error.message}`);
-        return;
-      }
-      if (stderr) {
-        console.log(`stderr: ${stderr}`);
-        return;
-      }
-      console.log(`stdout: ${stdout}`);
-    }
-  );
+  const legal_name = "Hugo_Gonzalez";
+  notify("The Doctor is ready");
   console.time("mainExecution");
 
   try {
-    const summaries = await Promise.all([
-      summarize("./context/professional"),
-      summarize("./context/jobs"),
-    ]);
-    const [professionalBackground, jobProfile] = summaries;
-    let contentType = cType(0);
+    const job_profile = await profile_job();
+    const career_profile = await extract_career_chunks(job_profile);
+    console.info(career_profile);
+    let content_type = cType(0);
 
-    let directive = `You are a resume expert. You will use the given context to answer the given query. Do not hallucinate, only use the facts given to you in this prompt. Answer in the first person as if you were Hugo Gonzalez.`;
-    let frameQuery = `Generate a ${contentType} for the job listing based on the professional background that makes me look a senior engineer in the field.`;
+    let frame_query = `Generate a ${content_type} for the job listing based on the professional background that makes me look a senior engineer in the field.`;
 
-    const resumePrompt = await frame(
-      directive,
-      professionalBackground,
-      jobProfile,
-      frameQuery
+    const resume_prompt = await frame(
+      legal_name,
+      career_profile,
+      job_profile,
+      frame_query
     );
 
-    contentType = cType(1);
+    content_type = cType(1);
 
-    directive = `You are a cover letter expert. You will use the given context to answer the given query. Do not hallucinate, only use the facts given to you in this prompt. Answer in the first person as if you were Hugo Gonzalez.`;
-    frameQuery = `Generate a ${contentType} for the job listing based on the professional background that makes me look a senior engineer in the field. Only provide the body of the letter, do not add a greeting nor closing. Keep it under 250 words while staying hyperfocused on making it seem like I'm the perfect candidate for the position given.`;
+    frame_query = `Generate a ${content_type} for the job listing based on the professional background that makes me look a senior engineer in the field. Only provide the body of the letter, do not add a greeting nor closing. Keep it under 250 words while staying hyper-focused on making it seem like I'm the perfect candidate for the position given.`;
 
-    const coverletterPrompt = await frame(
-      directive,
-      professionalBackground,
-      jobProfile,
-      frameQuery
+    const cover_letter_prompt = await frame(
+      legal_name,
+      career_profile,
+      job_profile,
+      frame_query
     );
 
-    contentType = cType(2);
+    content_type = cType(2);
 
-    directive = `You are a resume expert. You will use the given context to answer the given query. Do not hallucinate, only use the facts given to you in this prompt. Answer in the first person as if you were Hugo Gonzalez.`;
-    frameQuery = `Generate a ${contentType} for the job listing based on the professional background that makes me look a senior engineer in the field. Please format your response as an array of at least 10 skills. Each skill listed should be verbose and related to the job listing. Each skill should be impressive and prove I am a competent expert in the relevant field. Make sure the list is a javascript array`;
+    frame_query = `Generate a ${content_type} for the job listing based on the professional background that makes me look a senior engineer in the field. Please format your response as an array of at least 10 skills. Each skill listed should be verbose and related to the job listing. Each skill should be impressive and prove I am a competent expert in the relevant field. Make sure the list is a javascript array`;
 
-    const skillListPrompt = await frame(
-      directive,
-      professionalBackground,
-      jobProfile,
-      frameQuery
+    const skill_list_prompt = await frame(
+      legal_name,
+      career_profile,
+      job_profile,
+      frame_query
     );
 
-    directive = `You are a resume expert. You will use the given context to answer the given query. Do not hallucinate, only use the facts given to you in this prompt.`;
-    frameQuery = `Extract the name of the company from the job listing. Replace any space with hyphens. If you cannot find the name of the compnay, use the title of the job role instead. Only return the company name or the job role. Place the name or role in quoation marks. Remove any special characters from the name except for hyphens.`;
-
-    const companyNamePrompt = await frame(
-      directive,
-      "Irrelevant",
-      jobProfile,
-      frameQuery
-    );
-
-    const [professionalSummary, coverletterContent, skillList, companyName] =
+    const [professional_summary, cover_letter_content, skill_list] =
       await Promise.all([
-        query(resumePrompt),
-        query(coverletterPrompt),
-        query(skillListPrompt),
-        query(companyNamePrompt),
+        query(resume_prompt),
+        query(cover_letter_prompt),
+        query(skill_list_prompt),
       ]);
 
-    interface GeneratedContent {
-      professionalSummary: string;
-      skillList: string[];
-      coverletterContent: string;
+    interface Generated_content {
+      professional_summary: string;
+      skill_list: string[];
+      cover_letter_content: string;
       fileName: string;
     }
     const removeQuotes = (str: string) => str.replace(/['"]+/g, "");
 
-    const extractText = (str: string): string => {
-      let matches = str.match(/("[^"]*"|'[^']*')/g);
-      if (!matches) return "";
-      matches = matches[0].match(/^\"(.*?)\"$/);
-      if (!matches) return "";
-      const extractedText = removeQuotes(matches[0]);
-      return extractedText;
-    };
-
-    const extractedCompanyName = extractText(companyName);
     const extractJSONArray = (str: string): string[] => {
       const regex = /^\[(.*)\]$/s;
       const matches = str.trim().match(regex);
@@ -111,71 +70,43 @@ async function main(): Promise<void> {
       return matches ? JSON.parse(`[${matches[1]}]`) : [];
     };
 
-    const extractedSkillList = extractJSONArray(skillList);
+    const extracted_skill_list = extractJSONArray(skill_list);
 
-    const content: GeneratedContent = {
-      professionalSummary,
-      skillList: extractedSkillList,
-      coverletterContent,
-      fileName: extractedCompanyName,
+    const content: Generated_content = {
+      professional_summary,
+      skill_list: extracted_skill_list,
+      cover_letter_content,
+      fileName: job_profile.company_name_string,
     } as const;
 
-    if (content.skillList.length < 5 || content.fileName == "")
+    if (content.skill_list.length < 5 || content.fileName == "")
       throw Error("Incomplete Generation.");
 
-    // Load the templates
-    const resumeTemplate = new document("./templates/resume.ejs");
-    const coverLetterTemplate = new document("./templates/coverletter.ejs");
-
     // Populate the templates
-    const populatedResume = ejs.render(resumeTemplate.load(), {
-      professionalSummary: content.professionalSummary,
-      skillList: content.skillList,
+    const resume_content = ejs.render("./templates/resume.ejs", {
+      professional_summary: content.professional_summary,
+      skill_list: content.skill_list,
     });
 
-    const populatedCoverLetter = ejs.render(coverLetterTemplate.load(), {
-      coverletterContent: content.coverletterContent,
-    });
-
-    const resume = new document(
-      `./src/html/resumes/Hugo_Gonzalez_Resume_${content.fileName}.html`
-    );
-    const coverletter = new document(
-      `./src/html/coverletters/Hugo_Gonzalez_Cover-Letter_${content.fileName}.html`
-    );
-
-    resume.save(populatedResume);
-    coverletter.save(populatedCoverLetter);
-    exec(
-      `notify-send -i "${iconPath}" "ResumeDoc" "All content for ${content.fileName} is ready."`,
-      (error, stdout, stderr) => {
-        if (error) {
-          console.log(`error: ${error.message}`);
-          return;
-        }
-        if (stderr) {
-          console.log(`stderr: ${stderr}`);
-          return;
-        }
-        console.log(`stdout: ${stdout}`);
+    const cover_letter_full_content = ejs.render(
+      "./templates/cover_letter.ejs",
+      {
+        cover_letter_content: content.cover_letter_content,
       }
     );
+
+    const resume = `./src/html/resumes/${legal_name}_Resume_${content.fileName}.html`;
+
+    const cover_letter = `./src/html/cover_letters/${legal_name}__cover-_letter_${content.fileName}.html`;
+
+    await Bun.write(resume, resume_content);
+    await Bun.write(cover_letter, cover_letter_full_content);
+    notify(`All content for ${content.fileName} is ready.`);
   } catch (error) {
-    exec(
-      `notify-send -i "${iconPath}" "ResumeDoc" "The Doctor is ill."`,
-      (error, stdout, stderr) => {
-        if (error) {
-          console.log(`error: ${error.message}`);
-          return;
-        }
-        if (stderr) {
-          console.log(`stderr: ${stderr}`);
-          return;
-        }
-        console.log(`stdout: ${stdout}`);
-      }
-    );
+    console.error("Error logs:", error);
+    notify(`The Doctor is ill`);
   }
+
   console.timeEnd("mainExecution");
 }
 main();
