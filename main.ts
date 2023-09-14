@@ -79,8 +79,10 @@ async function main(): Promise<void> {
       fileName: job_profile.company_name_string,
     } as const;
 
-    if (content.skill_list.length < 5 || content.fileName == "")
+    if (content.skill_list.length < 5 || content.fileName == "") {
+      console.error("Malformed content:", content);
       throw Error("Incomplete Generation.");
+    }
 
     // Populate the templates
     const resume_content = ejs.render("./templates/resume.ejs", {
