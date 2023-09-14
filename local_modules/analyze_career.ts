@@ -1,6 +1,5 @@
 import { extraction, extractions } from "./extract";
 import { get_relevant_career_chunks } from "./fuzzy_match";
-import { profile_job } from "./profile_job";
 
 export const extract_career_chunks = async (
   job_profile: extraction
