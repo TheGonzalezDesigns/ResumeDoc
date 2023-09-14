@@ -6,3 +6,6 @@ context/
 sandbox/
 src/
 testing/
+logs/
+*.log
+
