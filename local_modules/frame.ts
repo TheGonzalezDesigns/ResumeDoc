@@ -1,7 +1,16 @@
 import { PromptTemplate } from "langchain/prompts";
+import { extraction } from "./extract";
 
-export async function frame(directive: string, professionalBackground: string, jobProfile: string, query: string): Promise<string> {
-  const template = "Directive: {directive}\n Professional Background: {professionalBackground}\n Job profile: {jobProfile} \n Query: {query}";
+type profile = extraction | string;
+
+export async function frame(
+  directive: string,
+  professionalBackground: profile,
+  jobProfile: profile,
+  query: string
+): Promise<string> {
+  const template =
+    "Directive: {directive}\n Professional Background: {professionalBackground}\n Job profile: {jobProfile} \n Query: {query}";
 
   const promptTemplate = PromptTemplate.fromTemplate(template);
 
@@ -9,9 +18,8 @@ export async function frame(directive: string, professionalBackground: string, j
     directive,
     professionalBackground,
     jobProfile,
-    query
+    query,
   });
 
   return formattedPromptTemplate;
 }
-
