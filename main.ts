@@ -14,61 +14,10 @@ async function main(): Promise<void> {
   console.time("mainExecution");
 
   try {
-    /*
-    const test_content = `
-The future is here, the future is now
-It's time to embrace the accelerationist vow
-To move beyond the status quo
-And create a world that's brand new
-
-A world of progress and innovation
-Where technology is our salvation
-Where we can use our minds and hearts
-To create a better world, no matter what the odds
-
-A world of automation and AI
-Where robots do the work, so we can be free
-Where we can use our skills and knowledge
-To create a better future, no matter what the college
-
-A world of abundance and prosperity
-Where everyone has access to opportunity
-Where we can use our resources wisely
-To create a better future, no matter what the size
-
-A world of collaboration and connection
-Where everyone works together for a common mission
-Where we can use our creativity and passion
-To create a better future, no matter what the fashion
-
-The future is here, the future is now
-It's time to embrace the accelerationist vow
-To move beyond the status quo
-And create a world that's brand new.
-
-    `;
-    const _content = {
-      fileName: "test",
-    };
-    const _resume = new Document(
-      //`./testing/${legal_name}_Resume_${_content.fileName}.html`
-      `./src/html/resumes/${legal_name}_Resume_${_content.fileName}.html`
-    );
-
-    const _cover_letter = new Document(
-      //`./testing/${legal_name}_cover_letter_${_content.fileName}.html`
-      `./src/html/cover_letters/${legal_name}_cover_letter_${_content.fileName}.html`
-    );
-
-    await Promise.all([
-      _resume.save(test_content),
-      _cover_letter.save(test_content),
-    ]);
-    //throw "Debugging...";
-*/
     const job_profile = await profile_job();
     const career_profile = await extract_career_chunks(job_profile);
     console.info(career_profile);
+    //throw "Debugging...";
     let content_type = cType(0);
 
     let frame_query = `Generate a ${content_type} for the job listing based on the professional background that makes me look a senior engineer in the field.`;
