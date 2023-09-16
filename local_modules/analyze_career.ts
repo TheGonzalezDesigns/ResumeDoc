@@ -7,7 +7,7 @@ export const extract_career_chunks = async (
   const profiled_career_chunks = await Bun.file(
     "./context/professional/career_chunks.json"
   ).json();
-  const job_profile_keys = job_profile?.technical_skills_array;
+  const job_profile_keys = job_profile?.technical_skills;
 
   if (!Array.isArray(job_profile_keys) || job_profile_keys.length === 0)
     throw new Error(`Corrupt Keys: ${job_profile}`);
