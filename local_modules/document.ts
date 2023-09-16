@@ -1,6 +1,6 @@
-import fs from 'fs';
-import path from 'path';
-import os from 'os';
+import fs from "fs";
+import path from "path";
+import os from "os";
 
 export class Document {
   private filePath: string;
@@ -10,18 +10,18 @@ export class Document {
   }
 
   private normalizePath(filePath: string): string {
-      if (filePath.startsWith("~")) {
-          filePath = path.join(os.homedir(), filePath.slice(1));
-      }
-      return path.normalize(filePath);
+    if (filePath.startsWith("~"))
+      filePath = path.join(os.homedir(), filePath.slice(1));
+    filePath = path.resolve(filePath);
+    return path.normalize(filePath);
   }
 
   public load(): string {
-    return fs.readFileSync(this.filePath, 'utf-8');
+    return fs.readFileSync(this.filePath, "utf-8");
   }
 
   public save(content: string): void {
-    fs.writeFileSync(this.filePath, content, { encoding: 'utf-8' });
+    console.info("Saving ", this.filePath);
+    fs.writeFileSync(this.filePath, content, { encoding: "utf-8" });
   }
 }
-
