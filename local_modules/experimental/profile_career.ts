@@ -1,6 +1,6 @@
 import { extract_main_categories, extract_details } from "./extract";
 
-type extraction_keys = {
+export type extraction_keys = {
   [key: string]: string[];
 };
 
