@@ -16,32 +16,26 @@ export const profile_job = async (): Promise<extraction> => {
     7. If 'benefits' are mentioned but aren't detailed, indicate 'benefits: not specified'. Otherwise, list them.
     8. Determine the job's location.
 
-    Remember, accuracy, and completeness are paramount. The output should be in JSON format.
+    Remember, accuracy, and completeness are paramount. Ensure the output is in a valid JSON format without any errors or formatting issues. If the JSON format is invalid, correct it before responding.
 
     Job Listing:
     ${description}
   `;
-  const data = await query(prompt);
+  let data = await query(prompt);
 
-  const clean = await query(
-    `Please fix the following JSON if it is invalid, only respond with the json and nothing else: ${data}`
-  );
-  const extraction = JSON.parse(clean);
+  let extraction: extraction = {};
+  let flag = true;
 
-  /*
-  const extraction = await extract(
-    [
-      "job_title_string",
-      "technical_skills_array",
-      "company_name_string",
-      "job_description_summary_string",
-      "non_technical_requirements_array",
-      "pay_array",
-      "benefits_array",
-      "location_string",
-    ],
-    description
-  );
-  */
+  do {
+    try {
+      extraction = JSON.parse(data);
+      flag = false;
+    } catch (error) {
+      data = await query(
+        `Please fix the following JSON if it is invalid, only respond with the json and nothing else: ${data}`
+      );
+    }
+  } while (flag);
+
   return extraction;
 };
