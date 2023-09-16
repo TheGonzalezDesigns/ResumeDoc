@@ -10,6 +10,10 @@ export async function frame(
   query: string
 ): Promise<string> {
   const directive = `You are a resume expert. You will use the given context to answer the given query. Do not hallucinate, only use the facts given to you in this prompt. Answer in the first person as if you were ${legal_name}.`;
+
+  professional_background = JSON.stringify(professional_background);
+  job_profile = JSON.stringify(job_profile);
+
   const template =
     "Directive: {directive}\n Professional Background: {professional_background}\n Job profile: {job_profile} \n Query: {query}";
 
