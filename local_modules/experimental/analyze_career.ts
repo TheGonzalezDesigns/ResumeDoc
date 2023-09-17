@@ -24,7 +24,14 @@ export function analyze_career(
   const relevant_segments: career_history_segment_type[] = [];
   const threshold = 5; // This threshold can be adjusted
 
-  const keywords = job_profile.technical_skill_array as extraction_keys;
+  const keywords: extraction_keys = {
+    technical_skill_array: job_profile.technical_skill_array,
+    non_technical_skill_array: [],
+    career_achievements_array: [],
+    career_experience_array: [],
+    career_projects_array: [],
+  };
+
   for (const segment of career_history_segments) {
     const score = contextual_analysis(
       keywords,
