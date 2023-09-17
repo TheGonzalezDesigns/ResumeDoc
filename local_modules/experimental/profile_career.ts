@@ -1,8 +1,5 @@
 import { extract_main_categories, extract_details } from "./extract";
-
-export type extraction_keys = {
-  [key: string]: string[];
-};
+import { extraction_keys } from "../extract";
 
 export async function profile_career_chunk(
   career_chunk: string
