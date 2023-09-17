@@ -8,6 +8,8 @@ export async function extract_main_categories(text: string): Promise<string[]> {
   return [await query(prompt)];
 }
 
+const threshold = 0.7; // This can be adjusted based on your requirements
+
 export async function extract_details(
   category: string,
   text: string
@@ -23,18 +25,28 @@ export async function adaptive_chunking(
   // Initialize the keywords and regex patterns for the provided job profile
   init_keywords(job_profile);
 
-  const chunksToAnalyze = [text];
+  // Start by splitting the text into initial chunks
+  let chunksToAnalyze = await split_text(text);
   const acceptedChunks: string[] = [];
 
   while (chunksToAnalyze.length > 0) {
-    const currentChunk = chunksToAnalyze.pop()!;
-    const chunkAnalysis = await analyze_chunk(currentChunk, job_profile);
+    // Bulk analyze all the current chunks
+    const chunkAnalyses = await Promise.all(
+      chunksToAnalyze.map((chunk) => analyze_chunk(chunk, job_profile))
+    );
 
-    if (chunkAnalysis.score >= threshold) {
-      acceptedChunks.push(currentChunk);
-    } else {
-      const subChunks = await split_text(currentChunk);
-      chunksToAnalyze.push(...subChunks);
+    // Clear out our current chunks
+    chunksToAnalyze = [];
+
+    // Process each chunk based on its analysis
+    for (let i = 0; i < chunkAnalyses.length; i++) {
+      if (chunkAnalyses[i].score >= threshold) {
+        acceptedChunks.push(chunkAnalyses[i].chunk);
+      } else {
+        // If a chunk doesn't meet the threshold, split it further for analysis
+        const subChunks = await split_text(chunkAnalyses[i].chunk);
+        chunksToAnalyze.push(...subChunks);
+      }
     }
   }
 
