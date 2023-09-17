@@ -9,7 +9,7 @@ let regexList: RegExp[] = [];
 let isInitialized = false;
 let threshold: number;
 
-function init_keywords(job_profile: extraction) {
+export function init_keywords(job_profile: extraction) {
   // Extract all the important keywords from the job profile
   const tech_skills = job_profile.technical_skills ?? [];
   const non_tech_skills = job_profile.non_technical_skills ?? [];
