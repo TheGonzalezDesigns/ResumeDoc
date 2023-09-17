@@ -1,5 +1,4 @@
-import { extraction_keys } from "../extract";
-import { extract_main_categories, extract_details } from "./extract";
+import { extraction, extraction_keys } from "../extract";
 import { analyze_chunk, chunk_score } from "./chunk_analysis";
 import { profile_career_chunk } from "./profile_career";
 
@@ -22,9 +21,10 @@ export async function refine_career_data(
   // Step 2: Analyze each chunk and refine
   for (const chunk of initial_chunks) {
     const chunk_details = await profile_career_chunk(chunk);
-    const analysis_result = await analyze_chunk(chunk_details, job_profile);
+    const analysis_result = analyze_chunk(chunk, job_profile);
 
-    if (analysis_result.is_relevant) {
+    if (analysis_result.score > 0.7) {
+      // You can adjust this threshold
       refined_data.push(analysis_result);
     }
   }
