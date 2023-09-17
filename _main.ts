@@ -35,12 +35,14 @@ async function main(): Promise<void> {
     const refined_chunks = [];
     for (const chunk of initial_chunks) {
       const adapted_chunks = await adaptive_chunking(chunk, job_profile);
-      debug(adapted_chunks);
-      const refined_data = await refine_career_data(
-        adapted_chunks,
-        job_profile
-      );
-      refined_chunks.push(...refined_data);
+      for (const adapted_chunk of adapted_chunks) {
+        const refined_data = await refine_career_data(
+          adapted_chunk,
+          job_profile
+        );
+        debug(refined_data);
+        refined_chunks.push(...refined_data);
+      }
     }
 
     debug(refined_chunks);
