@@ -30,19 +30,24 @@ async function main(): Promise<void> {
     const filepath = "./context/professional/profile.txt";
     const raw_career_data = await Bun.file(filepath).text();
     const initial_chunks = await split_text(raw_career_data);
-
+    //debug({
+    //  job_profile,
+    //  initial_chunks,
+    //});
     // Step 2: Adaptive Chunking and Refinement
+    // Step 1: Perform adaptive chunking on the entire raw career data.
+    let adapted_chunks: string[] = [];
+    let chunks: string[];
+    initial_chunks.forEach(async (initial_chunk) => {
+      chunks = await adaptive_chunking(initial_chunk, job_profile);
+      adapted_chunks = Array.from(new Set([...adapted_chunks, ...chunks]));
+    });
+    debug(adapted_chunks);
     const refined_chunks = [];
-    for (const chunk of initial_chunks) {
-      const adapted_chunks = await adaptive_chunking(chunk, job_profile);
-      for (const adapted_chunk of adapted_chunks) {
-        const refined_data = await refine_career_data(
-          adapted_chunk,
-          job_profile
-        );
-        debug(refined_data);
-        refined_chunks.push(...refined_data);
-      }
+    // Step 2: Refine each adapted chunk and collect the results.
+    for (const adapted_chunk of adapted_chunks) {
+      const refined_data = await refine_career_data(adapted_chunk, job_profile);
+      refined_chunks.push(...refined_data);
     }
 
     debug(refined_chunks);
