@@ -8,7 +8,7 @@ echo "$jobProfile" > ~/projects/ResumeDoc/context/jobs/profile.txt
 
 echo "Profile: $jobProfile"
 
-bun run ./main.ts
+bun run ./_main.ts
 #bun run ./main.ts > run.log 2>&1
 # Directory paths
 set html_root "./src/html/"
