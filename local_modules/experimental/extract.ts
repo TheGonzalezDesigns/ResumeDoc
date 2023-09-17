@@ -1,6 +1,6 @@
 import { query } from "../query";
 import { split_text } from "./text_splitter";
-import { analyze_chunk } from "./chunk_analysis";
+import { analyze_chunk, init_keywords } from "./chunk_analysis";
 import { extraction } from "../extract";
 
 export async function extract_main_categories(text: string): Promise<string[]> {
@@ -20,19 +20,23 @@ export async function adaptive_chunking(
   text: string,
   job_profile: extraction
 ): Promise<string[]> {
-  const threshold = 0.7; // this can be adjusted
-  const chunk_analysis = await analyze_chunk(text, job_profile);
+  // Initialize the keywords and regex patterns for the provided job profile
+  init_keywords(job_profile);
 
-  if (chunk_analysis.score < threshold) {
-    // Split text into smaller chunks and analyze each recursively
-    const chunks = await split_text(text); // use your existing text splitting method
-    const all_chunks: string[] = [];
-    for (const chunk of chunks) {
-      const result = await adaptive_chunking(chunk, job_profile);
-      all_chunks.push(...result);
+  const chunksToAnalyze = [text];
+  const acceptedChunks: string[] = [];
+
+  while (chunksToAnalyze.length > 0) {
+    const currentChunk = chunksToAnalyze.pop()!;
+    const chunkAnalysis = await analyze_chunk(currentChunk, job_profile);
+
+    if (chunkAnalysis.score >= threshold) {
+      acceptedChunks.push(currentChunk);
+    } else {
+      const subChunks = await split_text(currentChunk);
+      chunksToAnalyze.push(...subChunks);
     }
-    return all_chunks;
   }
 
-  return [text];
+  return acceptedChunks;
 }
