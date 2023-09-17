@@ -17,6 +17,9 @@ export async function query(prompt: string, modelType: GPT = 3) {
   });
 
   const res = await model.call(prompt);
-
+  console.info({
+    query: prompt,
+    reply: res,
+  });
   return res;
 }
