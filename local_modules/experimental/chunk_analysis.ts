@@ -1,6 +1,6 @@
 import { extraction } from "../extract";
 
-type chunk_score = {
+export type chunk_score = {
   chunk: string;
   score: number;
 };
