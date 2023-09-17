@@ -1,4 +1,4 @@
-import { extraction_keys } from "./profile_career";
+import { extraction_keys } from "../extract";
 
 // Define the weights for each category
 const category_weights: { [key: string]: number } = {
