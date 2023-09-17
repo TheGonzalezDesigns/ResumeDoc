@@ -1,4 +1,5 @@
 import { contextual_analysis } from "./fuzzy_match";
+import { extraction_keys } from "../extract";
 
 type job_profile_type = {
   technical_skill_array: string[];
@@ -23,9 +24,10 @@ export function analyze_career(
   const relevant_segments: career_history_segment_type[] = [];
   const threshold = 5; // This threshold can be adjusted
 
+  const keywords = job_profile.technical_skill_array as extraction_keys;
   for (const segment of career_history_segments) {
     const score = contextual_analysis(
-      job_profile.technical_skill_array,
+      keywords,
       segment.technical_skill_array.join(" ")
     );
     if (score > threshold) {
