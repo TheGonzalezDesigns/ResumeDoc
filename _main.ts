@@ -56,31 +56,31 @@ async function main(): Promise<void> {
     const refined_chunks = [];
 
     // Refine each adapted chunk and collect the results
-    for (const adapted_chunk of adapted_chunks) {
+    adapted_chunks.forEach(async (adapted_chunk) => {
       const refined_data = await refine_career_data(adapted_chunk, job_profile);
       refined_chunks.push(...refined_data);
-    }
+    });
 
     // Step 4: Career Profile Creation
     const profile_chunks = [];
 
     // Create career profiles for refined chunks
-    for (const refined_chunk of refined_chunks) {
+    refined_chunks.forEach(async (refined_chunk) => {
       const chunk_profile = await profile_career_chunk(refined_chunk);
       profile_chunks.push(chunk_profile);
-    }
+    });
 
     // Step 5: Chunk Analysis and Scoring
     const scored_chunks = [];
 
     // Analyze each profile chunk and calculate scores
-    for (const profile_chunk of profile_chunks) {
+    profile_chunks.forEach(async (profile_chunk) => {
       const score = await analyze_chunk(profile_chunk, job_profile);
       scored_chunks.push({
         chunk: profile_chunk,
         score: score,
       });
-    }
+    });
 
     // Step 6: Meta Analysis
     const analysis_result = metaAnalysis(
