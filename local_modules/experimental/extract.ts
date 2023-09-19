@@ -1,7 +1,6 @@
 import { query } from "../query";
 import { split_text } from "./text_splitter";
 import { analyze_chunk } from "./chunk_analysis";
-import { debug, log } from "./debug";
 
 // Function to extract main categories from text
 export async function extract_main_categories(text: string): Promise<string[]> {
@@ -33,10 +32,6 @@ export async function adaptive_chunking(
   // Start by splitting the text into initial chunks
   let chunks_to_analyze = await split_text(text);
   const accepted_chunks: string[] = [];
-  const chunks = {
-    original: text,
-    split: chunks_to_analyze,
-  };
 
   // While there are chunks left to analyze
   while (chunks_to_analyze.length > 0) {
@@ -46,9 +41,6 @@ export async function adaptive_chunking(
         analyze_chunk(chunk, regex_list, threshold)
       )
     );
-
-    // Log the chunk analyses for debugging
-    log(chunk_analyses, "chunk_analyses");
 
     // Clear the current chunks for reevaluation
     chunks_to_analyze = [];
