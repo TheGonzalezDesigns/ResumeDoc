@@ -1,7 +1,10 @@
 import { refine_career_data } from "./local_modules/experimental/refinement";
 import { adaptive_chunking } from "./local_modules/experimental/extract";
 import { profile_career_chunk } from "./local_modules/experimental/profile_career";
-import { analyze_chunk } from "./local_modules/experimental/chunk_analysis";
+import {
+  analyze_chunk,
+  initialize_analysis,
+} from "./local_modules/experimental/chunk_analysis";
 import { meta_analysis } from "./local_modules/experimental/meta_analysis";
 import { analyze_career } from "./local_modules/experimental/analyze_career";
 import { frame } from "./local_modules/frame";
@@ -11,13 +14,7 @@ import { notify } from "./local_modules/notify";
 import { Document } from "local_modules/document";
 import { profile_job } from "local_modules/profile_job";
 import { split_text } from "local_modules/experimental/text_splitter";
-
-type bug = Record<string, any> | string | string[];
-
-const debug = (data: bug) => {
-  console.info("Debugging:", data);
-  throw "\nDebugging...\n";
-};
+import { debug, log } from "./local_modules/experimental/debug";
 
 async function main(): Promise<void> {
   const legal_name = "Hugo_Gonzalez";
@@ -26,23 +23,35 @@ async function main(): Promise<void> {
 
   try {
     const job_profile = await profile_job();
+    //debug(job_profile);
     // Step 1: Text Splitting and Initial Chunking
     const filepath = "./context/professional/profile.txt";
     const raw_career_data = await Bun.file(filepath).text();
     const initial_chunks = await split_text(raw_career_data);
     //debug({
-    //  job_profile,
     //  initial_chunks,
+    //  job_profile,
     //});
+    const { regexList, threshold } = initialize_analysis(job_profile);
+
     // Step 2: Adaptive Chunking and Refinement
     // Step 1: Perform adaptive chunking on the entire raw career data.
-    let adapted_chunks: string[] = [];
-    let chunks: string[];
-    initial_chunks.forEach(async (initial_chunk) => {
-      chunks = await adaptive_chunking(initial_chunk, job_profile);
-      adapted_chunks = Array.from(new Set([...adapted_chunks, ...chunks]));
-    });
-    debug(adapted_chunks);
+    let adapted_chunks: string[] = (
+      await Promise.all(
+        [...initial_chunks].map(async (initial_chunk) => {
+          let chunks = await adaptive_chunking(
+            initial_chunk,
+            regexList,
+            threshold
+          );
+          log(chunks, "main_chunks");
+          return chunks;
+        })
+      )
+    ).flat();
+    adapted_chunks = Array.from(new Set(adapted_chunks));
+    log(job_profile, "job_profile");
+    debug(adapted_chunks, "adapted_chunks");
     const refined_chunks = [];
     // Step 2: Refine each adapted chunk and collect the results.
     for (const adapted_chunk of adapted_chunks) {
