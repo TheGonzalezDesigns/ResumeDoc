@@ -14,28 +14,29 @@ import { notify } from "./local_modules/notify";
 import { Document } from "local_modules/document";
 import { profile_job } from "local_modules/profile_job";
 import { split_text } from "local_modules/experimental/text_splitter";
-import { debug, log } from "./local_modules/experimental/debug";
 
+// Main function
 async function main(): Promise<void> {
+  // Define the legal name for the profile
   const legal_name = "Hugo_Gonzalez";
+
+  // Notify that the program is ready
   notify("The Doctor is ready");
   console.time("mainExecution");
 
   try {
+    // Step 1: Profile Job Data
     const job_profile = await profile_job();
-    //debug(job_profile);
-    // Step 1: Text Splitting and Initial Chunking
+
+    // Step 2: Text Splitting and Initial Chunking
     const filepath = "./context/professional/profile.txt";
     const raw_career_data = await Bun.file(filepath).text();
     const initial_chunks = await split_text(raw_career_data);
-    //debug({
-    //  initial_chunks,
-    //  job_profile,
-    //});
+
+    // Initialize analysis with regex list and threshold
     const { regexList, threshold } = initialize_analysis(job_profile);
 
-    // Step 2: Adaptive Chunking and Refinement
-    // Step 1: Perform adaptive chunking on the entire raw career data.
+    // Step 3: Adaptive Chunking and Refinement
     let adapted_chunks: string[] = (
       await Promise.all(
         [...initial_chunks].map(async (initial_chunk) => {
@@ -44,31 +45,35 @@ async function main(): Promise<void> {
             regexList,
             threshold
           );
-          log(chunks, "main_chunks");
           return chunks;
         })
       )
     ).flat();
+
+    // Remove duplicates from the adapted chunks
     adapted_chunks = Array.from(new Set(adapted_chunks));
-    log(job_profile, "job_profile");
-    debug(adapted_chunks, "adapted_chunks");
+
     const refined_chunks = [];
-    // Step 2: Refine each adapted chunk and collect the results.
+
+    // Refine each adapted chunk and collect the results
     for (const adapted_chunk of adapted_chunks) {
       const refined_data = await refine_career_data(adapted_chunk, job_profile);
       refined_chunks.push(...refined_data);
     }
 
-    debug(refined_chunks);
-    // Step 3: Career Profile Creation
+    // Step 4: Career Profile Creation
     const profile_chunks = [];
+
+    // Create career profiles for refined chunks
     for (const refined_chunk of refined_chunks) {
       const chunk_profile = await profile_career_chunk(refined_chunk);
       profile_chunks.push(chunk_profile);
     }
 
-    // Step 4: Chunk Analysis and Scoring
+    // Step 5: Chunk Analysis and Scoring
     const scored_chunks = [];
+
+    // Analyze each profile chunk and calculate scores
     for (const profile_chunk of profile_chunks) {
       const score = await analyze_chunk(profile_chunk, job_profile);
       scored_chunks.push({
@@ -77,20 +82,20 @@ async function main(): Promise<void> {
       });
     }
 
-    // Step 5: Meta Analysis
+    // Step 6: Meta Analysis
     const analysis_result = metaAnalysis(
       scored_chunks,
       job_profile,
       raw_career_data
     );
 
-    // Step 6: Career Profile Aggregation
+    // Step 7: Career Profile Aggregation
     const aggregated_career_profile = analyze_career(
       job_profile,
       scored_chunks
     );
 
-    // Step 7: Final Structuring and Framing
+    // Step 8: Final Structuring and Framing
     const resume_content = frame(
       aggregated_career_profile,
       job_profile,
@@ -108,20 +113,25 @@ async function main(): Promise<void> {
       `./src/html/cover_letters/${legal_name}_cover_letter.html`
     );
 
+    // Save the generated resume and cover letter content to HTML files
     await Promise.all([
       resume.save(resume_content),
       cover_letter.save(cover_letter_content),
     ]);
 
+    // Notify that all content is ready
     notify(`All content for ${legal_name} is ready.`);
   } catch (error) {
+    // Handle errors
     console.error("Error logs:", error);
     notify(`The Doctor is ill`);
   }
 
+  // End the timer for main execution
   console.timeEnd("mainExecution");
 }
 
+// Start the main execution
 console.time("main");
 main();
 console.timeEnd("main");
