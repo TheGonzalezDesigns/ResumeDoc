@@ -1,14 +1,12 @@
 import { query } from "../query";
 import { split_text } from "./text_splitter";
-import { analyze_chunk, init_keywords } from "./chunk_analysis";
-import { extraction } from "../extract";
+import { analyze_chunk } from "./chunk_analysis";
+import { debug, log } from "./debug";
 
 export async function extract_main_categories(text: string): Promise<string[]> {
   const prompt = `Identify the main career categories from the following text: "${text}"`;
   return [await query(prompt)];
 }
-
-const threshold = 0.7; // This can be adjusted based on your requirements
 
 export async function extract_details(
   category: string,
@@ -20,20 +18,23 @@ export async function extract_details(
 
 export async function adaptive_chunking(
   text: string,
-  job_profile: extraction
+  regexList: RegExp[],
+  threshold: number
 ): Promise<string[]> {
-  // Initialize the keywords and regex patterns for the provided job profile
-  init_keywords(job_profile);
-
   // Start by splitting the text into initial chunks
   let chunksToAnalyze = await split_text(text);
   const acceptedChunks: string[] = [];
-
+  let chunks = {
+    original: text,
+    split: chunksToAnalyze,
+  };
+  //debug(`<chunksToAnalyze>${JSON.stringify(chunks)}</chunksToAnalyze>`);
   while (chunksToAnalyze.length > 0) {
     // Bulk analyze all the current chunks
     const chunkAnalyses = await Promise.all(
-      chunksToAnalyze.map((chunk) => analyze_chunk(chunk, job_profile))
+      chunksToAnalyze.map((chunk) => analyze_chunk(chunk, regexList, threshold))
     );
+    log(chunkAnalyses, "chunkAnalyses");
 
     // Clear out our current chunks
     chunksToAnalyze = [];
@@ -44,8 +45,10 @@ export async function adaptive_chunking(
         acceptedChunks.push(chunkAnalyses[i].chunk);
       } else {
         // If a chunk doesn't meet the threshold, split it further for analysis
-        const subChunks = await split_text(chunkAnalyses[i].chunk);
-        chunksToAnalyze.push(...subChunks);
+        if (chunkAnalyses[i].chunk.length > 100) {
+          const subChunks = await split_text(chunkAnalyses[i].chunk);
+          chunksToAnalyze.push(...subChunks);
+        }
       }
     }
   }
