@@ -5,6 +5,10 @@ export type extractions = extraction[];
 export type extraction_keys = {
   [key: string]: string[];
 };
+export type meta = {
+  raw_data: string;
+  categories: extraction_keys;
+};
 
 export const extract = async (
   extraction_args: string[],
