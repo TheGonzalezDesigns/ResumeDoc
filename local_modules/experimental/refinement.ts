@@ -1,5 +1,6 @@
 import { extraction_keys } from "../extract";
 import { analyze_chunk, chunk_score } from "./chunk_analysis";
+import { split_text } from "./text_splitter";
 
 /**
  * Refines the raw career data to extract relevant segments in the context of a given job profile.
@@ -9,21 +10,22 @@ import { analyze_chunk, chunk_score } from "./chunk_analysis";
  * @returns An array of refined, relevant career data segments.
  */
 export async function refine_career_data(
-  raw_career_data: string,
-  job_profile: extraction_keys
+  chunk: string,
+  regexList: RegExp[],
+  threshold: number
 ): Promise<chunk_score[]> {
   const refined_data: chunk_score[] = [];
+  const chunks = await split_text(chunk);
 
-  // Step 1: Initial chunking
-  const initial_chunks = raw_career_data.split("\n\n"); // Split by paragraphs, for instance
+  if (chunk.length > 50) {
+    // Step 2: Analyze each chunk and refine
+    for (const chunk of chunks) {
+      const analysis_result = analyze_chunk(chunk, regexList, threshold);
 
-  // Step 2: Analyze each chunk and refine
-  for (const chunk of initial_chunks) {
-    const analysis_result = analyze_chunk(chunk, job_profile);
-
-    if (analysis_result.score > 0.7) {
-      // You can adjust this threshold
-      refined_data.push(analysis_result);
+      if (analysis_result.score > threshold * 1) {
+        // You can adjust this threshold
+        refined_data.push(analysis_result);
+      }
     }
   }
 
