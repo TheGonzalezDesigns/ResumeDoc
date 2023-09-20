@@ -14,7 +14,7 @@ import { notify } from "./local_modules/notify";
 import { Document } from "local_modules/document";
 import { profile_job } from "local_modules/profile_job";
 import { split_text } from "local_modules/experimental/text_splitter";
-
+import { log, debug } from "./local_modules/experimental/debug";
 // Main function
 async function main(): Promise<void> {
   // Define the legal name for the profile
@@ -37,7 +37,7 @@ async function main(): Promise<void> {
     const { regexList, threshold } = initialize_analysis(job_profile);
 
     // Step 3: Adaptive Chunking and Refinement
-    let adapted_chunks: string[] = (
+    const adapted_chunks: string[] = (
       await Promise.all(
         [...initial_chunks].map(async (initial_chunk) => {
           let chunks = await adaptive_chunking(
@@ -51,36 +51,32 @@ async function main(): Promise<void> {
     ).flat();
 
     // Remove duplicates from the adapted chunks
-    adapted_chunks = Array.from(new Set(adapted_chunks));
-
-    const refined_chunks = [];
-
-    // Refine each adapted chunk and collect the results
-    adapted_chunks.forEach(async (adapted_chunk) => {
-      const refined_data = await refine_career_data(adapted_chunk, job_profile);
-      refined_chunks.push(...refined_data);
-    });
-
+    const refined_chunks = Array.from(new Set(adapted_chunks));
+    log(refined_chunks, "adapted_chunks");
     // Step 4: Career Profile Creation
-    const profile_chunks = [];
-
-    // Create career profiles for refined chunks
-    refined_chunks.forEach(async (refined_chunk) => {
-      const chunk_profile = await profile_career_chunk(refined_chunk);
-      profile_chunks.push(chunk_profile);
-    });
-
+    const profile_chunks = await Promise.all(
+      [...refined_chunks].map(async (refined_chunk) => {
+        const chunk_profile = await profile_career_chunk(refined_chunk);
+        return chunk_profile;
+      })
+    ); //NOtes: refine the array prompt to return an array object,
+    //then combine it with the original chhunk for {chunk, categories} where the categories will be analyzed next,
+    //and weighted but this way we dont lose the original chunk data
+    //debug(profile_chunks, "profile_chunks");
     // Step 5: Chunk Analysis and Scoring
-    const scored_chunks = [];
-
-    // Analyze each profile chunk and calculate scores
-    profile_chunks.forEach(async (profile_chunk) => {
-      const score = await analyze_chunk(profile_chunk, job_profile);
-      scored_chunks.push({
-        chunk: profile_chunk,
-        score: score,
-      });
+    const scored_chunks = [...profile_chunks].map((profile_chunk) => {
+      const analysis = analyze_chunk(
+        profile_chunk.raw_data,
+        regexList,
+        threshold
+      );
+      return {
+        chunk: profile_chunk.raw_data,
+        score: analysis.score,
+      };
     });
+    log(scored_chunks, "scored_chunks");
+    debug(adapted_chunks, "adapted_chunks");
 
     // Step 6: Meta Analysis
     const analysis_result = metaAnalysis(
