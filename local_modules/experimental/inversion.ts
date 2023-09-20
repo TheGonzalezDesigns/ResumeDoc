@@ -1,4 +1,4 @@
-import { query } from "./query";
+import { query } from "../query";
 
 /**
  * Inverts the provided text based on the given keywords.
