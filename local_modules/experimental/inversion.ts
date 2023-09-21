@@ -12,11 +12,10 @@ export const keyword_inversion = async (
 ): Promise<string> => {
   // Create a prompt for the model
   const prompt = `
-  Construct a brief and focused sentence using ONLY the provided keywords ${keywords.join(
-    ", "
-  )} from the text "${text}".
-`;
-
+    Construct a brief and focused sentence in the first person using ONLY the provided keywords ${keywords.join(
+      ", "
+    )} from the text "${text}".
+  `;
   // Get the response from the model
   const response = await query(prompt);
 
