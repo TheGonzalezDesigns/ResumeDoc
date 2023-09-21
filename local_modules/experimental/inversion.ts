@@ -6,10 +6,10 @@ import { query } from "../query";
  * @param keywords The keywords to focus on.
  * @returns The inverted text.
  */
-export async function keyword_inversion(
+export const keyword_inversion = async (
   text: string,
   keywords: string[]
-): Promise<string> {
+): Promise<string> => {
   // Create a prompt for the model
   const prompt = `
     Given the text "${text}", construct a concise sentence that prominently features the keywords ${keywords.join(
@@ -21,4 +21,12 @@ export async function keyword_inversion(
   const response = await query(prompt);
 
   return response;
-}
+};
+
+export const invert_chunks = async (
+  chunks: string[],
+  keywords: string[]
+): Promise<string[]> =>
+  await Promise.all(
+    chunks.map((chunk: string) => keyword_inversion(chunk, keywords))
+  );
