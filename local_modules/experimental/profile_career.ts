@@ -5,7 +5,6 @@ export async function profile_career_chunk(
   career_chunk: string
 ): Promise<meta> {
   const main_categories = await extract_main_categories(career_chunk);
-  //log(main_categories, `main_categories`);
   // Create an empty extraction object
   const extraction: extraction_keys = {};
 
