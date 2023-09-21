@@ -1,19 +1,13 @@
-import { refine_career_data } from "./local_modules/experimental/refinement";
 import { adaptive_chunking } from "./local_modules/experimental/extract";
 import { profile_career_chunk } from "./local_modules/experimental/profile_career";
 import {
   analyze_chunk,
   initialize_analysis,
 } from "./local_modules/experimental/chunk_analysis";
-import { meta_analysis } from "./local_modules/experimental/meta_analysis";
-import { analyze_career } from "./local_modules/experimental/analyze_career";
-import { frame } from "./local_modules/frame";
-import { query } from "./local_modules/query";
-import ejs from "ejs";
 import { notify } from "./local_modules/notify";
-import { Document } from "local_modules/document";
 import { profile_job } from "local_modules/profile_job";
 import { split_text } from "local_modules/experimental/text_splitter";
+import { invert_chunks } from "./local_modules/experimental/inversion";
 import { log, debug } from "./local_modules/experimental/debug";
 // Main function
 async function main(): Promise<void> {
@@ -39,14 +33,9 @@ async function main(): Promise<void> {
     // Step 3: Adaptive Chunking and Refinement
     const adapted_chunks: string[] = (
       await Promise.all(
-        [...initial_chunks].map(async (initial_chunk) => {
-          let chunks = await adaptive_chunking(
-            initial_chunk,
-            regexList,
-            threshold
-          );
-          return chunks;
-        })
+        [...initial_chunks].map((initial_chunk) =>
+          adaptive_chunking(initial_chunk, regexList, threshold)
+        )
       )
     ).flat();
 
@@ -59,10 +48,7 @@ async function main(): Promise<void> {
         const chunk_profile = await profile_career_chunk(refined_chunk);
         return chunk_profile;
       })
-    ); //NOtes: refine the array prompt to return an array object,
-    //then combine it with the original chhunk for {chunk, categories} where the categories will be analyzed next,
-    //and weighted but this way we dont lose the original chunk data
-    //debug(profile_chunks, "profile_chunks");
+    );
     // Step 5: Chunk Analysis and Scoring
     const scored_chunks = [...profile_chunks].map((profile_chunk) => {
       const analysis = analyze_chunk(
@@ -75,46 +61,14 @@ async function main(): Promise<void> {
         score: analysis.score,
       };
     });
-    log(scored_chunks, "scored_chunks");
-    debug(adapted_chunks, "adapted_chunks");
-
-    // Step 6: Meta Analysis
-    const analysis_result = metaAnalysis(
-      scored_chunks,
-      job_profile,
-      raw_career_data
-    );
-
-    // Step 7: Career Profile Aggregation
-    const aggregated_career_profile = analyze_career(
-      job_profile,
-      scored_chunks
-    );
-
-    // Step 8: Final Structuring and Framing
-    const resume_content = frame(
-      aggregated_career_profile,
-      job_profile,
-      "resume"
-    );
-    const cover_letter_content = frame(
-      aggregated_career_profile,
-      job_profile,
-      "cover_letter"
-    );
-
-    // Save the results
-    const resume = new Document(`./src/html/resumes/${legal_name}_Resume.html`);
-    const cover_letter = new Document(
-      `./src/html/cover_letters/${legal_name}_cover_letter.html`
-    );
-
-    // Save the generated resume and cover letter content to HTML files
-    await Promise.all([
-      resume.save(resume_content),
-      cover_letter.save(cover_letter_content),
-    ]);
-
+    //log(scored_chunks, "scored_chunks");
+    //log(adapted_chunks, "adapted_chunks");
+    const inverted_chunks = await invert_chunks(refined_chunks, regexList);
+    log(inverted_chunks, "inverted_chunks");
+    log(job_profile, "job_profile");
+    if (inverted_chunks.length == 0) {
+      throw "Bad Match";
+    }
     // Notify that all content is ready
     notify(`All content for ${legal_name} is ready.`);
   } catch (error) {
