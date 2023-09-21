@@ -8,14 +8,14 @@ import { query } from "../query";
  */
 export const keyword_inversion = async (
   text: string,
-  keywords: string[]
+  keywords: RegExp[]
 ): Promise<string> => {
   // Create a prompt for the model
   const prompt = `
-    Given the text "${text}", construct a concise sentence that prominently features the keywords ${keywords.join(
+  Construct a brief and focused sentence using ONLY the provided keywords ${keywords.join(
     ", "
-  )} while excluding non-relevant parts.
-  `;
+  )} from the text "${text}".
+`;
 
   // Get the response from the model
   const response = await query(prompt);
@@ -25,7 +25,7 @@ export const keyword_inversion = async (
 
 export const invert_chunks = async (
   chunks: string[],
-  keywords: string[]
+  keywords: RegExp[]
 ): Promise<string[]> =>
   await Promise.all(
     chunks.map((chunk: string) => keyword_inversion(chunk, keywords))
