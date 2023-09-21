@@ -1,6 +1,5 @@
 import { extract_main_categories, extract_details } from "./extract";
 import { extraction_keys, meta } from "../extract";
-import { debug, log } from "../experimental/debug";
 
 export async function profile_career_chunk(
   career_chunk: string
@@ -14,10 +13,6 @@ export async function profile_career_chunk(
   await Promise.all(
     main_categories.map(async (category) => {
       extraction[category] = await extract_details(category, career_chunk);
-      log(
-        { category, extraction: extraction[category] },
-        `profiling ${category}`
-      );
     })
   );
 
