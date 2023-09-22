@@ -3,9 +3,18 @@ import { split_text } from "local_modules/text_splitter";
 import { initialize_analysis } from "./chunk_analysis";
 import { adaptive_chunking } from "./extract";
 import { invert_chunks } from "./inversion";
+
+/**
+ * Summarizes a career based on the job profile and raw career data.
+ *
+ * @returns {Promise<string>} A promise that resolves to the summarized career text.
+ * @throws {Error} Throws an error if any step in the process fails.
+ */
 export const summarize_career = async (): Promise<string> => {
   let summary = "";
+
   try {
+    // Step 1: Obtain Job Profile
     const job_profile = await profile_job();
 
     // Step 2: Text Splitting and Initial Chunking
@@ -19,7 +28,7 @@ export const summarize_career = async (): Promise<string> => {
     // Step 3: Adaptive Chunking and Refinement
     const adapted_chunks: string[] = (
       await Promise.all(
-        [...initial_chunks].map((initial_chunk) =>
+        initial_chunks.map((initial_chunk) =>
           adaptive_chunking(initial_chunk, regexList, threshold)
         )
       )
@@ -27,10 +36,13 @@ export const summarize_career = async (): Promise<string> => {
 
     // Remove duplicates from the adapted chunks
     const refined_chunks = Array.from(new Set(adapted_chunks));
+
+    // Step 4: Invert and Join Chunks
     const inverted_chunks = await invert_chunks(refined_chunks, regexList);
     summary = inverted_chunks.join(". ");
   } catch (Error) {
     throw Error;
   }
+
   return summary;
 };
