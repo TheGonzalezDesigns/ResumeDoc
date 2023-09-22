@@ -4,9 +4,9 @@ import { query } from "./local_modules/query";
 import { validate_content_type as cType } from "./local_modules/content_type";
 import ejs from "ejs";
 import { notify } from "./local_modules/notify";
-import { extract_career_chunks } from "./local_modules/analyze_career";
 import { get_array } from "local_modules/reform_data";
 import { Document } from "local_modules/document";
+import { summarize_career } from "./local_modules/summarize_career";
 
 async function main(): Promise<void> {
   const legal_name = "Hugo_Gonzalez";
@@ -15,7 +15,7 @@ async function main(): Promise<void> {
 
   try {
     const job_profile = await profile_job();
-    const career_profile = await extract_career_chunks(job_profile);
+    const career_profile = await summarize_career(job_profile);
     console.info(career_profile);
     //throw "Debugging...";
     let content_type = cType(0);
