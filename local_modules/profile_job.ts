@@ -1,4 +1,4 @@
-import { extract, extraction } from "./extract";
+import { extraction } from "./extract";
 import { query } from "./query";
 
 /**
