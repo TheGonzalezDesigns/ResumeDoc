@@ -1,7 +1,8 @@
 import { profile_job } from "./profile_job";
 import { split_text } from "local_modules/text_splitter";
 import { analyze_chunk, initialize_analysis } from "./chunk_analysis";
-import { adaptive_chunking } from "./experimental/extract";
+import { adaptive_chunking } from "./extract";
+import { profile_career_chunk } from "./profile_career";
 export const summarize_career = async (): Promise<string> => {
   let summary = "";
   try {
@@ -26,7 +27,6 @@ export const summarize_career = async (): Promise<string> => {
 
     // Remove duplicates from the adapted chunks
     const refined_chunks = Array.from(new Set(adapted_chunks));
-    log(refined_chunks, "adapted_chunks");
     // Step 4: Career Profile Creation
     const profile_chunks = await Promise.all(
       [...refined_chunks].map(async (refined_chunk) => {
