@@ -28,6 +28,7 @@ export const summarize_career = async (): Promise<string> => {
     // Remove duplicates from the adapted chunks
     const refined_chunks = Array.from(new Set(adapted_chunks));
     const inverted_chunks = await invert_chunks(refined_chunks, regexList);
+    summary = inverted_chunks.join(". ");
   } catch (Error) {
     throw Error;
   }
