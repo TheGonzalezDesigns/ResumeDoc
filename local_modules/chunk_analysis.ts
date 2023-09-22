@@ -9,7 +9,7 @@ export type chunk_score = {
  * Initializes the analysis parameters based on the given job profile.
  *
  * @param {extraction} job_profile - The job profile containing technical and non-technical skills.
- * @returns {Object} An object containing the regex list and threshold for chunk analysis.
+ * @returns {{regexList: RegExp[], threshold: number}} An object containing the regex list and threshold for chunk analysis.
  */
 export const initialize_analysis = (job_profile: extraction) => {
   // Extract all the important keywords from the job profile.
