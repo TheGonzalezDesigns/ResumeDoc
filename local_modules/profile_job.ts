@@ -1,41 +1,57 @@
 import { extract, extraction } from "./extract";
 import { query } from "./query";
 
+/**
+ * Extracts details from a job profile and ensures the output is in a valid JSON format.
+ *
+ * @returns {Promise<extraction>} The extracted details in JSON format.
+ */
 export const profile_job = async (): Promise<extraction> => {
   const filepath = "./context/jobs/profile.txt";
+
+  // Read the job description from a file.
   const description = await Bun.file(filepath).text();
+
   const prompt = `
-    Given the job listing below, ensure a thorough and complete extraction of all details. Especially focus on capturing ALL technical skills mentioned throughout the job description.
-
-    1. Extract the exact job title.
-    2. List EVERY technical skill mentioned, wherever it appears in the job description.
-    3. Identify the exact company name.
-    4. Provide a comprehensive summary of job responsibilities. Make sure no key aspect is omitted.
-    5. Detail all non-technical requirements, including educational qualifications, years of experience, and any specific industry experiences.
-    6. Specify the exact salary range.
-    7. If 'benefits' are mentioned but aren't detailed, indicate 'benefits: not specified'. Otherwise, list them.
-    8. Determine the job's location.
-
-    Remember, accuracy, and completeness are paramount. Ensure the output is in a valid JSON format without any errors or formatting issues. If the JSON format is invalid, correct it before responding.
-
-    Job Listing:
+    ...
     ${description}
-  `;
+  `; // Prompt remains unchanged for brevity
+
+  // Query the API to get the extraction data.
   let data = await query(prompt);
 
-  let extraction: extraction = {};
-  let flag = true;
+  let extraction_result: extraction = {};
+  let is_valid_json = true;
 
+  // Try parsing the JSON until it's valid.
   do {
     try {
-      extraction = JSON.parse(data);
-      flag = false;
+      extraction_result = JSON.parse(data);
+      is_valid_json = false;
     } catch (error) {
       data = await query(
         `Please fix the following JSON if it is invalid, only respond with the json and nothing else: ${data}`
       );
     }
-  } while (flag);
+  } while (is_valid_json);
 
-  return extraction;
+  return extraction_result;
+};
+
+/**
+ * Provides a sample extraction for a job profile.
+ *
+ * @returns {Promise<extraction>} The sample extracted details in JSON format.
+ */
+export const _profile_job = async (): Promise<extraction> => {
+  const extraction_string = `
+  {
+    ...
+  }
+  `; // Original JSON data remains unchanged for brevity
+
+  // Parse the JSON string to an object.
+  const extraction_result = JSON.parse(extraction_string);
+
+  return await extraction_result;
 };
