@@ -1,4 +1,4 @@
-enum content {
+export enum content {
   professional_summary = 0,
   job_application_coverLetter = 1,
   technical_skill_list = 2,
