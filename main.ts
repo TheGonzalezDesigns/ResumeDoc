@@ -11,6 +11,13 @@ import {
   content,
 } from "./local_modules/content_type";
 
+/**
+ * Constructs a prompt stack for generating content.
+ * @param {string} job_title - The title of the job.
+ * @param {string} content_type - The type of content to be generated.
+ * @param {string} fine_tuned - Fine-tuned specific instructions.
+ * @returns {string} - The constructed prompt stack.
+ */
 const stack = (
   job_title: string,
   content_type: string,
@@ -20,25 +27,22 @@ const stack = (
   const instructions = fine_tuned.length
     ? `Specific-Instructions: ${fine_tuned}`
     : "";
-  const final = `${base} ${instructions}`;
-  return final;
+  return `${base} ${instructions}`;
 };
 
 /**
- * The main function to generate a resume, cover letter, and skill list based on job and career profiles.
+ * Main function to generate a resume, cover letter, and skill list based on job and career profiles.
+ * @returns {Promise<void>}
  */
-async function main(): Promise<void> {
+const main = async (): Promise<void> => {
   const legal_name = "Hugo_Gonzalez";
   notify("The Doctor is ready");
-  console.time("mainExecution");
 
   try {
     // Fetch job and career profiles
     const job_profile = await profile_job();
     const career_profile = await summarize_career(job_profile);
 
-    // Log the career profile
-    console.info(career_profile);
     const job_title = job_profile.job_title;
     const reframe = (content_type: content, prompt: string = "") =>
       frame(
@@ -48,26 +52,25 @@ async function main(): Promise<void> {
         stack(job_title, cType(content_type), prompt),
         cType(content_type)
       );
-    // Generate resume content
-    const prompt_professional_summary = reframe(0);
-    const prompt_cover_letter = reframe(
-      1,
-      "Submit the main content of the letter only, excluding salutations or closings. Limit to 250 words, emphasizing suitability for the specified role"
-    );
-    const prompt_skill_list = reframe(
-      2,
-      "Provide an array of 10 or more skills relevant to the job. Each skill should clearly demonstrate your expertise. Format as a JavaScript array."
-    );
 
-    // Query to get final generated content
+    // Generate resume content
     const [professional_summary, cover_letter_content, skill_list] =
       await Promise.all([
-        query(prompt_professional_summary),
-        query(prompt_cover_letter),
-        query(prompt_skill_list),
+        query(reframe(0)),
+        query(
+          reframe(
+            1,
+            "Submit the main content of the letter only, excluding salutations or closings. Limit to 250 words, emphasizing suitability for the specified role"
+          )
+        ),
+        query(
+          reframe(
+            2,
+            "Provide an array of 10 or more skills relevant to the job. Each skill should clearly demonstrate your expertise. Format as a JavaScript array."
+          )
+        ),
       ]);
 
-    // Define the generated content type
     interface Generated_content {
       professional_summary: string;
       skill_list: string[];
@@ -76,8 +79,6 @@ async function main(): Promise<void> {
     }
 
     const extracted_skill_list = await get_array(skill_list);
-
-    // Populate the content object
     const content: Generated_content = {
       professional_summary,
       skill_list: extracted_skill_list,
@@ -86,20 +87,17 @@ async function main(): Promise<void> {
     };
 
     if (content.skill_list.length < 5 || content.fileName === "") {
-      console.error("Malformed content:", content);
       throw Error("Incomplete Generation.");
     }
 
     // Generate final documents
     const resume_template = new Document("./templates/resume.ejs");
     const resume_content = ejs.render(resume_template.load(), content);
-
     const cover_letter_template = new Document("./templates/cover_letter.ejs");
     const cover_letter_full_content = ejs.render(cover_letter_template.load(), {
       cover_letter_content: content.cover_letter_content,
     });
 
-    // Save the generated documents
     const resume = new Document(
       `./src/html/resumes/${legal_name}_Resume_${content.fileName}.html`
     );
@@ -113,13 +111,8 @@ async function main(): Promise<void> {
 
     notify(`All content for ${content.fileName} is ready.`);
   } catch (error) {
-    console.error("Error logs:", error);
     notify("The Doctor is ill");
   }
+};
 
-  console.timeEnd("mainExecution");
-}
-
-console.time("main");
 main();
-console.timeEnd("main");
