@@ -3,6 +3,7 @@ import { split_text } from "local_modules/text_splitter";
 import { analyze_chunk, initialize_analysis } from "./chunk_analysis";
 import { adaptive_chunking } from "./extract";
 import { profile_career_chunk } from "./profile_career";
+import { invert_chunks } from "./inversion";
 export const summarize_career = async (): Promise<string> => {
   let summary = "";
   try {
@@ -34,20 +35,6 @@ export const summarize_career = async (): Promise<string> => {
         return chunk_profile;
       })
     );
-    // Step 5: Chunk Analysis and Scoring
-    const scored_chunks = [...profile_chunks].map((profile_chunk) => {
-      const analysis = analyze_chunk(
-        profile_chunk.raw_data,
-        regexList,
-        threshold
-      );
-      return {
-        chunk: profile_chunk.raw_data,
-        score: analysis.score,
-      };
-    });
-    //log(scored_chunks, "scored_chunks");
-    //log(adapted_chunks, "adapted_chunks");
     const inverted_chunks = await invert_chunks(refined_chunks, regexList);
   } catch (Error) {
     throw Error;
