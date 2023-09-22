@@ -1,4 +1,4 @@
-import { extraction } from "../extract";
+import { extraction } from "./extract";
 
 export type chunk_score = {
   chunk: string;
@@ -51,11 +51,3 @@ export const analyze_chunk = (
     score: match_count,
   };
 };
-
-// Check if a chunk is worthy based on its analysis
-export function is_chunk_worthy(
-  chunk_analysis: chunk_score,
-  threshold: number
-): boolean {
-  return chunk_analysis.score > threshold;
-}
