@@ -1,4 +1,4 @@
-import { profile_job } from "./profile_job";
+import { extraction } from "./extract";
 import { split_text } from "local_modules/text_splitter";
 import { initialize_analysis } from "./chunk_analysis";
 import { adaptive_chunking } from "./extract";
@@ -7,16 +7,16 @@ import { invert_chunks } from "./inversion";
 /**
  * Summarizes a career based on the job profile and raw career data.
  *
+ * @param {extraction} job_profile - The job profile containing technical and non-technical skills.
  * @returns {Promise<string>} A promise that resolves to the summarized career text.
  * @throws {Error} Throws an error if any step in the process fails.
  */
-export const summarize_career = async (): Promise<string> => {
+export const summarize_career = async (
+  job_profile: extraction
+): Promise<string> => {
   let summary = "";
 
   try {
-    // Step 1: Obtain Job Profile
-    const job_profile = await profile_job();
-
     // Step 2: Text Splitting and Initial Chunking
     const filepath = "./context/professional/profile.txt";
     const raw_career_data = await Bun.file(filepath).text();
