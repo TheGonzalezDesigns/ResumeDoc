@@ -1,27 +1,25 @@
 import { query } from "./query";
 import { extraction } from "./extract";
 
+/**
+ * Generates a professional summary based on the given job profile and career summary.
+ *
+ * @param {extraction} job_profile - The job profile containing various details like job title, company name, etc.
+ * @param {string} career_summary - The career summary of the individual.
+ * @returns {Promise<string>} A promise that resolves to a generated professional summary.
+ */
 export const generate_professional_summary = async (
   job_profile: extraction,
   career_summary: string
 ): Promise<string> => {
-  // Log the job_profile for debugging
-  console.error(job_profile);
-
-  // Extract relevant details from the job and career profiles
   const job_title = job_profile.job_title;
   const company_name = job_profile.company_name;
   const technical_skills = job_profile.technical_skills;
-
-  // Directly use job_responsibilities as it’s a string.
   const responsibilities = job_profile.job_responsibilities;
-
-  // Directly use specific_industry_experience as it’s a string or fallback to a default string.
   const non_technical_requirements =
     job_profile.non_technical_requirements.specific_industry_experience ||
     "industry-specific experiences";
 
-  // Craft the professional summary prompt dynamically
   const professional_summary_prompt = `
     Craft a concise, clear, and highly personalized professional summary using this profile of my career: ${career_summary}
 
@@ -34,5 +32,6 @@ export const generate_professional_summary = async (
 
     Ensure the summary is eloquent, engaging, succinct, and highly relevant, omitting any unnecessary details, redundancies, or technical jargon. Explicitly highlight the proficiency in ${technical_skills} and illustrate how these skills can be pivotal in fulfilling the aspirations of ${company_name}.
   `;
+
   return await query(professional_summary_prompt, 4);
 };
