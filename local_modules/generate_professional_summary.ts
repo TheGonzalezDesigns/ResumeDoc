@@ -17,14 +17,14 @@ export const generate_professional_summary = async (
     Craft a concise, clear, and highly personalized professional summary using this profile of my career: ${career_summary}
 
     Strive to:
-    - Include specific and quantifiable achievements demonstrating tangible impact made in previous roles, particularly those relevant to a ${job_title} role at ${company_name}.
-    - Highlight unique contributions, innovations, or approaches that set the candidate apart.
-    - Detail specific experiences, projects, or technologies that align directly with the responsibilities and requirements of the ${job_title} role.
-    - Express a genuine and deep alignment with ${company_name}’s values, mission, and objectives, providing specific examples or insights to showcase understanding and fit.
-    - Conclude with a compelling and personalized statement expressing enthusiasm and alignment with the role at ${company_name}, and the potential contribution to be made.
+    - Include specific and quantifiable achievements, using examples or case studies, demonstrating tangible impact made in previous roles, particularly those relevant to a ${job_title} role at ${company_name}.
+    - Highlight unique contributions, innovations, or approaches, ensuring they are directly aligned with the responsibilities and requirements of the ${job_title} role.
+    - Detail experiences and projects that are highly relevant to ${company_name}, using clear, concise, and straightforward language.
+    - Reflect on how the candidate’s approach, philosophy, or work ethic aligns with the culture and values of ${company_name}, providing insights to showcase understanding and fit.
+    - Conclude with a compelling and personalized statement, expressing genuine enthusiasm, alignment with the role at ${company_name}, and the potential significant contribution to be made.
 
-    Ensure the summary is eloquent, engaging, succinct, and highly relevant, avoiding unnecessary details or redundancies.
+    Ensure the summary is eloquent, engaging, succinct, and highly relevant, avoiding any unnecessary details, redundancies, or jargon.
 `;
   console.error(job_profile);
-  return await query(professional_summary_prompt);
+  return await query(professional_summary_prompt, 4);
 };
