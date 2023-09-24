@@ -1,11 +1,28 @@
 import { exec } from "child_process";
 import path from "path";
-import os from "os";
 
-export const notify = (message: string): void => {
-  const iconPath = path.join(os.homedir(), "Pictures/ApplicationIcons/icon");
+// Enum for notification type
+enum notification_type {
+  neutral = "neutral",
+  error = "error",
+  success = "success",
+}
+
+/**
+ * Sends a notification to the user.
+ *
+ * @param {string} message - The message to be displayed in the notification.
+ * @param {notification_type} [notification=notification_type.neutral] - The type of the notification.
+ */
+export const notify = (
+  message: string,
+  notification: notification_type = notification_type.neutral
+): void => {
+  const icon_path: string = path.resolve(
+    `./assets/icons/notification/${notification}/icon.png`
+  );
   exec(
-    `notify-send -i "${iconPath}" "ResumeDoc" "${message}"`,
+    `notify-send -i "${icon_path}" "ResumeDoc" "${message}"`,
     (error, stdout, stderr) => {
       if (error) {
         console.log(`error: ${error.message}`);
@@ -19,3 +36,19 @@ export const notify = (message: string): void => {
     }
   );
 };
+
+/**
+ * Sends a success notification to the user.
+ *
+ * @param {string} message - The message to be displayed in the notification.
+ */
+export const success = (message: string) =>
+  notify(message, notification_type.success);
+
+/**
+ * Sends an error notification to the user.
+ *
+ * @param {string} message - The message to be displayed in the notification.
+ */
+export const err = (message: string) =>
+  notify(message, notification_type.error);
