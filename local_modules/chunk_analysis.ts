@@ -9,7 +9,7 @@ export type chunk_score = {
  * Initializes the analysis parameters based on the given job profile.
  *
  * @param {extraction} job_profile - The job profile containing technical and non-technical skills.
- * @returns {{regexList: RegExp[], threshold: number}} An object containing the regex list and threshold for chunk analysis.
+ * @returns {{regex_list: RegExp[], threshold: number}} An object containing the regex list and threshold for chunk analysis.
  */
 export const initialize_analysis = (
   job_profile: extraction
@@ -17,10 +17,14 @@ export const initialize_analysis = (
   const tech_skills = job_profile.technical_skills ?? [];
   const non_tech_skills = job_profile.non_technical_skills ?? [];
   let regex_list: RegExp[] = [];
-  const job_keywords = [...tech_skills, ...non_tech_skills];
+
+  // Filter out empty or null keywords
+  const job_keywords = [...tech_skills, ...non_tech_skills].filter(Boolean);
+
   regex_list = job_keywords.map(
     (keyword) => new RegExp(`\\b${keyword}\\b`, "i")
   );
+
   const threshold_coefficient = 0.15;
   const threshold = threshold_coefficient * job_keywords.length;
 
