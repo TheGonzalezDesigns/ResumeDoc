@@ -1,15 +1,23 @@
 import { query } from "./query";
 import { extraction } from "./extract";
+import { get_array } from "./reform_data";
 
+/**
+ * Generates a list of sentences highlighting skills and achievements based on the given job profile and career summary.
+ *
+ * @param {extraction} job_profile - The job profile containing various details like job title, technical skills, etc.
+ * @param {string} career_summary - The career summary of the individual.
+ * @returns {Promise<string[]>} A promise that resolves to a list of sentences highlighting skills and achievements.
+ */
 export const generate_skill_list = async (
   job_profile: extraction,
   career_summary: string
-): Promise<string> => {
-  // Extract relevant details from the job and career profiles
-  const job_title = job_profile.job_title;
-  const technical_skills = job_profile.technical_skills.join(", ");
+): Promise<string[]> => {
+  const job_title = job_profile.job_title || "the role";
+  const technical_skills = job_profile.technical_skills
+    ? job_profile.technical_skills.join(", ")
+    : "relevant technical skills";
 
-  // Craft the skills section prompt dynamically
   const skills_section_prompt = `
     Create ten sentences highlighting the skills and achievements, using this profile of my career: ${career_summary}
 
@@ -23,6 +31,9 @@ export const generate_skill_list = async (
     - High specificity and quantification in mentioning skills and achievements.
     - Strict relevance to the skills and responsibilities of a ${job_title}.
     - A smooth and eloquent flow in each sentence, with a clear focus on applicability to the role.
-`;
-  return await query(skills_section_prompt);
+  `;
+
+  const text_list = await query(skills_section_prompt);
+  const skill_list = await get_array(text_list);
+  return skill_list;
 };
