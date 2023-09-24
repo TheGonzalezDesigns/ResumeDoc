@@ -5,11 +5,18 @@ export const generate_professional_summary = async (
   job_profile: extraction,
   career_summary: string
 ): Promise<string> => {
+  // Log the job_profile for debugging
+  console.error(job_profile);
+
   // Extract relevant details from the job and career profiles
   const job_title = job_profile.job_title;
   const company_name = job_profile.company_name;
   const technical_skills = job_profile.technical_skills.join(", ");
-  const responsibilities = job_profile.job_responsibilities.join(", ");
+
+  // Directly use job_responsibilities as it’s a string.
+  const responsibilities = job_profile.job_responsibilities;
+
+  // Directly use specific_industry_experience as it’s a string or fallback to a default string.
   const non_technical_requirements =
     job_profile.non_technical_requirements.specific_industry_experience ||
     "industry-specific experiences";
@@ -26,7 +33,6 @@ export const generate_professional_summary = async (
     - Conclude with a compelling and personalized statement, expressing genuine enthusiasm and alignment with the role at ${company_name}, and detailing the potential significant contribution to be made.
 
     Ensure the summary is eloquent, engaging, succinct, and highly relevant, avoiding any unnecessary details, redundancies, or jargon. Highlight the proficiency in ${technical_skills} and how it can be leveraged to meet the goals of ${company_name}.
-`;
-  console.error(job_profile);
+  `;
   return await query(professional_summary_prompt, 4);
 };
