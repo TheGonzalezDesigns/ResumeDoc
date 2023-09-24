@@ -1,7 +1,7 @@
 import { query } from "./query";
 import { extraction } from "./extract";
 
-export const generate_skills_section = async (
+export const generate_skill_list = async (
   job_profile: extraction,
   career_summary: string
 ): Promise<string> => {
