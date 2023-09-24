@@ -1,5 +1,5 @@
 import { extraction } from "./extract";
-import { split_text } from "local_modules/text_splitter";
+import { split_text } from "./text_splitter";
 import { initialize_analysis } from "./chunk_analysis";
 import { adaptive_chunking } from "./extract";
 import { invert_chunks } from "./inversion";
@@ -23,22 +23,23 @@ export const summarize_career = async (
     const initial_chunks = await split_text(raw_career_data);
 
     // Initialize analysis with regex list and threshold
-    const { regexList, threshold } = initialize_analysis(job_profile);
+    const { regex_list, threshold } = initialize_analysis(job_profile);
 
     // Step 3: Adaptive Chunking and Refinement
     const adapted_chunks: string[] = (
       await Promise.all(
         initial_chunks.map((initial_chunk) =>
-          adaptive_chunking(initial_chunk, regexList, threshold)
+          adaptive_chunking(initial_chunk, regex_list, threshold)
         )
       )
     ).flat();
 
     // Remove duplicates from the adapted chunks
     const refined_chunks = Array.from(new Set(adapted_chunks));
+    if (refined_chunks.length == 0) throw "This job is a bad match.";
 
     // Step 4: Invert and Join Chunks
-    const inverted_chunks = await invert_chunks(refined_chunks, regexList);
+    const inverted_chunks = await invert_chunks(refined_chunks, regex_list);
     summary = inverted_chunks.join(". ");
   } catch (Error) {
     throw Error;
