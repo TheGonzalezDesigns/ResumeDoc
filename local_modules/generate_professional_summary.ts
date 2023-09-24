@@ -16,25 +16,21 @@ export const generate_professional_summary = async (
     Create a concise, relevant, and detailed professional summary, using this profile of my career: ${career_summary}
 
     Please ensure to include:
-    - Specific experiences relevant to the role of a ${job_title}, focusing on ${technical_skills}.
-    - Any experiences related to ${
+    - Specific and quantifiable achievements or impacts relevant to the role of a ${job_title}, focusing on ${technical_skills}.
+    - Experiences and achievements related to ${
       non_technical_requirements.specific_industry_experience ||
       "the specific industry"
-    } if applicable.
-    - Experiences in ${responsibilities} to validate the effectiveness of design ideas.
-    - Mention of establishing and promoting design guidelines, best practices, and standards.
-    - Any experience in designing marketing creative for various media including static and video advertisements.
-    - A mention of expertise in ${technical_skills} and other relevant technical skills.
-    - The professional summary should be specifically tailored to align with a role as a ${job_title}.
-
-    Avoid including:
-    - Unnecessary technical details or skills that are not relevant to a ${job_title} role, unless they significantly enhance the profile.
-    - Overemphasis on roles or experiences that do not align with ${job_title}.
-
-    Strive for:
-    - Clarity and precision in mentioning experiences and skills.
-    - Relevance to the job profile of a ${job_title}.
-    - A smooth and eloquent flow in the summary.
+    } that highlight the understanding and fulfillment of unique requirements and brand identities, if applicable.
+    - Experiences in ${responsibilities} that demonstrate the ability to validate and optimize design ideas effectively.
+    - Mention of establishing and promoting design guidelines, best practices, and standards, illustrating the commitment to quality and consistency in design.
+    - A detailed showcase of experiences in designing marketing creative for various media, emphasizing the ability to create visually appealing and engaging materials.
+    - A balanced mention of expertise in ${technical_skills} and other relevant technical skills, along with soft skills, showcasing versatility and comprehensive capability.
+    
+    The professional summary should:
+    - Be tailored specifically to align with a role as a ${job_title}.
+    - Clearly articulate the value and impact brought to previous roles.
+    - Have a smooth and eloquent flow, maintaining clarity and precision.
+    - Strictly maintain relevance to the job profile of a ${job_title}, avoiding overemphasis on unrelated roles or technical details.
 `;
   return await query(professional_summary_prompt);
 };
