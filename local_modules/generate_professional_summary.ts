@@ -11,7 +11,7 @@ export const generate_professional_summary = async (
   // Extract relevant details from the job and career profiles
   const job_title = job_profile.job_title;
   const company_name = job_profile.company_name;
-  const technical_skills = job_profile.technical_skills.join(", ");
+  const technical_skills = job_profile.technical_skills;
 
   // Directly use job_responsibilities as it’s a string.
   const responsibilities = job_profile.job_responsibilities;
