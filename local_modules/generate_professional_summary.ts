@@ -14,7 +14,7 @@ export const generate_professional_summary = async (
 ): Promise<string> => {
   const job_title = job_profile.job_title;
   const company_name = job_profile.company_name;
-  const technical_skills = job_profile.technical_skills;
+  const technical_skills = job_profile.technical_skills.join(", ");
   const responsibilities = job_profile.job_responsibilities;
   const non_technical_requirements =
     job_profile?.non_technical_requirements?.specific_industry_experience ||
@@ -24,13 +24,13 @@ export const generate_professional_summary = async (
     Craft a concise, clear, and highly personalized professional summary using this profile of my career: ${career_summary}
 
     Strive to:
-    - Detail specific, quantifiable achievements, using metrics or statistics where possible, demonstrating tangible impact made in previous roles relevant to a ${job_title} role at ${company_name}.
-    - Emphasize distinctive contributions and innovations and elucidate how they are directly aligned with the responsibilities of ${responsibilities} and requirements of the ${job_title} role.
-    - Discuss experiences and projects, focusing on those that showcase a profound understanding of ${non_technical_requirements}, and are highly pertinent to ${company_name}.
-    - Delve into how the candidate’s philosophy or approach to design and work aligns with the culture and values of ${company_name}, providing specific insights or examples that showcase understanding and fit with the company’s mission and objectives.
-    - Conclude with a compelling and personalized statement, expressing genuine enthusiasm and alignment with the role at ${company_name}, detailing the unique and significant contributions to be made.
+    - Include specific and quantifiable achievements, providing metrics or data to demonstrate the tangible impact made in roles relevant to a ${job_title} position at ${company_name}.
+    - Highlight unique contributions, innovations, or methodologies, explaining how they align with the responsibilities of ${responsibilities} and the ${job_title} role requirements.
+    - Discuss experiences and projects that demonstrate a deep understanding of ${non_technical_requirements}, offering insights that are directly relevant to ${company_name}.
+    - Reflect on the alignment of the candidate's approach or philosophy with the culture and values of ${company_name}, providing concrete examples or anecdotes that indicate a strong fit with the company’s goals and mission.
+    - Conclude with a compelling, personalized statement, expressing enthusiasm for the role at ${company_name}. In particular, detail how the candidate's ${non_technical_requirements} experience will contribute to shaping the future of the organization and align with its objectives.
 
-    Ensure the summary is eloquent, engaging, succinct, and highly relevant, omitting any unnecessary details, redundancies, or technical jargon. Explicitly highlight the proficiency in ${technical_skills} and illustrate how these skills can be pivotal in fulfilling the aspirations of ${company_name}.
+    Ensure the summary is eloquent, engaging, succinct, and highly relevant. Avoid unnecessary details, redundancies, or technical jargon. Clearly highlight proficiency in ${technical_skills} and how these skills can contribute to ${company_name}'s objectives.
   `;
 
   return await query(professional_summary_prompt, 4);
