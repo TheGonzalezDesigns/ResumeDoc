@@ -8,8 +8,6 @@ export const generate_skill_list = async (
   // Extract relevant details from the job and career profiles
   const job_title = job_profile.job_title;
   const technical_skills = job_profile.technical_skills.join(", ");
-  const responsibilities = job_profile.job_responsibilities;
-  const non_technical_requirements = job_profile.non_technical_requirements;
 
   // Craft the skills section prompt dynamically
   const skills_section_prompt = `
