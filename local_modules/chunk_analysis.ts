@@ -24,12 +24,23 @@ export const initialize_analysis = (
   const escapeRegExp = (string: string) =>
     string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
-  let regex_list: RegExp[] = job_keywords.map(
-    (keyword) => new RegExp(`\\b${escapeRegExp(keyword)}\\b`, "i")
+  // Split each keyword by various delimiters to get individual words
+  const individual_words = job_keywords
+    .map((keyword) => keyword.split(/[\s/._\&@#%^]+/))
+    .flat();
+
+  // Combine original phrases with their individual components
+  const combined_keywords = [
+    ...new Set([...job_keywords, ...individual_words]),
+  ];
+
+  // Create regex list based on combined keywords
+  const regex_list: RegExp[] = combined_keywords.map(
+    (word) => new RegExp(`\\b${escapeRegExp(word)}\\b`, "i")
   );
-  console.error(regex_list);
+
   const threshold_coefficient = 0.15;
-  const threshold = threshold_coefficient * job_keywords.length;
+  const threshold = threshold_coefficient * combined_keywords.length;
 
   return {
     regex_list,
