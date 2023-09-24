@@ -44,7 +44,7 @@ export const profile_job = async (): Promise<extraction> => {
     ${description}
   `;
 
-  let data = await query(prompt, 4);
+  let data = await query(prompt);
   let extraction: extraction = {};
   let flag = true;
 
