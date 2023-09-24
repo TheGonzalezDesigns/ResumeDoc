@@ -26,13 +26,13 @@ export const generate_professional_summary = async (
     Craft a concise, clear, and highly personalized professional summary using this profile of my career: ${career_summary}
 
     Strive to:
-    - Include specific, quantifiable achievements and impact, with clear examples or case studies, particularly those that are most relevant to a ${job_title} role at ${company_name}.
-    - Emphasize unique contributions, innovations, or approaches and explain how they are directly aligned with the responsibilities of ${responsibilities} and requirements of the ${job_title} role.
-    - Detail experiences and projects that demonstrate a deep understanding of ${non_technical_requirements}, providing insights and examples that are highly relevant to ${company_name}.
-    - Reflect on alignment with the culture and values of ${company_name}, providing insights or anecdotes that showcase a deep understanding and fit with the company’s mission and objectives.
-    - Conclude with a compelling and personalized statement, expressing genuine enthusiasm and alignment with the role at ${company_name}, and detailing the specific contributions to be made.
+    - Detail specific, quantifiable achievements, using metrics or statistics where possible, demonstrating tangible impact made in previous roles relevant to a ${job_title} role at ${company_name}.
+    - Emphasize distinctive contributions and innovations and elucidate how they are directly aligned with the responsibilities of ${responsibilities} and requirements of the ${job_title} role.
+    - Discuss experiences and projects, focusing on those that showcase a profound understanding of ${non_technical_requirements}, and are highly pertinent to ${company_name}.
+    - Delve into how the candidate’s philosophy or approach to design and work aligns with the culture and values of ${company_name}, providing specific insights or examples that showcase understanding and fit with the company’s mission and objectives.
+    - Conclude with a compelling and personalized statement, expressing genuine enthusiasm and alignment with the role at ${company_name}, detailing the unique and significant contributions to be made.
 
-    Ensure the summary is eloquent, engaging, succinct, and highly relevant, avoiding any unnecessary details, redundancies, or technical jargon. Explicitly highlight the proficiency in ${technical_skills} and how these skills can contribute to achieving the goals of ${company_name}.
+    Ensure the summary is eloquent, engaging, succinct, and highly relevant, omitting any unnecessary details, redundancies, or technical jargon. Explicitly highlight the proficiency in ${technical_skills} and illustrate how these skills can be pivotal in fulfilling the aspirations of ${company_name}.
   `;
   return await query(professional_summary_prompt, 4);
 };
