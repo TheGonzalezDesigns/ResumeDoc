@@ -6,6 +6,8 @@ import { get_array } from "./local_modules/reform_data";
 import { profile_job } from "./local_modules/profile_job";
 import { summarize_career } from "./local_modules/summarize_career";
 import { generate_professional_summary } from "./local_modules/generate_professional_summary";
+import { generate_skill_list } from "./local_modules/generate_skill_list";
+import { meta } from "./local_modules/extract.ts";
 import {
   validate_content_type as cType,
   content,
@@ -57,15 +59,22 @@ const main = async (): Promise<void> => {
   try {
     // Fetch job and career profiles
     const job_profile = await profile_job();
-    //console.error(job_profile);
     const career_profile = await summarize_career(job_profile);
-
+    //console.error(job_profile);
+    const [professional_summary, skill_list]: [string, string[]] =
+      await Promise.all([
+        generate_professional_summary(job_profile, career_profile),
+        generate_skill_list(job_profile, career_profile),
+      ]);
+    yell(JSON.stringify({ professional_summary, skill_list }));
+    /*
     const professional_summary = await generate_professional_summary(
       job_profile,
       career_profile
+      const skill_list = await generate_skill_list(job_profile, career_profile);
     );
-
-    yell(professional_summary);
+    yell(skill_list);
+*/
     const reframe = (content_type: content, prompt: string = "") =>
       frame(
         legal_name,
@@ -128,7 +137,7 @@ const main = async (): Promise<void> => {
   } catch (error) {
     err("The Doctor is ill");
     if (typeof error === "string") err(error);
-    else console.error(error);
+    console.error(error);
   }
 };
 
