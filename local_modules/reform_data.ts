@@ -10,7 +10,7 @@ type list = string[];
  */
 export const get_array = async (data: string): Promise<list> => {
   const list = await query(
-    `Create a valid JSON array from the following list, only respond with the valid array and nothing else: ${data}`
+    `Create a valid Typescript string array from the following list, only respond with the valid Typescript string[] and nothing else: ${data}`
   );
   return JSON.parse(list);
 };
