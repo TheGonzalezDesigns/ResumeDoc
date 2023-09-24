@@ -1,17 +1,11 @@
 import ejs from "ejs";
-import { frame } from "./local_modules/frame";
-import { query } from "./local_modules/query";
 import { Document } from "./local_modules/document";
 import { get_array } from "./local_modules/reform_data";
 import { profile_job } from "./local_modules/profile_job";
 import { summarize_career } from "./local_modules/summarize_career";
 import { generate_professional_summary } from "./local_modules/generate_professional_summary";
+import { generate_cover_letter } from "./local_modules/generate_cover_letter";
 import { generate_skill_list } from "./local_modules/generate_skill_list";
-import { meta } from "./local_modules/extract.ts";
-import {
-  validate_content_type as cType,
-  content,
-} from "./local_modules/content_type";
 import { notify, err, success } from "./local_modules/notify";
 
 interface Generated_content {
@@ -61,12 +55,18 @@ const main = async (): Promise<void> => {
     const job_profile = await profile_job();
     const career_profile = await summarize_career(job_profile);
     //console.error(job_profile);
-    const [professional_summary, skill_list]: [string, string[]] =
-      await Promise.all([
-        generate_professional_summary(job_profile, career_profile),
-        generate_skill_list(job_profile, career_profile),
-      ]);
-    yell(JSON.stringify({ professional_summary, skill_list }));
+    const [professional_summary, skill_list, cover_letter_content]: [
+      string,
+      string[],
+      string
+    ] = await Promise.all([
+      generate_professional_summary(job_profile, career_profile),
+      generate_skill_list(job_profile, career_profile),
+      generate_cover_letter(job_profile, career_profile),
+    ]);
+    yell(
+      JSON.stringify({ professional_summary, skill_list, cover_letter_content })
+    );
     /*
     const professional_summary = await generate_professional_summary(
       job_profile,
@@ -75,34 +75,7 @@ const main = async (): Promise<void> => {
     );
     yell(skill_list);
 */
-    const reframe = (content_type: content, prompt: string = "") =>
-      frame(
-        legal_name,
-        career_profile,
-        job_profile,
-        stack(job_title, cType(content_type), prompt),
-        cType(content_type)
-      );
     /*
-    // Generate resume content
-    const [professional_summary, cover_letter_content, skill_list] =
-      await Promise.all([
-        query(reframe(0)),
-        query(
-          reframe(
-            1,
-            "Submit the main content of the letter only, excluding salutations or closings. Limit to 250 words, emphasizing suitability for the specified role"
-          )
-        ),
-        query(
-          reframe(
-            2,
-            "Provide an array of 10 or more skills relevant to the job. Each skill should clearly demonstrate your expertise. Format as a JavaScript array."
-          )
-        ),
-      ]);
-
-    const extracted_skill_list = await get_array(skill_list);
     const content: Generated_content = {
       professional_summary,
       skill_list: extracted_skill_list,
