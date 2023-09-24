@@ -1,15 +1,23 @@
 import ejs from "ejs";
 import { frame } from "./local_modules/frame";
 import { query } from "./local_modules/query";
-import { notify } from "./local_modules/notify";
 import { Document } from "./local_modules/document";
 import { get_array } from "./local_modules/reform_data";
 import { profile_job } from "./local_modules/profile_job";
 import { summarize_career } from "./local_modules/summarize_career";
+import { generate_professional_summary } from "./local_modules/generate_professional_summary";
 import {
   validate_content_type as cType,
   content,
 } from "./local_modules/content_type";
+import { notify, err, success } from "./local_modules/notify";
+
+interface Generated_content {
+  professional_summary: string;
+  skill_list: string[];
+  cover_letter_content: string;
+  fileName: string;
+}
 
 /**
  * Constructs a prompt stack for generating content.
@@ -30,6 +38,14 @@ const stack = (
   return `${base} ${instructions}`;
 };
 
+const yell = (call: string) => {
+  console.error(
+    "--------------------------------------------------------------------------------------------------------------------------------"
+  );
+  console.error(call);
+  throw "Testing...";
+};
+
 /**
  * Main function to generate a resume, cover letter, and skill list based on job and career profiles.
  * @returns {Promise<void>}
@@ -41,9 +57,15 @@ const main = async (): Promise<void> => {
   try {
     // Fetch job and career profiles
     const job_profile = await profile_job();
+    //console.error(job_profile);
     const career_profile = await summarize_career(job_profile);
 
-    const job_title = job_profile.job_title;
+    const professional_summary = await generate_professional_summary(
+      job_profile,
+      career_profile
+    );
+
+    yell(professional_summary);
     const reframe = (content_type: content, prompt: string = "") =>
       frame(
         legal_name,
@@ -52,7 +74,7 @@ const main = async (): Promise<void> => {
         stack(job_title, cType(content_type), prompt),
         cType(content_type)
       );
-
+    /*
     // Generate resume content
     const [professional_summary, cover_letter_content, skill_list] =
       await Promise.all([
@@ -71,19 +93,12 @@ const main = async (): Promise<void> => {
         ),
       ]);
 
-    interface Generated_content {
-      professional_summary: string;
-      skill_list: string[];
-      cover_letter_content: string;
-      fileName: string;
-    }
-
     const extracted_skill_list = await get_array(skill_list);
     const content: Generated_content = {
       professional_summary,
       skill_list: extracted_skill_list,
       cover_letter_content,
-      fileName: job_profile.company_name_string,
+      fileName: job_profile.company_name,
     };
 
     if (content.skill_list.length < 5 || content.fileName === "") {
@@ -108,10 +123,12 @@ const main = async (): Promise<void> => {
       resume.save(resume_content),
       cover_letter.save(cover_letter_full_content),
     ]);
-
-    notify(`All content for ${content.fileName} is ready.`);
+    success(`All content for ${content.fileName} is ready.`);
+*/
   } catch (error) {
-    notify("The Doctor is ill");
+    err("The Doctor is ill");
+    if (typeof error === "string") err(error);
+    else console.error(error);
   }
 };
 
