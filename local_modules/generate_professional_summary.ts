@@ -17,7 +17,7 @@ export const generate_professional_summary = async (
   const technical_skills = job_profile.technical_skills;
   const responsibilities = job_profile.job_responsibilities;
   const non_technical_requirements =
-    job_profile.non_technical_requirements.specific_industry_experience ||
+    job_profile?.non_technical_requirements?.specific_industry_experience ||
     "industry-specific experiences";
 
   const professional_summary_prompt = `
