@@ -10,7 +10,10 @@ const models = {
   4: "gpt-4",
 };
 
-export async function query(prompt: string, modelType: GPT = 3) {
+export const query = async (
+  prompt: string,
+  modelType: GPT = 3
+): Promise<string> => {
   const model = new OpenAI({
     modelName: models[modelType],
     temperature: 0.9,
@@ -22,4 +25,4 @@ export async function query(prompt: string, modelType: GPT = 3) {
     reply: res,
   });
   return res;
-}
+};
