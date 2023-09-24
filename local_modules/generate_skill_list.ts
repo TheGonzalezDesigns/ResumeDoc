@@ -15,11 +15,11 @@ export const generate_skill_list = async (
   const skills_section_prompt = `
     Create ten sentences highlighting the skills and achievements, using this profile of my career: ${career_summary}
 
-    Please ensure to include:
-    - Achievements and experiences that are relevant to the role of a ${job_title}, with a focus on ${technical_skills}.
-    - Specific instances where skills related to ${technical_skills} and ${responsibilities} were applied to achieve successful outcomes.
-    - Mention of any recognition or awards received for accomplishments in the field of ${job_title}.
-    - Any contributions to significant projects or initiatives, particularly those related to ${responsibilities}.
+    Please ensure to:
+    - Include specific examples, quantifiable achievements, or impacts in each sentence to substantiate the claims.
+    - Only mention skills, experiences, or technologies that are directly relevant to the role of a ${job_title}, focusing on ${technical_skills}.
+    - Keep each sentence concise, clear, and to the point, avoiding unnecessary jargon or verbosity.
+    - Ensure each sentence is tailored to align with the specific requirements and responsibilities of a ${job_title}.
 
     Strive for:
     - Clarity and precision in mentioning skills and achievements.
