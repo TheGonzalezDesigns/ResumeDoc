@@ -14,16 +14,16 @@ export const generate_professional_summary = async (
 
   // Craft the professional summary prompt dynamically
   const professional_summary_prompt = `
-    Create a concise, balanced, and highly relevant professional summary, using this profile of my career: ${career_summary}
+    Craft a concise, clear, and highly personalized professional summary using this profile of my career: ${career_summary}
 
-    Please ensure to:
-    - Include specific and quantifiable achievements, illustrating the impact and value brought to previous roles, relevant to a ${job_title}.
-    - Detail experiences and skills with a high level of specificity and relevance to the role of a ${job_title}, focusing on ${technical_skills}.
-    - Maintain a balanced and brief depiction of technical skills, soft skills, and achievements, avoiding unnecessary elongation and maintaining the reader’s interest.
-    - Articulate clearly how past experiences and roles align with the requirements and objectives of the ${job_title} role at ${company_name} (if available), showcasing a deep understanding of the role and the company.
-    - Customize the summary to reflect an understanding of and alignment with the company’s values, mission, and objectives, demonstrating a genuine interest and fit for the company and the role.
-    
-    The professional summary should maintain a smooth and eloquent flow, ensuring clarity, precision, and a high level of engagement for the reader.
+    Strive to:
+    - Include specific and quantifiable achievements demonstrating tangible impact made in previous roles, particularly those relevant to a ${job_title} role at ${company_name}.
+    - Highlight unique contributions, innovations, or approaches that set the candidate apart.
+    - Detail specific experiences, projects, or technologies that align directly with the responsibilities and requirements of the ${job_title} role.
+    - Express a genuine and deep alignment with ${company_name}’s values, mission, and objectives, providing specific examples or insights to showcase understanding and fit.
+    - Conclude with a compelling and personalized statement expressing enthusiasm and alignment with the role at ${company_name}, and the potential contribution to be made.
+
+    Ensure the summary is eloquent, engaging, succinct, and highly relevant, avoiding unnecessary details or redundancies.
 `;
   console.error(job_profile);
   return await query(professional_summary_prompt);
