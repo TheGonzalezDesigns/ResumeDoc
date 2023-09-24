@@ -16,15 +16,15 @@ export const generate_skill_list = async (
     Create ten sentences highlighting the skills and achievements, using this profile of my career: ${career_summary}
 
     Please ensure to:
-    - Include specific examples, quantifiable achievements, or impacts in each sentence to substantiate the claims.
-    - Only mention skills, experiences, or technologies that are directly relevant to the role of a ${job_title}, focusing on ${technical_skills}.
-    - Keep each sentence concise, clear, and to the point, avoiding unnecessary jargon or verbosity.
-    - Ensure each sentence is tailored to align with the specific requirements and responsibilities of a ${job_title}.
+    - Include specific, quantifiable achievements or impacts in each sentence to substantiate the claims.
+    - Only mention skills, experiences, or technologies that have clear relevance to the role of a ${job_title}, focusing on ${technical_skills}.
+    - Balance the mention of technical skills with the application of soft skills in achieving successful outcomes.
+    - Tailor each sentence to closely align with the unique aspects and requirements of a ${job_title} role, focusing on the specific needs mentioned in the job profile.
 
     Strive for:
-    - Clarity and precision in mentioning skills and achievements.
-    - Relevance to the skills and responsibilities of a ${job_title}.
-    - A smooth and eloquent flow in each sentence.
+    - High specificity and quantification in mentioning skills and achievements.
+    - Strict relevance to the skills and responsibilities of a ${job_title}.
+    - A smooth and eloquent flow in each sentence, with a clear focus on applicability to the role.
 `;
   return await query(skills_section_prompt);
 };
