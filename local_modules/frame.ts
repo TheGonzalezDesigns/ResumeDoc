@@ -13,5 +13,5 @@ export const frame = (
   if (typeof job_profile !== "string")
     job_profile = JSON.stringify(job_profile);
 
-  return `Refactored Prompt: "Task: ${directive}\nExperience: ${professional_background}\nRole: ${job_profile}\nQuestion: ${query}"`;
+  return `"Task: ${directive}\nExperience: ${professional_background}\nRole: ${job_profile}\nQuestion: ${query}"`;
 };
