@@ -7,30 +7,24 @@ export const generate_professional_summary = async (
 ): Promise<string> => {
   // Extract relevant details from the job and career profiles
   const job_title = job_profile.job_title;
+  const company_name = job_profile.company_name;
   const technical_skills = job_profile.technical_skills.join(", ");
   const responsibilities = job_profile.job_responsibilities;
   const non_technical_requirements = job_profile.non_technical_requirements;
 
   // Craft the professional summary prompt dynamically
   const professional_summary_prompt = `
-    Create a concise, relevant, and detailed professional summary, using this profile of my career: ${career_summary}
+    Create a concise, balanced, and highly relevant professional summary, using this profile of my career: ${career_summary}
 
-    Please ensure to include:
-    - Specific and quantifiable achievements or impacts relevant to the role of a ${job_title}, focusing on ${technical_skills}.
-    - Experiences and achievements related to ${
-      non_technical_requirements.specific_industry_experience ||
-      "the specific industry"
-    } that highlight the understanding and fulfillment of unique requirements and brand identities, if applicable.
-    - Experiences in ${responsibilities} that demonstrate the ability to validate and optimize design ideas effectively.
-    - Mention of establishing and promoting design guidelines, best practices, and standards, illustrating the commitment to quality and consistency in design.
-    - A detailed showcase of experiences in designing marketing creative for various media, emphasizing the ability to create visually appealing and engaging materials.
-    - A balanced mention of expertise in ${technical_skills} and other relevant technical skills, along with soft skills, showcasing versatility and comprehensive capability.
+    Please ensure to:
+    - Include specific and quantifiable achievements, illustrating the impact and value brought to previous roles, relevant to a ${job_title}.
+    - Detail experiences and skills with a high level of specificity and relevance to the role of a ${job_title}, focusing on ${technical_skills}.
+    - Maintain a balanced and brief depiction of technical skills, soft skills, and achievements, avoiding unnecessary elongation and maintaining the reader’s interest.
+    - Articulate clearly how past experiences and roles align with the requirements and objectives of the ${job_title} role at ${company_name} (if available), showcasing a deep understanding of the role and the company.
+    - Customize the summary to reflect an understanding of and alignment with the company’s values, mission, and objectives, demonstrating a genuine interest and fit for the company and the role.
     
-    The professional summary should:
-    - Be tailored specifically to align with a role as a ${job_title}.
-    - Clearly articulate the value and impact brought to previous roles.
-    - Have a smooth and eloquent flow, maintaining clarity and precision.
-    - Strictly maintain relevance to the job profile of a ${job_title}, avoiding overemphasis on unrelated roles or technical details.
+    The professional summary should maintain a smooth and eloquent flow, ensuring clarity, precision, and a high level of engagement for the reader.
 `;
+  console.error(job_profile);
   return await query(professional_summary_prompt);
 };
