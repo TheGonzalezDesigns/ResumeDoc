@@ -22,17 +22,15 @@ export type meta = {
 export const extract_main_categories = async (
   text: string
 ): Promise<string[]> => {
-  const prompt = `...`; // Prompt remains unchanged for brevity
+  const prompt = `Given the following text, identify the main career categories and list them as strings in a JSON array format. Avoid returning structured objects or nested arrays. Text: "${text}"`;
 
   let data = await query(prompt);
   let parsed_result: string[] = [];
 
-  // Loop to ensure the result is a valid array of strings.
   while (true) {
     try {
       parsed_result = JSON.parse(data);
 
-      // Validate if parsed result is an array of strings.
       if (
         !Array.isArray(parsed_result) ||
         !parsed_result.every((item) => typeof item === "string")
@@ -42,7 +40,9 @@ export const extract_main_categories = async (
 
       break;
     } catch (err) {
-      data = await query(`...`);
+      data = await query(
+        `Please fix the following JSON ensuring it's a valid array. Only respond with the json array and nothing else: ${data}`
+      );
     }
   }
 
@@ -60,24 +60,24 @@ export const extract_details = async (
   category: string,
   text: string
 ): Promise<string[]> => {
-  const prompt = `...`; // Prompt remains unchanged for brevity
+  const prompt = `Given the category "${category}" and the text "${text}", extract relevant details about the category. Format the response as a valid Typescript String[]. Only respond with the array and nothing else.`;
 
   let data = await query(prompt);
   let parsed_result: string[] = [];
 
-  // Loop to ensure the result is a valid array.
   while (true) {
     try {
       parsed_result = JSON.parse(data);
 
-      // Validate if parsed result is an array.
       if (!Array.isArray(parsed_result)) {
         throw new Error("Result is not an array");
       }
 
       break;
     } catch (err) {
-      data = await query(`...`);
+      data = await query(
+        `Please fix the following JSON ensuring it's a valid array. Only respond with the json array and nothing else: ${data}`
+      );
     }
   }
 
@@ -100,7 +100,6 @@ export const adaptive_chunking = async (
   let chunks_to_analyze = await split_text(text);
   const accepted_chunks: string[] = [];
 
-  // Loop to analyze all the chunks.
   while (chunks_to_analyze.length > 0) {
     const chunk_analyses = await Promise.all(
       chunks_to_analyze.map((chunk) =>
@@ -109,7 +108,6 @@ export const adaptive_chunking = async (
     );
     chunks_to_analyze = [];
 
-    // Evaluate each chunk based on its analysis.
     for (const analysis of chunk_analyses) {
       if (analysis.score >= threshold) {
         accepted_chunks.push(analysis.chunk);
