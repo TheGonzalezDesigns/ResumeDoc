@@ -28,14 +28,17 @@ export const generate_cover_letter = async (
     "\n\nStrive to:",
   ];
 
-  // Improved prompt instructions
+  // Further improved prompt instructions
   const instructions = [
-    `- Open with a captivating paragraph that grabs attention and sets the tone. Mention interest in the ${job_title} position at ${company_name} and align it with the company's culture and values.`,
+    `- Open with an exceptionally captivating paragraph that immediately grabs the reader's attention. Consider starting with a personal connection to ${company_name}'s mission or a brief anecdote that exemplifies your passion or suitability for the ${job_title}.`,
+    `- Mention how you learned about the ${job_title} position at ${company_name} and if applicable, refer to a recent company milestone that excites you.`,
     `- Provide specific, measurable achievements, offering metrics or data to underscore the impact made in roles relevant to the ${job_title} at ${company_name}.`,
     `- Discuss experiences and projects that not only show understanding of ${non_technical_requirements} but also showcase soft skills like teamwork, leadership, and communication.`,
     `- Emphasize unique contributions, innovations, or methodologies that align with ${company_name}'s goals and the responsibilities of the ${job_title}.`,
+    `- Include a concrete example that demonstrates your problem-solving abilities relevant to the ${job_title}.`,
     `- Integrate examples or anecdotes that indicate a strong cultural and philosophical fit with ${company_name}.`,
-    `- Conclude with a compelling statement that expresses enthusiasm for the role at ${company_name} and details how the candidate’s experience will contribute to the company's future.`,
+    `- Conclude with a compelling statement that expresses enthusiasm for the role at ${company_name} and details how your experience will contribute to the company's future.`,
+    `- Include a polite call to action, indicating your eagerness to continue the conversation in an interview.`,
     `- Keep the language eloquent yet concise, avoiding unnecessary jargon. Highlight proficiency in ${technical_skills} and its relevance to ${company_name}.`,
     `- Return the cover letter as a JSON object with the following structure: { "salutation": "salutation line", "content": "all of the cover letter", "valediction": "valediction line, e.g. Sincerely, Yours Truly. Cheers, best regards, etc." }`,
   ];
