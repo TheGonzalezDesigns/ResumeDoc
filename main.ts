@@ -1,6 +1,5 @@
 import ejs from "ejs";
 import { Document } from "./local_modules/document";
-import { get_array } from "./local_modules/reform_data";
 import { profile_job } from "./local_modules/profile_job";
 import { summarize_career } from "./local_modules/summarize_career";
 import { generate_professional_summary } from "./local_modules/generate_professional_summary";
@@ -14,33 +13,6 @@ interface Generated_content {
   cover_letter_content: string;
   fileName: string;
 }
-
-/**
- * Constructs a prompt stack for generating content.
- * @param {string} job_title - The title of the job.
- * @param {string} content_type - The type of content to be generated.
- * @param {string} fine_tuned - Fine-tuned specific instructions.
- * @returns {string} - The constructed prompt stack.
- */
-const stack = (
-  job_title: string,
-  content_type: string,
-  fine_tuned: string
-): string => {
-  const base = `Base-Prompt: "Craft a ${job_title} ${content_type} for the Job Listing Based on Your Expertise."`;
-  const instructions = fine_tuned.length
-    ? `Specific-Instructions: ${fine_tuned}`
-    : "";
-  return `${base} ${instructions}`;
-};
-
-const yell = (call: string) => {
-  console.error(
-    "--------------------------------------------------------------------------------------------------------------------------------"
-  );
-  console.error(call);
-  throw "Testing...";
-};
 
 /**
  * Main function to generate a resume, cover letter, and skill list based on job and career profiles.
@@ -64,21 +36,10 @@ const main = async (): Promise<void> => {
       generate_skill_list(job_profile, career_profile),
       generate_cover_letter(job_profile, career_profile),
     ]);
-    yell(
-      JSON.stringify({ professional_summary, skill_list, cover_letter_content })
-    );
-    /*
-    const professional_summary = await generate_professional_summary(
-      job_profile,
-      career_profile
-      const skill_list = await generate_skill_list(job_profile, career_profile);
-    );
-    yell(skill_list);
-*/
-    /*
+
     const content: Generated_content = {
       professional_summary,
-      skill_list: extracted_skill_list,
+      skill_list,
       cover_letter_content,
       fileName: job_profile.company_name,
     };
@@ -106,7 +67,6 @@ const main = async (): Promise<void> => {
       cover_letter.save(cover_letter_full_content),
     ]);
     success(`All content for ${content.fileName} is ready.`);
-*/
   } catch (error) {
     err("The Doctor is ill");
     if (typeof error === "string") err(error);
