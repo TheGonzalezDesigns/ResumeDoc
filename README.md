@@ -1,5 +1,5 @@
 ## ⚠️ Construction in Progress ⚠️
-# 👩🏼‍⚕️ ResumeDoc: The Ultimate Job Application Tool
+# 👩🏼‍⚕️ ResumeDoc: Never write another resume again!
 
 ![Banner Image](https://i.imgur.com/pozHSgZ.jpg)
 
@@ -7,6 +7,24 @@
 > Meet ResumeDoc, your new best friend. Just tell him who you are and what job you want, and he'll whip up the perfect documents for you in no time.
 > And that's not all. He can also handle those annoying questions that some startups ask, like why you love their company or what makes you unique.
 > Don't say "I don't want to be homeless". Let ResumeDoc say something smart and original for you!
+
+---
+
+## 🔔 Updates
+
+> I'm proud to release ResumeDoc Version Alpha.
+> 
+> You can now install it via `git clone git@github.com:TheGonzalezDesigns/ResumeDoc.git`
+>
+> Paste your career data into `"ResumeDoc/context/professional/profile.txt"`
+>
+> Copy a job profile from indeed.com...
+>
+> Run `ResumeDoc/CV.fish` and voila!
+>
+> If the Doctor determines the job to be a good match based on your career data,
+>
+> You will have a Resume and Cover letter in `~/Documents/Resumes/` and `~/Documents/Coverletters/` directories respectively.
 
 ---
 
@@ -24,17 +42,20 @@
 ## 🌟 Features
 
 - Customizable templates: Make your own resume template with html and css. It'll turn into a fancy pdf.
-- Questionable: Ask it anything and it'll answer based on your background.
 - Fast: With openAI's gpt-3.5, it can generate both resume and cover letter in a flash.
 - Notifications: On linux, it'll let you know when it's done.
 - Data Dump: Just dump everything about yourself into a file, and it'll get to know you.
+- Fine-Tuned descriptions: It'll only mention the skills relevant for the job.
 
 ---
 
 ## 🚀 Coming soon! 
 
-- Fine-Tuned descriptions: It'll only mention the skills relevant for the job.
-- No more "As a longtime dishwasher" when applying to your dream job.
+- Fancy GUI: A UI for updating your career profile and more!
+- Dockerization: Soon it will be as easy as download and run, on any OS!
+- Interview buddy: Put on your headphones and let an AI tell you how to respond
+  to interviewers in real-time!
+- Questionable: Ask it anything and it'll answer based on your background.
 
 ---
 
