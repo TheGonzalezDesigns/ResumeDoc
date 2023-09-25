@@ -16,7 +16,8 @@ interface Generated_content {
 
 /**
  * Main function to generate a resume, cover letter, and skill list based on job and career profiles.
- * @returns {Promise<void>}
+ *
+ * @returns {Promise<void>} Resolves when all tasks are completed.
  */
 const main = async (): Promise<void> => {
   const legal_name = "Hugo_Gonzalez";
@@ -26,7 +27,8 @@ const main = async (): Promise<void> => {
     // Fetch job and career profiles
     const job_profile = await profile_job();
     const career_profile = await summarize_career(job_profile);
-    //console.error(job_profile);
+
+    // Generate content: professional summary, skill list, and cover letter
     const [professional_summary, skill_list, cover_letter_content]: [
       string,
       string[],
@@ -37,6 +39,7 @@ const main = async (): Promise<void> => {
       generate_cover_letter(job_profile, career_profile),
     ]);
 
+    // Verify if generated content is complete
     const content: Generated_content = {
       professional_summary,
       skill_list,
@@ -62,10 +65,13 @@ const main = async (): Promise<void> => {
     const cover_letter = new Document(
       `./src/html/cover_letters/${legal_name}_cover_letter_${content.fileName}.html`
     );
+
+    // Save the generated documents
     await Promise.all([
       resume.save(resume_content),
       cover_letter.save(cover_letter_full_content),
     ]);
+
     success(`All content for ${content.fileName} is ready.`);
   } catch (error) {
     err("The Doctor is ill");
