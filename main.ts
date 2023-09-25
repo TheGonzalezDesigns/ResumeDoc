@@ -57,6 +57,7 @@ const main = async (): Promise<void> => {
     const cover_letter_template = new Document("./templates/cover_letter.ejs");
     const cover_letter_full_content = ejs.render(cover_letter_template.load(), {
       cover_letter_content: content.cover_letter_content,
+      company_name: content.fileName,
     });
 
     const resume = new Document(
