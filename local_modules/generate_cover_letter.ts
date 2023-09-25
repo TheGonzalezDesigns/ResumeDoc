@@ -23,11 +23,12 @@ export const generate_cover_letter = async (
     job_profile?.non_technical_requirements?.specific_industry_experience ||
     "industry-specific experiences";
 
-  const promptSections = [
+  const promptSections: string[] = [
     `Craft a compelling, clear, and highly personalized cover letter using this profile of my career: ${career_summary}`,
     "\n\nStrive to:",
   ];
 
+  // Add all your requirements to the prompt
   promptSections.push(
     `- Start with a strong opening paragraph that captures the reader's attention and sets the tone for the rest of the letter. Mention the interest in the ${job_title} position at ${company_name}.`
   );
@@ -46,12 +47,32 @@ export const generate_cover_letter = async (
   promptSections.push(
     `- Conclude with a compelling, personalized statement, expressing enthusiasm for the role at ${company_name}. In particular, detail how the candidate's ${non_technical_requirements} experience will contribute to shaping the future of the organization and align with its objectives.`
   );
-
   promptSections.push(
-    `\n\nEnsure the cover letter is eloquent, engaging, succinct, and highly relevant. Avoid unnecessary details, redundancies, or technical jargon. Clearly highlight proficiency in ${technical_skills} and how these skills can contribute to ${company_name}'s objectives.`
+    `- Ensure the cover letter is eloquent, engaging, succinct, and highly relevant. Avoid unnecessary details, redundancies, or technical jargon. Clearly highlight proficiency in ${technical_skills} and how these skills can contribute to ${company_name}'s objectives.`
+  );
+  promptSections.push(
+    `\n\nReturn the cover letter as a JSON object with the following structure: { "opening": "opening lines", "content": "main body of the cover letter", "closing": "closing lines" }`
   );
 
-  const cover_letter_prompt = promptSections.join("\n");
+  const cover_letter_prompt: string = promptSections.join("\n");
 
-  return await query(cover_letter_prompt, 4);
+  // Query to generate the JSON object
+  let cover_letter_json_str: string = await query(cover_letter_prompt, 4);
+
+  // Parse the returned JSON string
+  let cover_letter_json: any = {};
+  let flag: boolean = true;
+  do {
+    try {
+      cover_letter_json = JSON.parse(cover_letter_json_str);
+      flag = false;
+    } catch (error) {
+      cover_letter_json_str = await query(
+        `Please fix the following JSON if it is invalid, only respond with the json and nothing else: ${cover_letter_json_str}`
+      );
+    }
+  } while (flag);
+
+  // Extract and return just the 'content' from the JSON object
+  return cover_letter_json.content;
 };
