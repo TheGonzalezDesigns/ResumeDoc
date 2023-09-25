@@ -4,9 +4,9 @@
 
 set jobProfile (xclip -selection clipboard -o)
 
-echo "$jobProfile" > ~/projects/ResumeDoc/context/jobs/profile.txt
+echo "$jobProfile" > ./context/jobs/profile.txt
 
-echo "Profile: $jobProfile"
+#echo "Profile: $jobProfile"
 
 bun run ./main.ts
 #bun run ./main.ts > run.log 2>&1
@@ -31,7 +31,7 @@ for dir in $sub_dirs
     for html_file in $html_dir*.html
         # Derive the output PDF filename
         set pdf_file (basename $html_file .html).pdf
-        echo -e "\nConverting $html_file to $pdf_dir$pdf_file"
+        #echo -e "\nConverting $html_file to $pdf_dir$pdf_file"
         cat $html_file
         # Convert the HTML to PDF
         python3 html2pdf.py $html_file $pdf_dir$pdf_file > /dev/null
@@ -41,14 +41,18 @@ for dir in $sub_dirs
     end
   end
 
+mkdir -P ~/Documents/Resumes > /dev/null
+
 for file in ./src/pdfs/resumes/*.pdf
-    echo -e "\nRelocating resume: $file"
+    #echo -e "\nRelocating resume: $file"
     #cat $file
-    mv $file /home/c43/Documents/Resumes/Polished/Tailored/
+    mv $file ~/Documents/Resumes/
 end
 
+mkdir -P ~/Documents/Coverletters > /dev/null
+
 for file in ./src/pdfs/cover_letters/*.pdf
-    echo -e "\nRelocating letter: $file"
+    #echo -e "\nRelocating letter: $file"
     #cat $file
-    mv $file /home/c43/Documents/Coverletters/Tailored/
-  end
+    mv $file ~/Documents/Coverletters
+end
