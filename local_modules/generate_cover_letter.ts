@@ -51,7 +51,7 @@ export const generate_cover_letter = async (
   let cover_letter_json_str = await query(cover_letter_prompt, 4);
   let cover_letter_json = {};
   let flag = true;
-  console.warn(cover_letter_json_str);
+
   do {
     try {
       cover_letter_json = JSON.parse(cover_letter_json_str);
@@ -62,6 +62,6 @@ export const generate_cover_letter = async (
       );
     }
   } while (flag);
-  console.error(cover_letter_json);
+
   return cover_letter_json.content;
 };
