@@ -23,45 +23,32 @@ export const generate_cover_letter = async (
     job_profile?.non_technical_requirements?.specific_industry_experience ||
     "industry-specific experiences";
 
-  const promptSections: string[] = [
+  const promptSections = [
     `Craft a compelling, clear, and highly personalized cover letter using this profile of my career: ${career_summary}`,
     "\n\nStrive to:",
   ];
 
-  // Add all your requirements to the prompt
-  promptSections.push(
-    `- Start with a strong opening paragraph that captures the reader's attention and sets the tone for the rest of the letter. Mention the interest in the ${job_title} position at ${company_name}.`
-  );
-  promptSections.push(
-    `- Include specific and quantifiable achievements, providing metrics or data to demonstrate the tangible impact made in roles relevant to a ${job_title} position at ${company_name}.`
-  );
-  promptSections.push(
-    `- Discuss experiences and projects that demonstrate a deep understanding of ${non_technical_requirements}, offering insights that are directly relevant to ${company_name}.`
-  );
-  promptSections.push(
-    `- Highlight unique contributions, innovations, or methodologies, explaining how they align with the responsibilities of ${responsibilities} and the ${job_title} role requirements at ${company_name}.`
-  );
-  promptSections.push(
-    `- Reflect on the alignment of the candidate's approach or philosophy with the culture and values of ${company_name}, providing concrete examples or anecdotes that indicate a strong fit with the company’s goals and mission.`
-  );
-  promptSections.push(
-    `- Conclude with a compelling, personalized statement, expressing enthusiasm for the role at ${company_name}. In particular, detail how the candidate's ${non_technical_requirements} experience will contribute to shaping the future of the organization and align with its objectives.`
-  );
-  promptSections.push(
-    `- Ensure the cover letter is eloquent, engaging, succinct, and highly relevant. Avoid unnecessary details, redundancies, or technical jargon. Clearly highlight proficiency in ${technical_skills} and how these skills can contribute to ${company_name}'s objectives.`
-  );
-  promptSections.push(
-    `\n\nReturn the cover letter as a JSON object with the following structure: { "opening": "opening lines", "content": "main body of the cover letter", "closing": "closing lines" }`
-  );
+  // Improved prompt instructions
+  const instructions = [
+    `- Open with a captivating paragraph that grabs attention and sets the tone. Mention interest in the ${job_title} position at ${company_name} and align it with the company's culture and values.`,
+    `- Provide specific, measurable achievements, offering metrics or data to underscore the impact made in roles relevant to the ${job_title} at ${company_name}.`,
+    `- Discuss experiences and projects that not only show understanding of ${non_technical_requirements} but also showcase soft skills like teamwork, leadership, and communication.`,
+    `- Emphasize unique contributions, innovations, or methodologies that align with ${company_name}'s goals and the responsibilities of the ${job_title}.`,
+    `- Integrate examples or anecdotes that indicate a strong cultural and philosophical fit with ${company_name}.`,
+    `- Conclude with a compelling statement that expresses enthusiasm for the role at ${company_name} and details how the candidate’s experience will contribute to the company's future.`,
+    `- Keep the language eloquent yet concise, avoiding unnecessary jargon. Highlight proficiency in ${technical_skills} and its relevance to ${company_name}.`,
+    `- Return the cover letter as a JSON object with the following structure: { "salutation": "salutation line", "content": "all of the cover letter", "valediction": "valediction line, e.g. Sincerely, Yours Truly. Cheers, best regards, etc." }`,
+  ];
 
-  const cover_letter_prompt: string = promptSections.join("\n");
+  // Combine all sections for the final prompt
+  promptSections.push(...instructions);
+  const cover_letter_prompt = promptSections.join("\n");
 
-  // Query to generate the JSON object
-  let cover_letter_json_str: string = await query(cover_letter_prompt, 4);
-
-  // Parse the returned JSON string
-  let cover_letter_json: any = {};
-  let flag: boolean = true;
+  // Initialize variables for JSON parsing
+  let cover_letter_json_str = await query(cover_letter_prompt, 4);
+  let cover_letter_json = {};
+  let flag = true;
+  console.warn(cover_letter_json_str);
   do {
     try {
       cover_letter_json = JSON.parse(cover_letter_json_str);
@@ -72,7 +59,6 @@ export const generate_cover_letter = async (
       );
     }
   } while (flag);
-
-  // Extract and return just the 'content' from the JSON object
+  console.error(cover_letter_json);
   return cover_letter_json.content;
 };
