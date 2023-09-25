@@ -28,6 +28,8 @@ const main = async (): Promise<void> => {
     const job_profile = await profile_job();
     const career_profile = await summarize_career(job_profile);
 
+    success("This job is a good match! The doc is working.");
+
     // Generate content: professional summary, skill list, and cover letter
     const [professional_summary, skill_list, cover_letter_content]: [
       string,
