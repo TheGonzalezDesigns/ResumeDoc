@@ -2,27 +2,37 @@ import { exec } from "child_process";
 import path from "path";
 
 // Enum for notification type
-enum notification_type {
-  neutral = "neutral",
-  error = "error",
-  success = "success",
+enum NotificationType {
+  Neutral = "neutral",
+  Error = "error",
+  Success = "success",
 }
 
 /**
  * Sends a notification to the user.
  *
  * @param {string} message - The message to be displayed in the notification.
- * @param {notification_type} [notification=notification_type.neutral] - The type of the notification.
+ * @param {NotificationType} [notification=NotificationType.Neutral] - The type of the notification.
  */
 export const notify = (
   message: string,
-  notification: notification_type = notification_type.neutral
+  notification: NotificationType = NotificationType.Neutral
 ): void => {
-  const icon_path: string = path.resolve(
+  const iconPath: string = path.resolve(
     `./assets/icons/notification/${notification}/icon.png`
   );
+  console[
+    `${
+      notification === NotificationType.Error
+        ? "error"
+        : notification === NotificationType.Success
+        ? "info"
+        : "log"
+    }`
+  ](`Notification: ${message}`);
+
   exec(
-    `notify-send -i "${icon_path}" "ResumeDoc" "${message}"`,
+    `notify-send -i "${iconPath}" "ResumeDoc" "${message}"`,
     (error, stdout, stderr) => {
       if (error) {
         console.log(`error: ${error.message}`);
@@ -42,13 +52,15 @@ export const notify = (
  *
  * @param {string} message - The message to be displayed in the notification.
  */
-export const success = (message: string) =>
-  notify(message, notification_type.success);
+export const success = (message: string): void => {
+  notify(message, NotificationType.Success);
+};
 
 /**
  * Sends an error notification to the user.
  *
  * @param {string} message - The message to be displayed in the notification.
  */
-export const err = (message: string) =>
-  notify(message, notification_type.error);
+export const err = (message: string): void => {
+  notify(message, NotificationType.Error);
+};
