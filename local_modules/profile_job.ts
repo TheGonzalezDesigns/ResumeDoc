@@ -48,18 +48,17 @@ export const profile_job = async (): Promise<extraction> => {
 
   let data = await query(prompt);
   let extraction: extraction = {};
-  let flag = true;
 
-  do {
+  while (true) {
     try {
       extraction = JSON.parse(data);
-      flag = false;
+      break;
     } catch (error) {
       data = await query(
         `Please fix the following JSON if it is invalid, only respond with the json and nothing else: ${data}`
       );
     }
-  } while (flag);
+  }
 
   return extraction;
 };
