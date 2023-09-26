@@ -41,7 +41,7 @@ for dir in $sub_dirs
     end
   end
 
-mkdir -P ~/Documents/Resumes > /dev/null
+mkdir -p ~/Documents/Resumes > /dev/null
 
 for file in ./src/pdfs/resumes/*.pdf
     #echo -e "\nRelocating resume: $file"
@@ -49,7 +49,7 @@ for file in ./src/pdfs/resumes/*.pdf
     mv $file ~/Documents/Resumes/
 end
 
-mkdir -P ~/Documents/Coverletters > /dev/null
+mkdir -p ~/Documents/Coverletters > /dev/null
 
 for file in ./src/pdfs/cover_letters/*.pdf
     #echo -e "\nRelocating letter: $file"
