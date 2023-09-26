@@ -8,7 +8,7 @@ import { invert_chunks } from "./inversion";
  * Summarizes a career based on the job profile and raw career data.
  *
  * @param {extraction} job_profile - The job profile containing technical and non-technical skills.
- * @returns {Promise<string>} A promise that resolves to the summarized career text.
+ * @returns {Promise<string>} A promise that resolves to a summarized career text.
  * @throws {Error} Throws an error if any step in the process fails.
  */
 export const summarize_career = async (
@@ -17,15 +17,17 @@ export const summarize_career = async (
   let summary = "";
 
   try {
-    // Step 2: Text Splitting and Initial Chunking
+    // Step 1: Load Raw Career Data
     const filepath = "./context/professional/profile.txt";
     const raw_career_data = await Bun.file(filepath).text();
+
+    // Step 2: Text Splitting and Initial Chunking
     const initial_chunks = await split_text(raw_career_data);
 
-    // Initialize analysis with regex list and threshold
-    const { regex_list, threshold } = initialize_analysis(job_profile);
+    // Step 3: Initialize Analysis Parameters
+    const { regex_list, threshold } = await initialize_analysis(job_profile);
 
-    // Step 3: Adaptive Chunking and Refinement
+    // Step 4: Adaptive Chunking and Refinement
     const adapted_chunks: string[] = (
       await Promise.all(
         initial_chunks.map((initial_chunk) =>
@@ -36,13 +38,16 @@ export const summarize_career = async (
 
     // Remove duplicates from the adapted chunks
     const refined_chunks = Array.from(new Set(adapted_chunks));
-    if (refined_chunks.length == 0) throw "This job is a bad match.";
 
-    // Step 4: Invert and Join Chunks
+    if (refined_chunks.length === 0) {
+      throw new Error("This job is a bad match.");
+    }
+
+    // Step 5: Invert and Join Chunks
     const inverted_chunks = await invert_chunks(refined_chunks, regex_list);
     summary = inverted_chunks.join(". ");
-  } catch (Error) {
-    throw Error;
+  } catch (error) {
+    throw error;
   }
 
   return summary;
