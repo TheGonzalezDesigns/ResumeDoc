@@ -1,15 +1,25 @@
 import { query } from "./query";
 
-export const expand_keywords = async (keywords: string[]) => {
+/**
+ * Expands the given list of keywords by adding synonyms.
+ *
+ * @param {string[]} keywords - The list of keywords to be expanded.
+ * @returns {Promise<string[]>} A promise that resolves to an array of expanded keywords.
+ */
+export const expand_keywords = async (
+  keywords: string[]
+): Promise<string[]> => {
   const prompt = `
     Given this list of keywords: ${keywords.join(" | ")}
-    Augment the list by add synonyms to each keyword.
+    Augment the list by adding synonyms to each keyword.
     Format the list as a string[]
+    Return a list twice the current size.
+    Make sure each added keyword is relevant to the original set.
+    Avoid including any generic terms.
   `;
-  const response = await query(prompt);
 
+  let data = await query(prompt);
   let parsed_result: string[] = [];
-  let data: string = response;
 
   while (true) {
     try {
@@ -29,5 +39,5 @@ export const expand_keywords = async (keywords: string[]) => {
       );
     }
   }
-  return keywords;
+  return parsed_result;
 };
