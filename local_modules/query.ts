@@ -8,7 +8,7 @@ enum GPT {
 // Define available models
 const models = {
   3: "gpt-3.5-turbo",
-  4: "gpt-4",
+  4: "gpt-3.5-turbo-16k-0613",
 };
 
 /**
@@ -27,7 +27,7 @@ export const query = async (
     modelName: models[modelType],
     temperature: 0.9,
   });
-
+  console.warn("Query:", prompt);
   // Query the model and return the response
   const res = await model.call(prompt);
   return res;
