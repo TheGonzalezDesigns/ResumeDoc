@@ -7,11 +7,11 @@ import { generate_cover_letter } from "./local_modules/generate_cover_letter";
 import { generate_skill_list } from "./local_modules/generate_skill_list";
 import { notify, err, success } from "./local_modules/notify";
 
-interface Generated_content {
+interface GeneratedContent {
   professional_summary: string;
   skill_list: string[];
   cover_letter_content: string;
-  fileName: string;
+  file_name: string;
 }
 
 /**
@@ -20,66 +20,77 @@ interface Generated_content {
  * @returns {Promise<void>} Resolves when all tasks are completed.
  */
 const main = async (): Promise<void> => {
-  const legal_name = "Hugo_Gonzalez";
+  const legalName = "Hugo_Gonzalez";
   notify("The Doctor is ready");
 
   try {
     // Fetch job and career profiles
-    const job_profile = await profile_job();
-    const career_profile = await summarize_career(job_profile);
+    const jobProfile = await profile_job();
+    const companyName = jobProfile.company_name;
+    const careerProfile = await summarize_career(jobProfile);
 
-    success("This job is a good match! The doc is working.");
+    success(`This job at ${jobProfile.company_name} is a good match!`);
+    success("The Doctor is working on your prescription.");
 
     // Generate content: professional summary, skill list, and cover letter
-    const [professional_summary, skill_list, cover_letter_content]: [
+    const [professionalSummary, skillList, coverLetterContent]: [
       string,
       string[],
       string
     ] = await Promise.all([
-      generate_professional_summary(job_profile, career_profile),
-      generate_skill_list(job_profile, career_profile),
-      generate_cover_letter(job_profile, career_profile),
+      generate_professional_summary(jobProfile, careerProfile),
+      generate_skill_list(jobProfile, careerProfile),
+      generate_cover_letter(jobProfile, careerProfile),
     ]);
 
+    success("The pharmacy is ready with your prescription.");
+
+    const fileName = companyName
+      .replace(/,|\s+/g, "_")
+      .replace(/_+/g, "_")
+      .replace(/\.$/, "");
+
     // Verify if generated content is complete
-    const content: Generated_content = {
-      professional_summary,
-      skill_list,
-      cover_letter_content,
-      fileName: job_profile.company_name,
+    const content: GeneratedContent = {
+      professional_summary: professionalSummary,
+      skill_list: skillList,
+      cover_letter_content: coverLetterContent,
+      file_name: fileName,
     };
 
-    if (content.skill_list.length < 5 || content.fileName === "") {
+    if (content.skill_list.length < 5 || content.file_name === "") {
       throw Error("Incomplete Generation.");
     }
 
     // Generate final documents
-    const resume_template = new Document("./templates/resume.ejs");
-    const resume_content = ejs.render(resume_template.load(), content);
-    const cover_letter_template = new Document("./templates/cover_letter.ejs");
-    const cover_letter_full_content = ejs.render(cover_letter_template.load(), {
+    const resumeTemplate = new Document("./templates/resume.ejs");
+    const resumeContent = ejs.render(resumeTemplate.load(), content);
+    const coverLetterTemplate = new Document("./templates/cover_letter.ejs");
+    const coverLetterFullContent = ejs.render(coverLetterTemplate.load(), {
       cover_letter_content: content.cover_letter_content,
-      company_name: content.fileName,
+      company_name: companyName,
     });
 
     const resume = new Document(
-      `./src/html/resumes/${legal_name}_Resume_${content.fileName}.html`
+      `./src/html/resumes/${legalName}_Resume_${content.file_name}.html`
     );
-    const cover_letter = new Document(
-      `./src/html/cover_letters/${legal_name}_cover_letter_${content.fileName}.html`
+    const coverLetter = new Document(
+      `./src/html/cover_letters/${legalName}_cover_letter_${content.file_name}.html`
     );
 
     // Save the generated documents
     await Promise.all([
-      resume.save(resume_content),
-      cover_letter.save(cover_letter_full_content),
+      resume.save(resumeContent),
+      coverLetter.save(coverLetterFullContent),
     ]);
 
-    success(`All content for ${content.fileName} is ready.`);
+    success(`All content for ${content.file_name} is ready.`);
   } catch (error) {
-    err("The Doctor is ill");
     if (typeof error === "string") err(error);
-    console.error(error);
+    else {
+      err("The Doctor is ill");
+      console.error(error);
+    }
   }
 };
 
