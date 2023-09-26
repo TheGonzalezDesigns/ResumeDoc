@@ -1,4 +1,5 @@
 import { extraction } from "./extract";
+import { expand_keywords } from "./expand_keywords";
 
 export type chunk_score = {
   chunk: string;
@@ -9,29 +10,32 @@ export type chunk_score = {
  * Initializes the analysis parameters based on the given job profile.
  *
  * @param {extraction} job_profile - The job profile containing technical and non-technical skills.
- * @returns {{regex_list: RegExp[], threshold: number}} An object containing the regex list and threshold for chunk analysis.
+ * @returns {Promise<{regex_list: RegExp[], threshold: number}>} An object containing the regex list and threshold for chunk analysis.
  */
-export const initialize_analysis = (
+export const initialize_analysis = async (
   job_profile: extraction
-): { regex_list: RegExp[]; threshold: number } => {
+): Promise<{ regex_list: RegExp[]; threshold: number }> => {
   const tech_skills = job_profile.technical_skills ?? [];
   const non_tech_skills = job_profile.non_technical_skills ?? [];
 
   // Filter out empty or null keywords
   const job_keywords = [...tech_skills, ...non_tech_skills].filter(Boolean);
 
+  // Expand the keywords using a predefined function
+  const expanded_keywords = await expand_keywords(job_keywords);
+
   // Escape special regex characters in keywords
   const escapeRegExp = (string: string) =>
     string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
   // Split each keyword by various delimiters to get individual words
-  const individual_words = job_keywords
+  const individual_words = expanded_keywords
     .map((keyword) => keyword.split(/[\s/._\&@#%^]+/))
     .flat();
 
   // Combine original phrases with their individual components
   const combined_keywords = [
-    ...new Set([...job_keywords, ...individual_words]),
+    ...new Set([...expanded_keywords, ...individual_words]),
   ];
 
   // Create regex list based on combined keywords
@@ -39,7 +43,8 @@ export const initialize_analysis = (
     (word) => new RegExp(`\\b${escapeRegExp(word)}\\b`, "i")
   );
 
-  const threshold_coefficient = 0.15;
+  // Calculate threshold based on the length of combined keywords
+  const threshold_coefficient = 0.075;
   const threshold = threshold_coefficient * combined_keywords.length;
 
   return {
