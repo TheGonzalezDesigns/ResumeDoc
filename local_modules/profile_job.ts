@@ -17,12 +17,13 @@ export const profile_job = async (): Promise<extraction> => {
     {
       job_title: "",
       technical_skills: [],
+      non_technical_skills: [],
       company_name: "",
       job_responsibilities_summary: "",
       non_technical_requirements: {
         educational_qualifications: "",
         years_of_experience: "",
-        specific_industry_experience: ""
+        specific_industry_experience: "",
       },
       salary_range: "",
       benefits: [],
@@ -31,12 +32,13 @@ export const profile_job = async (): Promise<extraction> => {
 
     1. Extract the exact job title.
     2. List EVERY technical skill mentioned, wherever it appears in the job description.
-    3. Identify the exact company name.
-    4. Provide a comprehensive summary of job responsibilities. Make sure no key aspect is omitted.
-    5. Detail all non-technical requirements, including educational qualifications, years of experience, and any specific industry experiences.
-    6. Specify the exact salary range.
-    7. If 'benefits' are mentioned but aren't detailed, indicate 'benefits: not specified'. Otherwise, list them.
-    8. Determine the job's location.
+    3. List EVERY non technical skill mentioned, wherever it appears in the job description.
+    4. Identify the exact company name.
+    5. Provide a comprehensive summary of job responsibilities. Make sure no key aspect is omitted.
+    6. Detail all non-technical requirements, including educational qualifications, years of experience, and any specific industry experiences.
+    7. Specify the exact salary range.
+    8. If 'benefits' are mentioned but aren't detailed, indicate 'benefits: not specified'. Otherwise, list them.
+    9. Determine the job's location.
 
     Remember, accuracy and completeness are paramount. Ensure the output is in a valid JSON format without any errors or formatting issues.
 
