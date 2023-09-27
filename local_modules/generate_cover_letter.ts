@@ -28,40 +28,39 @@ export const generate_cover_letter = async (
     "\n\nStrive to:",
   ];
 
-  // Further improved prompt instructions
   const instructions = [
-    `- Open with an exceptionally captivating paragraph that immediately grabs the reader's attention. Consider starting with a personal connection to ${company_name}'s mission or a brief anecdote that exemplifies your passion or suitability for the ${job_title}.`,
-    `- Mention how you learned about the ${job_title} position at ${company_name} and if applicable, refer to a recent company milestone that excites you.`,
-    `- Provide specific, measurable achievements, offering metrics or data to underscore the impact made in roles relevant to the ${job_title} at ${company_name}.`,
-    `- Discuss experiences and projects that not only show understanding of ${non_technical_requirements} but also showcase soft skills like teamwork, leadership, and communication.`,
-    `- Emphasize unique contributions, innovations, or methodologies that align with ${company_name}'s goals and the responsibilities of the ${job_title}.`,
-    `- Include a concrete example that demonstrates your problem-solving abilities relevant to the ${job_title}.`,
-    `- Integrate examples or anecdotes that indicate a strong cultural and philosophical fit with ${company_name}.`,
-    `- Conclude with a compelling statement that expresses enthusiasm for the role at ${company_name} and details how your experience will contribute to the company's future.`,
-    `- Include a polite call to action, indicating your eagerness to continue the conversation in an interview.`,
-    `- Keep the language eloquent yet concise, avoiding unnecessary jargon. Highlight proficiency in ${technical_skills} and its relevance to ${company_name}.`,
-    `- Return the cover letter as a JSON object with the following structure: { "salutation": "salutation line", "content": "all of the cover letter", "valediction": "valediction line, e.g. Sincerely, Yours Truly. Cheers, best regards, etc." }`,
+    `- Open with an exceptionally captivating paragraph. Mention a personal connection to ${company_name}'s mission or a brief anecdote for the ${job_title}.`,
+    `- Mention how you learned about the ${job_title} position at ${company_name} and refer to a recent company milestone.`,
+    `- Provide specific, measurable achievements for the ${job_title} at ${company_name}.`,
+    `- Discuss experiences and projects showing understanding of ${non_technical_requirements} and soft skills.`,
+    `- Emphasize unique contributions aligning with ${company_name}'s goals and the ${job_title}.`,
+    `- Include a concrete example demonstrating problem-solving abilities.`,
+    `- Integrate examples indicating a strong fit with ${company_name}.`,
+    `- Conclude with a compelling statement expressing enthusiasm for the role at ${company_name}.`,
+    `- Include a polite call to action.`,
+    `- Keep language eloquent yet concise. Highlight proficiency in ${technical_skills}.`,
+    `- Return the cover letter as a JSON object with the following structure: { "salutation": "salutation line", "content": "all of the cover letter", "valediction": "valediction line" }`,
   ];
 
-  // Combine all sections for the final prompt
   promptSections.push(...instructions);
   const cover_letter_prompt = promptSections.join("\n");
 
-  // Initialize variables for JSON parsing
   let cover_letter_json_str = await query(cover_letter_prompt, 4);
-  let cover_letter_json = {};
-  let flag = true;
+  let cover_letter_json = { content: "" };
 
-  do {
+  while (true) {
     try {
       cover_letter_json = JSON.parse(cover_letter_json_str);
-      flag = false;
+      break;
     } catch (error) {
       cover_letter_json_str = await query(
         `Please fix the following JSON if it is invalid, only respond with the json and nothing else: ${cover_letter_json_str}`
       );
     }
-  } while (flag);
+  }
 
-  return cover_letter_json.content;
+  const cover_letter_content: string = await query(
+    `Remove any valedication from this letter: ${cover_letter_json?.content}`
+  );
+  return cover_letter_content;
 };
