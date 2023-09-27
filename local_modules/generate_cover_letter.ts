@@ -1,8 +1,12 @@
 import { query } from "./query";
 import { extraction } from "./extract";
 
-const cleanUpContent = (content: string): string => {
-  // Define a list of common valedictions
+/**
+ * Cleans up the provided cover letter content by removing common valedictions and placeholders.
+ * @param {string} content - The cover letter content to be cleaned.
+ * @returns {string} The cleaned-up cover letter content.
+ */
+const clean_up_content = (content: string): string => {
   const valedictions = [
     "Sincerely",
     "Yours Truly",
@@ -21,38 +25,25 @@ const cleanUpContent = (content: string): string => {
     "Cheers",
   ];
 
-  const placeholderPattern = "\\[.*?\\]"; // Non-greedy match for any text between brackets
-  const trailingCharactersPattern = "[,.;!]*"; // Match trailing characters like comma, period, or exclamation mark
-  const whitespacesPattern = "\\s*"; // Match any whitespace characters
-
-  // Escaping special characters in valedictions
   const escapedValedictions = valedictions.map((val) =>
     val.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&")
   );
 
-  // Create a non-greedy regular expression pattern to match valedictions, placeholders, and trailing characters
   const cleanupPattern = new RegExp(
-    `(${escapedValedictions.join(
-      "|"
-    )})${whitespacesPattern}${placeholderPattern}?${trailingCharactersPattern}`,
+    `(${escapedValedictions.join("|")})\\s*\\[.*?\\][,.;!]*`,
     "gi"
   );
 
-  // Removing placeholders regardless of whether they are preceded by a valediction
-  const placeholderRemovalPattern = new RegExp(placeholderPattern, "g");
-
-  // Repeatedly remove all occurrences of valedictions and placeholders until none are left
   let cleanedContent = content;
   let previousContent;
   do {
     previousContent = cleanedContent;
     cleanedContent = cleanedContent
       .replace(cleanupPattern, "")
-      .replace(placeholderRemovalPattern, "") // Remove standalone placeholders
+      .replace(/\[.*?\]/g, "")
       .trim();
   } while (cleanedContent !== previousContent);
 
-  // Finally, remove any trailing punctuation and whitespace
   return cleanedContent.replace(/[\s,.;]*$/, "");
 };
 
@@ -69,9 +60,8 @@ export const generate_cover_letter = async (
 ): Promise<string> => {
   const job_title = job_profile.job_title || "the role";
   const company_name = job_profile.company_name || "the company";
-  const technical_skills = job_profile.technical_skills
-    ? job_profile.technical_skills.join(", ")
-    : "relevant technical skills";
+  const technical_skills =
+    job_profile.technical_skills?.join(", ") || "relevant technical skills";
   const responsibilities =
     job_profile.job_responsibilities || "the responsibilities";
   const non_technical_requirements =
@@ -119,12 +109,5 @@ export const generate_cover_letter = async (
     `Remove any valedication or placeholders from this letter: ${cover_letter_json?.content}`
   );
 
-  const polished_letter = cleanUpContent(cover_letter_content) + ".";
-  console.info({
-    cover_letter_json_str,
-    cover_letter_json,
-    cover_letter_content,
-    polished_letter,
-  });
-  return polished_letter;
+  return clean_up_content(cover_letter_content) + ".";
 };
