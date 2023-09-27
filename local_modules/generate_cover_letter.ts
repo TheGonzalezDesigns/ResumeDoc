@@ -1,6 +1,61 @@
 import { query } from "./query";
 import { extraction } from "./extract";
 
+const cleanUpContent = (content: string): string => {
+  // Define a list of common valedictions
+  const valedictions = [
+    "Sincerely",
+    "Yours Truly",
+    "Kind Regards",
+    "Best Regards",
+    "Regards",
+    "Thank you",
+    "Thanks",
+    "Yours Faithfully",
+    "Yours Sincerely",
+    "Warm Regards",
+    "Appreciatively",
+    "Best Wishes",
+    "Respectfully",
+    "Yours in Service",
+    "Cheers",
+  ];
+
+  const placeholderPattern = "\\[.*?\\]"; // Non-greedy match for any text between brackets
+  const trailingCharactersPattern = "[,.;!]*"; // Match trailing characters like comma, period, or exclamation mark
+  const whitespacesPattern = "\\s*"; // Match any whitespace characters
+
+  // Escaping special characters in valedictions
+  const escapedValedictions = valedictions.map((val) =>
+    val.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&")
+  );
+
+  // Create a non-greedy regular expression pattern to match valedictions, placeholders, and trailing characters
+  const cleanupPattern = new RegExp(
+    `(${escapedValedictions.join(
+      "|"
+    )})${whitespacesPattern}${placeholderPattern}?${trailingCharactersPattern}`,
+    "gi"
+  );
+
+  // Removing placeholders regardless of whether they are preceded by a valediction
+  const placeholderRemovalPattern = new RegExp(placeholderPattern, "g");
+
+  // Repeatedly remove all occurrences of valedictions and placeholders until none are left
+  let cleanedContent = content;
+  let previousContent;
+  do {
+    previousContent = cleanedContent;
+    cleanedContent = cleanedContent
+      .replace(cleanupPattern, "")
+      .replace(placeholderRemovalPattern, "") // Remove standalone placeholders
+      .trim();
+  } while (cleanedContent !== previousContent);
+
+  // Finally, remove any trailing punctuation and whitespace
+  return cleanedContent.replace(/[\s,.;]*$/, "");
+};
+
 /**
  * Generates a cover letter based on the given job profile and career summary.
  *
@@ -39,6 +94,7 @@ export const generate_cover_letter = async (
     `- Conclude with a compelling statement expressing enthusiasm for the role at ${company_name}.`,
     `- Include a polite call to action.`,
     `- Keep language eloquent yet concise. Highlight proficiency in ${technical_skills}.`,
+    `- Make no mention of any resume.`,
     `- Return the cover letter as a JSON object with the following structure: { "salutation": "salutation line", "content": "all of the cover letter", "valediction": "valediction line" }`,
   ];
 
@@ -52,7 +108,7 @@ export const generate_cover_letter = async (
     try {
       cover_letter_json = JSON.parse(cover_letter_json_str);
       break;
-    } catch (error) {
+    } catch (_error) {
       cover_letter_json_str = await query(
         `Please fix the following JSON if it is invalid, only respond with the json and nothing else: ${cover_letter_json_str}`
       );
@@ -60,7 +116,15 @@ export const generate_cover_letter = async (
   }
 
   const cover_letter_content: string = await query(
-    `Remove any valedication from this letter: ${cover_letter_json?.content}`
+    `Remove any valedication or placeholders from this letter: ${cover_letter_json?.content}`
   );
-  return cover_letter_content;
+
+  const polished_letter = cleanUpContent(cover_letter_content) + ".";
+  console.info({
+    cover_letter_json_str,
+    cover_letter_json,
+    cover_letter_content,
+    polished_letter,
+  });
+  return polished_letter;
 };
