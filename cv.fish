@@ -1,58 +1,42 @@
 #!/usr/bin/env fish
 
+clear
+
 # Read clipboard content and write to file
+set job_profile (xclip -selection clipboard -o)
+echo "$job_profile" > ./context/jobs/profile.txt
 
-set jobProfile (xclip -selection clipboard -o)
+# Execute main script and log the output
+time bun run ./_main.ts > run.log 2>&1
 
-echo "$jobProfile" > ./context/jobs/profile.txt
-
-#echo "Profile: $jobProfile"
-
-bun run ./main.ts
-#bun run ./main.ts > run.log 2>&1
-# Directory paths
+# Define directory paths
 set html_root "./src/html/"
 set pdf_root "./src/pdfs/"
-
-# Sub directories
 set sub_dirs "cover_letters" "resumes"
 
-# Iterate over each sub-directory
+# Process HTML files in specified subdirectories and convert them to PDF
 for dir in $sub_dirs
     set html_dir $html_root$dir/
     set pdf_dir $pdf_root$dir/
 
-    # Ensure pdf sub directory exists
     if not test -d $pdf_dir
         mkdir -p $pdf_dir
     end
 
-    # Iterate over each HTML file in the sub-directory of html directory
     for html_file in $html_dir*.html
-        # Derive the output PDF filename
         set pdf_file (basename $html_file .html).pdf
-        #echo -e "\nConverting $html_file to $pdf_dir$pdf_file"
-        cat $html_file
-        # Convert the HTML to PDF
         python3 html2pdf.py $html_file $pdf_dir$pdf_file > /dev/null
-
-        # Remove the original HTML file
         rm $html_file
     end
-  end
+end
 
+# Relocate the generated PDFs to the respective directories
 mkdir -p ~/Documents/Resumes > /dev/null
-
 for file in ./src/pdfs/resumes/*.pdf
-    #echo -e "\nRelocating resume: $file"
-    #cat $file
     mv $file ~/Documents/Resumes/
 end
 
 mkdir -p ~/Documents/Coverletters > /dev/null
-
 for file in ./src/pdfs/cover_letters/*.pdf
-    #echo -e "\nRelocating letter: $file"
-    #cat $file
     mv $file ~/Documents/Coverletters
 end
