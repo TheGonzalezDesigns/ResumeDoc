@@ -40,7 +40,7 @@ export const summarize_career = async (
     const refined_chunks = Array.from(new Set(adapted_chunks));
 
     if (refined_chunks.length === 0) {
-      throw new Error("This job is a bad match.");
+      throw "This job is a bad match.";
     }
 
     // Step 5: Invert and Join Chunks
