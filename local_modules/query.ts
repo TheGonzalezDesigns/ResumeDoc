@@ -26,24 +26,6 @@ const models = {
 };
 
 /**
- * Generates a random hash for timing queries.
- * @returns {string} A random hash string.
- */
-const random_hash_generator = (): string => {
-  let hash = "";
-  const possible_chars =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
-  for (let i = 0; i < 10; i++) {
-    hash += possible_chars.charAt(
-      Math.floor(Math.random() * possible_chars.length)
-    );
-  }
-
-  return hash;
-};
-
-/**
  * Queries an OpenAI model and returns the generated response.
  *
  * @param {string} prompt - The prompt to be sent to the OpenAI model.
@@ -54,7 +36,6 @@ export const query = async (
   prompt: string,
   model_type: GPT = GPT.GPT3
 ): Promise<string> => {
-  const timer = `[[querying-ai]]-${random_hash_generator()}`;
   const model = models[model_type];
   const res = await model.call(prompt);
   return res;
