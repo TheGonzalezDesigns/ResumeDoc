@@ -10,24 +10,25 @@ export const expand_keywords = async (
   keywords: string[]
 ): Promise<string[]> => {
   const prompt = `
-    Given this list of keywords: ${keywords.join(" | ")}
+    Given this list of keywords: [${keywords.join(", ")}]
     Augment the list by adding synonyms to each keyword.
     Format the list as a string[]
     Return a list twice the current size.
     Make sure each added keyword is relevant to the original set.
     Avoid including any generic terms.
+    Only respond with the new string[] and nothing else.
   `;
 
   let data = await query(prompt);
-  let parsed_result: string[] = [];
+  let parsedResult: string[] = [];
 
   while (true) {
     try {
-      parsed_result = JSON.parse(data);
+      parsedResult = JSON.parse(data);
 
       if (
-        !Array.isArray(parsed_result) ||
-        !parsed_result.every((item) => typeof item === "string")
+        !Array.isArray(parsedResult) ||
+        !parsedResult.every((item) => typeof item === "string")
       ) {
         throw new Error("Result is not an array of strings");
       }
@@ -39,5 +40,5 @@ export const expand_keywords = async (
       );
     }
   }
-  return parsed_result;
+  return parsedResult;
 };
