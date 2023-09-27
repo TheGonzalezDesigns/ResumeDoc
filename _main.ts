@@ -1,87 +1,106 @@
-import { adaptive_chunking } from "./local_modules/experimental/extract";
-import { profile_career_chunk } from "./local_modules/experimental/profile_career";
-import {
-  analyze_chunk,
-  initialize_analysis,
-} from "./local_modules/experimental/chunk_analysis";
-import { notify } from "./local_modules/notify";
-import { profile_job } from "local_modules/profile_job";
-import { split_text } from "local_modules/experimental/text_splitter";
-import { invert_chunks } from "./local_modules/experimental/inversion";
-import { log, debug } from "./local_modules/experimental/debug";
-// Main function
-async function main(): Promise<void> {
-  // Define the legal name for the profile
-  const legal_name = "Hugo_Gonzalez";
+import ejs from "ejs";
+import { Document } from "./local_modules/document";
+import { profile_job } from "./local_modules/profile_job";
+import { summarize_career } from "./local_modules/summarize_career";
+import { generate_professional_summary } from "./local_modules/generate_professional_summary";
+import { generate_cover_letter } from "./local_modules/generate_cover_letter";
+import { generate_skill_list } from "./local_modules/generate_skill_list";
+import { notify, err, success } from "./local_modules/notify";
 
-  // Notify that the program is ready
-  notify("The Doctor is ready");
-  console.time("mainExecution");
-
-  try {
-    // Step 1: Profile Job Data
-    const job_profile = await profile_job();
-
-    // Step 2: Text Splitting and Initial Chunking
-    const filepath = "./context/professional/profile.txt";
-    const raw_career_data = await Bun.file(filepath).text();
-    const initial_chunks = await split_text(raw_career_data);
-
-    // Initialize analysis with regex list and threshold
-    const { regexList, threshold } = initialize_analysis(job_profile);
-
-    // Step 3: Adaptive Chunking and Refinement
-    const adapted_chunks: string[] = (
-      await Promise.all(
-        [...initial_chunks].map((initial_chunk) =>
-          adaptive_chunking(initial_chunk, regexList, threshold)
-        )
-      )
-    ).flat();
-
-    // Remove duplicates from the adapted chunks
-    const refined_chunks = Array.from(new Set(adapted_chunks));
-    log(refined_chunks, "adapted_chunks");
-    // Step 4: Career Profile Creation
-    const profile_chunks = await Promise.all(
-      [...refined_chunks].map(async (refined_chunk) => {
-        const chunk_profile = await profile_career_chunk(refined_chunk);
-        return chunk_profile;
-      })
-    );
-    // Step 5: Chunk Analysis and Scoring
-    const scored_chunks = [...profile_chunks].map((profile_chunk) => {
-      const analysis = analyze_chunk(
-        profile_chunk.raw_data,
-        regexList,
-        threshold
-      );
-      return {
-        chunk: profile_chunk.raw_data,
-        score: analysis.score,
-      };
-    });
-    //log(scored_chunks, "scored_chunks");
-    //log(adapted_chunks, "adapted_chunks");
-    const inverted_chunks = await invert_chunks(refined_chunks, regexList);
-    log(inverted_chunks, "inverted_chunks");
-    log(job_profile, "job_profile");
-    if (inverted_chunks.length == 0) {
-      throw "Bad Match";
-    }
-    // Notify that all content is ready
-    notify(`All content for ${legal_name} is ready.`);
-  } catch (error) {
-    // Handle errors
-    console.error("Error logs:", error);
-    notify(`The Doctor is ill`);
-  }
-
-  // End the timer for main execution
-  console.timeEnd("mainExecution");
+interface Generated_content {
+  professional_summary: string;
+  skill_list: string[];
+  cover_letter_content: string;
+  file_name: string;
 }
 
-// Start the main execution
-console.time("main");
+/**
+ * Main function to generate a resume, cover letter, and skill list based on job and career profiles.
+ *
+ * @returns {Promise<void>} Resolves when all tasks are completed.
+ */
+const main = async (): Promise<void> => {
+  const legal_name = "Hugo_Gonzalez";
+  notify("The Doctor is ready");
+
+  try {
+    console.time("test-time");
+    console.time("pre-processing");
+    // Fetch job and career profiles
+    notify("Analyzing your job profile.");
+    const job_profile = await profile_job();
+    success("Analysis done. Lets compare it to your career.");
+    const company_name = job_profile.company_name;
+    console.time("timing-");
+    const career_profile = await summarize_career(job_profile);
+    success(`This job at ${job_profile.company_name} is a good match!`);
+    success("The Doctor is working on your prescription.");
+
+    console.timeEnd("pre-processing");
+
+    //throw "The doctor is testing...";
+    // Generate content: professional summary, skill list, and cover letter
+    const [professional_summary, skill_list, cover_letter_content]: [
+      string,
+      string[],
+      string
+    ] = await Promise.all([
+      generate_professional_summary(job_profile, career_profile),
+      generate_skill_list(job_profile, career_profile),
+      generate_cover_letter(job_profile, career_profile),
+    ]);
+
+    success("The pharmacy is ready with your prescription.");
+
+    const file_name = company_name
+      .replace(/,|\s+/g, "_")
+      .replace(/_+/g, "_")
+      .replace(/\.$/, "");
+
+    // Verify if generated content is complete
+    const content: Generated_content = {
+      professional_summary: professional_summary,
+      skill_list: skill_list,
+      cover_letter_content: cover_letter_content,
+      file_name: file_name,
+    };
+
+    if (content.skill_list.length < 5 || content.file_name === "") {
+      throw Error("Incomplete Generation.");
+    }
+    console.warn("Generated_content: ", content);
+    console.timeEnd("test-time");
+
+    // Generate final documents
+    const resume_template = new Document("./templates/resume.ejs");
+    const resume_content = ejs.render(resume_template.load(), content);
+    const cover_letter_template = new Document("./templates/cover_letter.ejs");
+    const cover_letter_full_content = ejs.render(cover_letter_template.load(), {
+      cover_letter_content: content.cover_letter_content,
+      company_name: company_name,
+    });
+
+    const resume = new Document(
+      `./src/html/resumes/${legal_name}_Resume_${content.file_name}.html`
+    );
+    const cover_letter = new Document(
+      `./src/html/cover_letters/${legal_name}_cover_letter_${content.file_name}.html`
+    );
+
+    // Save the generated documents
+    await Promise.all([
+      resume.save(resume_content),
+      cover_letter.save(cover_letter_full_content),
+    ]);
+
+    success(`All content for ${content.file_name} is ready.`);
+  } catch (error) {
+    if (typeof error === "string") err(error);
+    else {
+      err("The Doctor is ill");
+      console.error(error);
+    }
+  }
+};
+
 main();
-console.timeEnd("main");
