@@ -5,7 +5,7 @@ import { query } from "./query";
  *
  * @param {string} text - The input text to be inverted.
  * @param {RegExp[]} keywords - The regular expressions representing keywords to focus on while inverting.
- * @returns {Promise<string>} - A promise that resolves to the inverted text, focusing only on provided keywords.
+ * @returns {Promise<string>} A promise that resolves to the inverted text, focusing only on provided keywords.
  */
 export const keyword_inversion = async (
   text: string,
@@ -29,13 +29,24 @@ export const keyword_inversion = async (
  *
  * @param {string[]} chunks - The array of text chunks to be inverted.
  * @param {RegExp[]} keywords - The regular expressions representing keywords to focus on while inverting.
- * @returns {Promise<string[]>} - A promise that resolves to an array of inverted text chunks, each focusing only on provided keywords.
+ * @returns {Promise<string[]>} A promise that resolves to an array of inverted text chunks, each focusing only on provided keywords.
  */
 export const invert_chunks = async (
   chunks: string[],
   keywords: RegExp[]
 ): Promise<string[]> => {
-  return await Promise.all(
-    chunks.map((chunk: string) => keyword_inversion(chunk, keywords))
-  );
+  const prompt = `
+    From the text [${chunks.join(", ")}].
+    Focus ONLY on the following keywords: [${keywords
+      .map((k) => k.source)
+      .join(", ")}].
+    Reconstruct each sentence(s) in the first person and OMIT any topics or information that do not relate to the provided keywords.
+    Each sentence should sound impressive, direct, and natural.
+  `;
+
+  const response = await query(prompt, 4);
+
+  const inverted_chunks = [response].flat();
+
+  return inverted_chunks;
 };
