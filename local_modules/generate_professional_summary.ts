@@ -24,27 +24,27 @@ export const generate_professional_summary = async (
     "industry-specific experiences";
 
   let promptSections = [
-    `Craft a concise, clear, and highly personalized professional summary using this profile of my career: ${career_summary}`,
-    "\n\nStrive to:",
+    `Create a concise and compelling professional summary using this career profile: ${career_summary}`,
+    "\n\nFocus on:",
   ];
 
   promptSections.push(
-    `- Include specific and quantifiable achievements, providing metrics or data to demonstrate the tangible impact made in roles relevant to a ${job_title} position at ${company_name}.`
+    `- Providing specific, measurable achievements and metrics demonstrating the impact made in roles relevant to a ${job_title} at ${company_name}.`
   );
   promptSections.push(
-    `- Highlight unique contributions, innovations, or methodologies, explaining how they align with the responsibilities of ${responsibilities} and the ${job_title} role requirements.`
+    `- Emphasizing unique contributions and innovations that align with the role of ${responsibilities} and showing how they meet the requirements of the ${job_title}.`
   );
   promptSections.push(
-    `- Discuss experiences and projects that demonstrate a deep understanding of ${non_technical_requirements}, offering insights that are directly relevant to ${company_name}.`
+    `- Illustrating experiences and projects that reveal a deep understanding of ${non_technical_requirements} and that are directly relevant to ${company_name}.`
   );
   promptSections.push(
-    `- Reflect on the alignment of the candidate's approach or philosophy with the culture and values of ${company_name}, providing concrete examples or anecdotes that indicate a strong fit with the company’s goals and mission.`
+    `- Reflecting alignment with the values and culture of ${company_name}, with examples or anecdotes indicating a strong fit with the company's mission and goals.`
   );
   promptSections.push(
-    `- Conclude with a compelling, personalized statement, expressing enthusiasm for the role at ${company_name}. In particular, detail how the candidate's ${non_technical_requirements} experience will contribute to shaping the future of the organization and align with its objectives.`
+    `- Concluding with a compelling statement expressing enthusiasm for the role at ${company_name} and detailing how the experience in ${non_technical_requirements} will contribute to the company's future.`
   );
   promptSections.push(
-    `\n\nEnsure the summary is eloquent, engaging, succinct, and highly relevant. Avoid unnecessary details, redundancies, or technical jargon. Clearly highlight proficiency in ${technical_skills} and how these skills can contribute to ${company_name}'s objectives.`
+    `\n\nMake sure the summary is engaging, succinct, clear, and highly relevant. Avoid letter format, greetings, valedictions, and unnecessary details or jargon. Highlight proficiency in ${technical_skills} and its relevance to ${company_name}'s goals.`
   );
 
   const professional_summary_prompt = promptSections.join("\n");
