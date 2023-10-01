@@ -5,9 +5,9 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - 8000 # Replace with desired port(s) if needed
-    networks:
-      - mynetwork
-networks:
-  mynetwork:
+      - 8080:8080 # Replace with desired port(s) if needed
 
+    networks:
+      - resume_hospital
+networks:
+  resume_hospital:
