@@ -1,64 +1,80 @@
-// THIS IS BOILERPLATE, THE ENDPOINTS STILL NEED TO BE BUILT ENTIRELY
-// Import Bun and the FileSystemRouter module
-import Bun from "bun";
-import FileSystemRouter from "bun/fs-router";
-import { Request, Response } from "bun/http";
+import { generate_documents } from "main";
+import { Hono } from "hono";
 
-// Create a new FileSystemRouter instance
-const router = new FileSystemRouter();
+// Create a new Hono instance
+const app = new Hono();
 
+/*
 // Define the GET endpoint for /status?job=...
-router.get("/status", (req: Request) => {
-  const job = req.query.get("job");
-  if (!job) return new Response("Job parameter is missing", { status: 400 });
-  return new Response(`The status of job ${job} is ...`);
+app.get("/status/:job", (c) => {
+  const job = c.req.param("job");
+  if (!job) return c.text("Job parameter is missing");
+  return c.text(`The status of job ${job} is ...`);
 });
 
-router.post("/generate", async (req: Request) => {
+app.post("/generate", async (c) => {
   try {
-    const body = await req.json();
-    const jobProfile = body.job_profile;
+    const body = await c.req.json();
+    const job_profile = body.job_profile;
     // Replace ... with your logic
-    const output = { result: "Replace with your logic" };
-    return new Response(JSON.stringify(output), {
-      headers: { "Content-Type": "application/json" },
-    });
+    console.info("job_profile:", job_profile);
   } catch (error) {
-    return new Response(`Error: ${error.message}`, { status: 500 });
+    // Handle error
   }
 });
 
-router.get("/questionaire", async (req: Request) => {
+app.get("/questionaire", async (c) => {
   try {
-    const body = await req.json();
-    const htmlSnippet = body.html_snippet;
+    const body = await c.req.json();
+    const html_snippet = body.html_snippet;
     // Replace ... with your logic
-    const document = Bun.render(htmlSnippet);
-    const output = { result: "Replace with your logic" };
-    return new Response(JSON.stringify(output), {
-      headers: { "Content-Type": "application/json" },
-    });
+    console.info("html_snippet:", html_snippet);
   } catch (error) {
-    return new Response(`Error: ${error.message}`, { status: 500 });
+    // Handle error
   }
 });
 
-router.post("/select_file", (req: Request) => {
+app.post("/select_file/:file_path", (c) => {
   try {
-    const filePath = req.query.get("file_path");
-    if (!filePath) return new Response("File path is missing", { status: 400 });
+    const file_path = c.req.param("file_path");
     // Replace ... with your logic
-    const file = Bun.file(filePath);
-    const output = { result: "Replace with your logic" };
-    return new Response(JSON.stringify(output), {
-      headers: { "Content-Type": "application/json" },
-    });
+    console.info("file_path:", file_path);
   } catch (error) {
-    return new Response(`Error: ${error.message}`, { status: 500 });
+    // Handle error
   }
 });
+*/
 
-// Start the server with the router as the fetch handler
-Bun.serve({
-  fetch: router.fetch,
+app.notFound((c) => {
+  return c.text("Custom 404 Message", 404);
 });
+
+app.onError((err, c) => {
+  console.error(`${err}`);
+  return c.text("Custom Error Message", 500);
+});
+
+app.get("/", (c) => c.text("Hello Bun!"));
+app.get("/test", (c) => c.text("Testing Bun!"));
+
+app.post("/generate", async (c) => {
+  //console.info(c.req.headers);
+  const body = await c.req.json();
+  const job_profile = body.job_profile;
+  console.info("job_profile:", job_profile);
+  try {
+    await generate_documents();
+    console.info("Generation success");
+  } catch (error) {
+    console.error("Generation failed:", error);
+  }
+  //// Replace ... with your logic
+  return c.json(body);
+});
+
+export default {
+  port: 8080,
+  fetch: app.fetch,
+};
+
+console.info("Server started");
