@@ -1,6 +1,12 @@
 # Use ubuntu:22.04 as the base image
 FROM ubuntu:22.04
 
+# Set the Working Directory inside the container
+WORKDIR /app
+
+# Copy everything from the current directory to the Working Directory inside the container
+COPY . /app
+
 # Update the package list and install software-properties-common
 RUN apt update && apt install -y software-properties-common
 
