@@ -25,11 +25,11 @@ RUN pip3 install --no-cache-dir -r /app/requirements.txt
 # Install bunjs runtime
 RUN curl -fsSL https://bun.sh/install | bash
 
-# Run bun install
-RUN bun install
-
 # Add ./root/.bun/bin to the PATH
 ENV PATH="/root/.bun/bin:${PATH}"
+
+# Run bun install
+RUN bun install
 
 # Keep the container running indefinitely
 CMD ["tail", "-f", "/dev/null"]
