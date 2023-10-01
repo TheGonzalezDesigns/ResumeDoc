@@ -14,6 +14,18 @@ interface Generated_content {
   file_name: string;
 }
 
+interface Filenames {
+  resume: string;
+  cover_letter: string;
+}
+
+type Status = Boolean;
+
+interface Log {
+  status: Status;
+  filenames: Filenames;
+}
+
 /**
  * Main function to generate a resume, cover letter, and skill list based on job and career profiles.
  *
@@ -21,9 +33,19 @@ interface Generated_content {
  */
 export const generate_documents = async (
   description?: string
-): Promise<void> => {
+): Promise<Log> => {
   const legal_name = "Hugo_Gonzalez";
   notify("The Doctor is ready");
+  let filenames: Filenames = {
+    resume: "",
+    cover_letter: "",
+  };
+  let status = false;
+
+  let log = {
+    status,
+    filenames,
+  };
 
   try {
     // Fetch job and career profiles
@@ -65,19 +87,20 @@ export const generate_documents = async (
     }
 
     // Generate final documents
-    const resumeTemplate = new Document("./templates/resume.ejs");
-    const resume_content = ejs.render(resumeTemplate.load(), content);
-    const cover_letterTemplate = new Document("./templates/cover_letter.ejs");
-    const cover_letter_full_content = ejs.render(cover_letterTemplate.load(), {
+    const resume_template = new Document("./templates/resume.ejs");
+    const resume_content = ejs.render(resume_template.load(), content);
+    const cover_letter_template = new Document("./templates/cover_letter.ejs");
+    const cover_letter_full_content = ejs.render(cover_letter_template.load(), {
       cover_letter_content: content.cover_letter_content,
       company_name: company_name,
     });
 
-    const resume = new Document(
-      `./src/html/resumes/${legal_name}_Resume_${content.file_name}.html`
-    );
+    const resume_file_name = `${legal_name}_Resume_${content.file_name}`;
+    const cover_letter_file_name = `${legal_name}_cover_letter_${content.file_name}`;
+
+    const resume = new Document(`./src/html/resumes/${resume_file_name}.html`);
     const cover_letter = new Document(
-      `./src/html/cover_letters/${legal_name}_cover_letter_${content.file_name}.html`
+      `./src/html/cover_letters/${cover_letter_file_name}.html`
     );
 
     // Save the generated documents
@@ -87,6 +110,15 @@ export const generate_documents = async (
     ]);
 
     success(`All content for ${content.file_name} is ready.`);
+    filenames = {
+      resume: resume_file_name,
+      cover_letter: cover_letter_file_name,
+    };
+    status = true;
+    log = {
+      filenames,
+      status,
+    };
   } catch (error) {
     if (typeof error === "string") err(error);
     else {
@@ -94,4 +126,5 @@ export const generate_documents = async (
       console.error(error);
     }
   }
+  return log;
 };
