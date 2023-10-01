@@ -21,7 +21,7 @@ interface Filenames {
 
 type Status = Boolean;
 
-interface Log {
+export interface Log {
   status: Status;
   filenames: Filenames;
 }
