@@ -13,8 +13,8 @@ RUN apt update && apt install -y software-properties-common
 # Add fishshell PPA
 RUN apt-add-repository ppa:fish-shell/release-3
 
-# Update the package list again and install python3, curl, make, unzip, and fish
-RUN apt update && apt install -y python3 curl make unzip fish python3-pip
+# Update the package list again and install python3, curl, make, unzip, fish, python3-pip, and xdotool
+RUN apt update && apt install -y python3 curl make unzip fish python3-pip xdotool
 
 # Set fish as the default shell
 RUN chsh -s /usr/bin/fish
@@ -31,5 +31,4 @@ ENV PATH="/root/.bun/bin:${PATH}"
 # Run bun install
 RUN bun install
 
-# Keep the container running indefinitely
-CMD ["tail", "-f", "/dev/null"]
+CMD ["bun", "run", "--hot", "./server.ts"]
