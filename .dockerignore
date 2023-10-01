@@ -9,3 +9,6 @@ docker-compose.yaml
 # Ignore other unwanted files or directories
 node_modules
 *.log
+
+# Ignore sandbox
+sandbox
