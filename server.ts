@@ -63,7 +63,7 @@ app.post("/generate", async (c) => {
   const job_profile = body.job_profile;
   console.info("job_profile:", job_profile);
   try {
-    //await generate_documents();
+    await generate_documents();
     console.info("Generation success");
   } catch (error) {
     console.error("Generation failed:", error);
