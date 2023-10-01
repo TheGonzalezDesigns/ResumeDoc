@@ -1,2 +1,11 @@
+# Ignore .git directory
+.git
+
+# Ignore Docker-related files
+Dockerfile
+docker-compose.yaml
+*.dockerignore
+
+# Ignore other unwanted files or directories
 node_modules
 *.log
