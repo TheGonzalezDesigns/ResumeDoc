@@ -14,13 +14,19 @@ RUN apt update && apt install -y software-properties-common
 RUN apt-add-repository ppa:fish-shell/release-3
 
 # Update the package list again and install python3, curl, make, unzip, and fish
-RUN apt update && apt install -y python3 curl make unzip fish
+RUN apt update && apt install -y python3 curl make unzip fish python3-pip
 
 # Set fish as the default shell
 RUN chsh -s /usr/bin/fish
 
+# Install Python packages
+RUN pip3 install --no-cache-dir -r /app/requirements.txt
+
 # Install bunjs runtime
 RUN curl -fsSL https://bun.sh/install | bash
+
+# Run bun install
+RUN bun install
 
 # Add ./root/.bun/bin to the PATH
 ENV PATH="/root/.bun/bin:${PATH}"
