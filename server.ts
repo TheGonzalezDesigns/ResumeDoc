@@ -1,28 +1,10 @@
-import { generate_documents } from "./generate_documents";
+import { generate_documents, Log } from "./generate_documents";
 import { Hono } from "hono";
 
 // Create a new Hono instance
 const app = new Hono();
 
 /*
-// Define the GET endpoint for /status?job=...
-app.get("/status/:job", (c) => {
-  const job = c.req.param("job");
-  if (!job) return c.text("Job parameter is missing");
-  return c.text(`The status of job ${job} is ...`);
-});
-
-app.post("/generate", async (c) => {
-  try {
-    const body = await c.req.json();
-    const job_profile = body.job_profile;
-    // Replace ... with your logic
-    console.info("job_profile:", job_profile);
-  } catch (error) {
-    // Handle error
-  }
-});
-
 app.get("/questionaire", async (c) => {
   try {
     const body = await c.req.json();
@@ -61,15 +43,25 @@ app.post("/generate", async (c) => {
   //console.info(c.req.headers);
   const body = await c.req.json();
   const job_profile = body.job_profile;
+  let log: Log = {
+    filenames: {
+      resume: "",
+      cover_letter: "",
+    },
+    status: false,
+  };
+
   console.info("job_profile:", job_profile);
+
   try {
-    await generate_documents();
+    //log = await generate_documents();
+    if (!log.status) throw "Generation Error";
     console.info("Generation success");
   } catch (error) {
     console.error("Generation failed:", error);
   }
   //// Replace ... with your logic
-  return c.json(body);
+  return c.json({ log });
 });
 
 export default {
