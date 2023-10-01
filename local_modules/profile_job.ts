@@ -7,9 +7,12 @@ import { query } from "./query";
  * @returns {Promise<extraction>} A promise that resolves to an extraction object containing detailed job profile information.
  * @throws {Error} Throws an error if the extraction fails.
  */
-export const profile_job = async (): Promise<extraction> => {
+export const profile_job = async (
+  description: string = ""
+): Promise<extraction> => {
   const filepath = "./context/jobs/profile.txt";
-  const description = await Bun.file(filepath).text();
+  description =
+    description.length > 1 ? description : await Bun.file(filepath).text();
   const prompt = `
     Given the job listing below, ensure a thorough and complete extraction of all details, especially focusing on capturing ALL technical skills, responsibilities, and non-technical requirements mentioned throughout the job description.
 
