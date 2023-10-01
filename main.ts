@@ -19,7 +19,7 @@ interface GeneratedContent {
  *
  * @returns {Promise<void>} Resolves when all tasks are completed.
  */
-const main = async (): Promise<void> => {
+export const main = async (): Promise<void> => {
   const legalName = "Hugo_Gonzalez";
   notify("The Doctor is ready");
 
