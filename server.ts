@@ -65,7 +65,7 @@ app.post("/generate", async (c) => {
 
 app.post("/simulate", async (c) => {
   try {
-    const commands = (await c.req.json())?.commands;
+    const { commands, delay = 1000 } = (await c.req.json()) ?? {};
 
     if (!Array.isArray(commands)) {
       console.error("Invalid command format: commands should be an array");
@@ -101,13 +101,11 @@ app.post("/simulate", async (c) => {
             await readStream(child.stderr, "STDERR from child process:");
           }
 
-          child.exited
-            .then((exitCode) => {
-              console.log(`Child process exited with code: ${exitCode}`);
-            })
-            .catch((error) => {
-              console.error("Child process exited with error:", error);
-            });
+          // Wait for the child process to exit
+          await child.exited;
+
+          // After processing each command, wait for the specified delay
+          await new Promise((resolve) => setTimeout(resolve, delay));
         }
       } catch (error) {
         console.error("Error executing command:", command, error);
