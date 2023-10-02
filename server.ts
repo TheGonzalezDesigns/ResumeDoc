@@ -48,13 +48,13 @@ app.post("/generate", async (c) => {
       resume: "",
       cover_letter: "",
     },
-    status: true,
+    status: false,
   };
 
   console.info("job_profile:", job_profile);
 
   try {
-    //log = await generate_documents();
+    log = await generate_documents();
     if (!log.status) throw "Generation Error";
     console.info("Generation success");
   } catch (error) {
@@ -96,12 +96,9 @@ app.post("/simulate", async (c) => {
         }
 
         if (child) {
-          const stdoutText = await new Response(child.stdout).text();
-          console.log("STDOUT from child process:", stdoutText);
-
+          await readStream(child.stdout, "STDOUT from child process:");
           if (child.stderr) {
-            const stderrText = await new Response(child.stderr).text();
-            console.error("STDERR from child process:", stderrText);
+            await readStream(child.stderr, "STDERR from child process:");
           }
 
           child.exited
@@ -124,6 +121,26 @@ app.post("/simulate", async (c) => {
     return c.text("Unexpected Error", 500);
   }
 });
+
+async function readStream(
+  stream: ReadableStream<Uint8Array>,
+  logPrefix: string
+) {
+  const reader = stream.getReader();
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) {
+        break;
+      }
+      console.log(`${logPrefix} ${new TextDecoder().decode(value)}`);
+    }
+  } catch (error) {
+    console.error("Error reading from stream:", error);
+  } finally {
+    reader.releaseLock();
+  }
+}
 
 export default {
   port: 8080,
