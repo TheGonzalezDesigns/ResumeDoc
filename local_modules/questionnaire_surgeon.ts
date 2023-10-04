@@ -21,7 +21,19 @@ export const questionnaire_surgeon = async (
   html_snippet: ${html_snippet}
   `;
 
-  const script = await query(prompt);
+  const response = await query(prompt, 4);
+
+  const reprompt = `
+  Please extract the code from the following text and place it into this json object, as the value for the 'code' key, only return the JSON object:
+  {
+    code: ""
+  }
+  text: ${response}
+  `;
+
+  const formatted_response = await query(reprompt);
+
+  const { code: script } = JSON.parse(formatted_response);
 
   return script;
 };
