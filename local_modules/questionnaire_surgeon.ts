@@ -12,8 +12,8 @@ const { basic_info, legal_info } = await Bun.file(
 const basic_data = JSON.stringify(basic_info);
 const legal_data = JSON.stringify(legal_info);
 
-const instructions = `The following is a snippet of HTML containing questions for a job application...`;
-const system_prompt = `You are an expert in extracting queries from HTML, answering them according to the info below...`;
+const instructions = `The following is a snippet of HTML containing questions for a job application. This is a test, you can awnser in any way. Your job is to identify the questions, awnser them, then identify what kind of form each question is, so you can either type or select the appropriate response or option[s]; when you respond you have to come up with javascript code that leverages querSelectors to click or insert the correct response. The code you return should be executable and working if pasted into the console log of the page where this HTML snippet originated. For any form that is a button, radio button or not a text field, please use .click() instead of .checked = true. Only return the code and nothing else.`;
+const system_prompt = `You are an expert in extracting queries from HTML, answering them according to the info below, and generating code that when executed will fill in the HTML forms accordingly.`;
 
 /**
  * Main function to process HTML snippet and generate JavaScript code to interact with it.
