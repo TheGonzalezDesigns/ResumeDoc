@@ -1,10 +1,16 @@
 type HTML = string;
 
+/**
+ * Report interface to hold the HTML snippet and its types.
+ */
 export interface Report {
   HTML_snippet: HTML;
   types: HTML_Type[];
 }
 
+/**
+ * Enumeration for HTML types.
+ */
 export enum HTML_Type {
   Legal = 0,
   Personal = 1,
@@ -12,6 +18,11 @@ export enum HTML_Type {
   Generated = 3,
 }
 
+/**
+ * Function to analyze the HTML snippet and identify its types.
+ * @param {HTML} HTML_snippet - The HTML snippet to analyze.
+ * @returns {Report} - The report containing the original HTML snippet and identified types.
+ */
 export const HTML_assistant = (HTML_snippet: HTML): Report => {
   let report: Report = {
     HTML_snippet,
