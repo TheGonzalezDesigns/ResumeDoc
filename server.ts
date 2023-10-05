@@ -4,6 +4,7 @@ import {
   questionnaire_surgeon,
   Script,
 } from "./local_modules/questionnaire_surgeon";
+import { read_stream } from "./local_modules/read_stream";
 
 /**
  * Initialize a new Hono instance.
@@ -94,9 +95,9 @@ app.post("/simulate", async (c) => {
         }
 
         if (child) {
-          await readStream(child.stdout, "STDOUT from child process:");
+          await read_stream(child.stdout, "STDOUT from child process:");
           if (child.stderr) {
-            await readStream(child.stderr, "STDERR from child process:");
+            await read_stream(child.stderr, "STDERR from child process:");
           }
 
           const exit_code = await child.exited;
@@ -112,32 +113,6 @@ app.post("/simulate", async (c) => {
     return c.text("Unexpected Error", 500);
   }
 });
-
-/**
- * Read from a stream and log the output.
- * @param {ReadableStream<Uint8Array>} stream - The stream to read from.
- * @param {string} logPrefix - Prefix for log messages.
- * @returns {Promise<void>}
- */
-async function readStream(
-  stream: ReadableStream<Uint8Array>,
-  logPrefix: string
-): Promise<void> {
-  const reader = stream.getReader();
-  try {
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) {
-        break;
-      }
-      console.log(`${logPrefix} ${new TextDecoder().decode(value)}`);
-    }
-  } catch (error) {
-    console.error("Error reading from stream:", error);
-  } finally {
-    reader.releaseLock();
-  }
-}
 
 /**
  * Handle questionnaire input.
