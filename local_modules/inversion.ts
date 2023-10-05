@@ -36,6 +36,10 @@ export const invert_chunks = async (
   keywords: RegExp[]
 ): Promise<string[]> => {
   const prompt = `
+    You are an expert in keyword relevancy. Your job is to rewrite statements to remove any irrelevant information.
+    For example if the keywords are ['Rust, DevOps'] and the statement is 'Proffessional Solidity dev with 5 years of experience in Rust and DevOps',
+    An acceptable response would be "Expert software developer passionate about DevOps with specialization in Rust."
+    An error response would be "Professional Solidity Engineer."
     From the text [${chunks.join(", ")}].
     Focus ONLY on the following keywords: [${keywords
       .map((k) => k.source)
