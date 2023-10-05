@@ -1,31 +1,12 @@
-import { generate_documents, Log } from "./generate_documents";
 import { Hono } from "hono";
+import { generate_documents, Log } from "./generate_documents";
+import {
+  questionnaire_surgeon,
+  Script,
+} from "./local_modules/questionnaire_surgeon";
 
 // Create a new Hono instance
 const app = new Hono();
-
-/*
-app.get("/questionaire", async (c) => {
-  try {
-    const body = await c.req.json();
-    const html_snippet = body.html_snippet;
-    // Replace ... with your logic
-    console.info("html_snippet:", html_snippet);
-  } catch (error) {
-    // Handle error
-  }
-});
-
-app.post("/select_file/:file_path", (c) => {
-  try {
-    const file_path = c.req.param("file_path");
-    // Replace ... with your logic
-    console.info("file_path:", file_path);
-  } catch (error) {
-    // Handle error
-  }
-});
-*/
 
 app.notFound((c) => {
   return c.text("Custom 404 Message", 404);
@@ -102,7 +83,15 @@ app.post("/simulate", async (c) => {
           }
 
           // Wait for the child process to exit
-          await child.exited;
+          const exit_code = await child.exited;
+
+          console.info(
+            `${exit_code == 0 ? "S" : "Uns"}uccessfuly simulated the ${
+              command.type === "key"
+                ? "pressing of `" + command.key
+                : "typing of `" + command.keys
+            }\``
+          );
 
           // After processing each command, wait for the specified delay
           await new Promise((resolve) => setTimeout(resolve, delay));
@@ -139,6 +128,22 @@ async function readStream(
     reader.releaseLock();
   }
 }
+
+app.post("/questionnaire", async (c) => {
+  try {
+    const { html_snippet, personal_summary } = (await c.req.json()) ?? {};
+    if (!(html_snippet !== undefined && Object.keys(html_snippet).length >= 1))
+      throw "No HTML Provided.";
+    if (!(personal_summary !== undefined && personal_summary.length >= 1))
+      throw "No Personal Summary Provided.";
+    const script = await questionnaire_surgeon(html_snippet, personal_summary);
+    console.info("script:", script);
+    return c.json({ status: "success", script });
+  } catch (error) {
+    console.error("Unexpected error:", error);
+    return c.text("Unexpected Error", 500);
+  }
+});
 
 export default {
   port: 8080,
