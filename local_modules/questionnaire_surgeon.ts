@@ -34,6 +34,7 @@ export const questionnaire_surgeon = async (
     types,
     basic_data,
     legal_data,
+    personal_summary,
     generated_data
   );
 
@@ -70,6 +71,7 @@ const get_relevant_data_prompt = (
   types: HTML_Type[],
   basic_data: string,
   legal_data: string,
+  personal_data: string,
   generated_data: string
 ): string => {
   const relevant_prompt_data: string[] = [];
@@ -79,6 +81,9 @@ const get_relevant_data_prompt = (
   }
   if (types.includes(HTML_Type.Legal)) {
     relevant_prompt_data.push(`legal_info: ${legal_data}`);
+  }
+  if (types.includes(HTML_Type.Personal)) {
+    relevant_prompt_data.push(`personal_info: ${personal_data}`);
   }
   if (types.includes(HTML_Type.Generated)) {
     relevant_prompt_data.push(`generated_info: ${generated_data}`);
