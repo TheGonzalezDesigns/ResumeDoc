@@ -59,7 +59,7 @@ app.post("/generate", async (c) => {
   };
 
   try {
-    log = await generate_documents();
+    log = await generate_documents(job_profile);
     if (!log.status) throw "Generation Error";
   } catch (error) {
     console.error("Generation failed:", error);
@@ -150,7 +150,12 @@ app.post("/questionnaire", async (c) => {
     if (!html_snippet || !personal_summary) {
       throw "Invalid input";
     }
-    const script = await questionnaire_surgeon(html_snippet, personal_summary);
+    console.time("Testing_QS");
+    const script: Script = await questionnaire_surgeon(
+      html_snippet,
+      personal_summary
+    );
+    console.timeEnd("Testing_QS");
     return c.json({ status: "success", script });
   } catch (error) {
     return c.text("Unexpected Error", 500);
