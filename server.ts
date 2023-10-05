@@ -5,23 +5,49 @@ import {
   Script,
 } from "./local_modules/questionnaire_surgeon";
 
-// Create a new Hono instance
+/**
+ * Initialize a new Hono instance.
+ */
 const app = new Hono();
 
-app.notFound((c) => {
-  return c.text("Custom 404 Message", 404);
-});
+/**
+ * Handle 404 errors.
+ * @param {any} c - Context object.
+ * @returns {any} - Response object.
+ */
+app.notFound((c) => c.text("Custom 404 Message", 404));
 
+/**
+ * Handle other errors.
+ * @param {Error} err - The error object.
+ * @param {any} c - Context object.
+ * @returns {any} - Response object.
+ */
 app.onError((err, c) => {
   console.error(`${err}`);
   return c.text("Custom Error Message", 500);
 });
 
+/**
+ * Home route.
+ * @param {any} c - Context object.
+ * @returns {any} - Response object.
+ */
 app.get("/", (c) => c.text("Hello Bun!"));
+
+/**
+ * Test route.
+ * @param {any} c - Context object.
+ * @returns {any} - Response object.
+ */
 app.get("/test", (c) => c.text("Testing Bun!"));
 
+/**
+ * Generate documents.
+ * @param {any} c - Context object.
+ * @returns {Promise<any>} - Response object.
+ */
 app.post("/generate", async (c) => {
-  //console.info(c.req.headers);
   const body = await c.req.json();
   const job_profile = body.job_profile;
   let log: Log = {
@@ -32,48 +58,39 @@ app.post("/generate", async (c) => {
     status: false,
   };
 
-  console.info("job_profile:", job_profile);
-
   try {
     log = await generate_documents();
     if (!log.status) throw "Generation Error";
-    console.info("Generation success");
   } catch (error) {
     console.error("Generation failed:", error);
   }
   return c.json({ log });
 });
 
+/**
+ * Simulate keypresses or typing.
+ * @param {any} c - Context object.
+ * @returns {Promise<any>} - Response object.
+ */
 app.post("/simulate", async (c) => {
   try {
     const { commands, delay = 1000 } = (await c.req.json()) ?? {};
 
     if (!Array.isArray(commands)) {
-      console.error("Invalid command format: commands should be an array");
       return c.text("Invalid command format", 400);
     }
 
     for (const command of commands) {
-      if (
-        typeof command.type !== "string" ||
-        !["key", "keys"].includes(command.type)
-      ) {
-        console.error("Invalid command type:", command.type);
+      if (!["key", "keys"].includes(command.type)) {
         return c.text("Invalid command type", 400);
       }
 
       try {
         let child;
-        if (command.type === "key" && typeof command.key === "string") {
+        if (command.type === "key") {
           child = Bun.spawn(["xdotool", "key", command.key]);
-        } else if (
-          command.type === "keys" &&
-          typeof command.keys === "string"
-        ) {
-          child = Bun.spawn(["xdotool", "type", command.keys]);
         } else {
-          console.error("Invalid command format:", command);
-          return c.text("Invalid command format", 400);
+          child = Bun.spawn(["xdotool", "type", command.keys]);
         }
 
         if (child) {
@@ -82,37 +99,30 @@ app.post("/simulate", async (c) => {
             await readStream(child.stderr, "STDERR from child process:");
           }
 
-          // Wait for the child process to exit
           const exit_code = await child.exited;
-
-          console.info(
-            `${exit_code == 0 ? "S" : "Uns"}uccessfuly simulated the ${
-              command.type === "key"
-                ? "pressing of `" + command.key
-                : "typing of `" + command.keys
-            }\``
-          );
-
-          // After processing each command, wait for the specified delay
           await new Promise((resolve) => setTimeout(resolve, delay));
         }
       } catch (error) {
-        console.error("Error executing command:", command, error);
         return c.text("Error executing command", 500);
       }
     }
 
     return c.json({ status: "success" });
   } catch (error) {
-    console.error("Unexpected error:", error);
     return c.text("Unexpected Error", 500);
   }
 });
 
+/**
+ * Read from a stream and log the output.
+ * @param {ReadableStream<Uint8Array>} stream - The stream to read from.
+ * @param {string} logPrefix - Prefix for log messages.
+ * @returns {Promise<void>}
+ */
 async function readStream(
   stream: ReadableStream<Uint8Array>,
   logPrefix: string
-) {
+): Promise<void> {
   const reader = stream.getReader();
   try {
     while (true) {
@@ -129,18 +139,20 @@ async function readStream(
   }
 }
 
+/**
+ * Handle questionnaire input.
+ * @param {any} c - Context object.
+ * @returns {Promise<any>} - Response object.
+ */
 app.post("/questionnaire", async (c) => {
   try {
     const { html_snippet, personal_summary } = (await c.req.json()) ?? {};
-    if (!(html_snippet !== undefined && Object.keys(html_snippet).length >= 1))
-      throw "No HTML Provided.";
-    if (!(personal_summary !== undefined && personal_summary.length >= 1))
-      throw "No Personal Summary Provided.";
+    if (!html_snippet || !personal_summary) {
+      throw "Invalid input";
+    }
     const script = await questionnaire_surgeon(html_snippet, personal_summary);
-    console.info("script:", script);
     return c.json({ status: "success", script });
   } catch (error) {
-    console.error("Unexpected error:", error);
     return c.text("Unexpected Error", 500);
   }
 });
