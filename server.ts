@@ -156,9 +156,9 @@ app.post("/questionnaire", async (c) => {
       personal_summary
     );
     console.timeEnd("Testing_QS");
-    return c.json({ status: "success", script });
+    return c.json({ metadata: { status: true, script } });
   } catch (error) {
-    return c.text("Unexpected Error", 500);
+    return c.json({ metadata: { status: false, script: "" } });
   }
 });
 
