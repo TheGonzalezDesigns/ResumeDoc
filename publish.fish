@@ -1,5 +1,5 @@
 #!/usr/bin/env fish
-
+echo '[[Publishing Documents]] Started'
 # Define directory paths
 set html_root "./src/html/"
 set pdf_root "./src/pdfs/"
@@ -31,3 +31,4 @@ mkdir -p ~/Documents/Coverletters > /dev/null
 for file in ./src/pdfs/cover_letters/*.pdf
     mv $file ~/Documents/Coverletters
 end
+echo '[[Publishing Documents]] Ended'
