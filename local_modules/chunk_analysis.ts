@@ -44,7 +44,7 @@ export const initialize_analysis = async (
   );
 
   // Calculate threshold based on the length of combined keywords
-  const threshold_coefficient = 1.5;
+  const threshold_coefficient = 0.95;
   const threshold = threshold_coefficient * combined_keywords.length;
 
   return {
