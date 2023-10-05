@@ -39,8 +39,7 @@ export const questionnaire_surgeon = async (
 
   const prompt = `
   System: ${system_prompt}
-  basic_info: ${basic_data}
-  personal_summary: ${personal_summary}
+  ${relevant_data_prompt}
   Instructions: ${instructions}
   HTML_snippet: ${HTML_snippet}
   `;
