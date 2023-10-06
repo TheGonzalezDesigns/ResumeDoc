@@ -1,23 +1,23 @@
-import { read_stream } from "local_modules/read_stream";
-
 /**
  * Function to publish documents using an external shell script.
  * @returns {Promise<void>} - Resolves if successful, rejects if failed.
  */
 export const publish_documents = async (): Promise<void> => {
   try {
-    const child = Bun.spawn(["./publish.fish"]);
+    const result = Bun.spawnSync(["./publish.fish"]);
 
-    if (child) {
-      await read_stream(child.stdout, "STDOUT from child process:");
-      if (child.stderr) {
-        await read_stream(child.stderr, "STDERR from child process:");
-      }
+    if (result.exitCode !== 0) {
+      throw new Error("Failed to Publish documents");
+    }
 
-      const exit_code = await child.exited;
-      if (exit_code !== 0) throw "Failed";
+    if (result.stdout) {
+      console.log("STDOUT from child process:", result.stdout.toString());
+    }
+
+    if (result.stderr) {
+      console.log("STDERR from child process:", result.stderr.toString());
     }
   } catch (error) {
-    throw "Failed to Publish documents";
+    throw new Error("Failed to Publish documents");
   }
 };
