@@ -24,6 +24,7 @@ type Status = Boolean;
 export interface Log {
   status: Status;
   filenames: Filenames;
+  content: string;
 }
 
 /**
@@ -41,10 +42,11 @@ export const generate_documents = async (
     cover_letter: "",
   };
   let status = false;
-
+  let content: string = "";
   let log = {
     status,
     filenames,
+    content,
   };
 
   try {
@@ -118,6 +120,7 @@ export const generate_documents = async (
     log = {
       filenames,
       status,
+      content: content.cover_letter_content,
     };
   } catch (error) {
     if (typeof error === "string") err(error);
