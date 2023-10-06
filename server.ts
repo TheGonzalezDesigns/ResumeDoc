@@ -4,7 +4,6 @@ import {
   questionnaire_surgeon,
   Script,
 } from "./local_modules/questionnaire_surgeon";
-import { read_stream } from "./local_modules/read_stream";
 
 /**
  * Initialize a new Hono instance.
@@ -87,22 +86,27 @@ app.post("/simulate", async (c) => {
       }
 
       try {
-        let child;
+        let result;
         if (command.type === "key") {
-          child = Bun.spawn(["xdotool", "key", command.key]);
+          result = Bun.spawnSync(["xdotool", "key", command.key]);
         } else {
-          child = Bun.spawn(["xdotool", "type", command.keys]);
+          result = Bun.spawnSync(["xdotool", "type", command.keys]);
         }
 
-        if (child) {
-          await read_stream(child.stdout, "STDOUT from child process:");
-          if (child.stderr) {
-            await read_stream(child.stderr, "STDERR from child process:");
-          }
-
-          const exit_code = await child.exited;
-          await new Promise((resolve) => setTimeout(resolve, delay));
+        if (result.exitCode !== 0) {
+          // You may want to handle the error or log it
+          return c.text("Error executing command", 500);
         }
+
+        if (result.stdout) {
+          console.log("STDOUT from child process:", result.stdout.toString());
+        }
+
+        if (result.stderr) {
+          console.log("STDERR from child process:", result.stderr.toString());
+        }
+
+        await new Promise((resolve) => setTimeout(resolve, delay));
       } catch (error) {
         return c.text("Error executing command", 500);
       }
