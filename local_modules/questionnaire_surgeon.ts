@@ -18,53 +18,34 @@ const system_prompt = `As an HTML query expert, your task is to analyze the HTML
 
 const methods = `
 try {
-/**
- * This updated snippet includes a revised function to simulate a click event
- * that accounts for elements that may require different event dispatching
- * mechanisms, like a button element inside a React application.
- */
-
-/**
- * Function to set the value of the input element
- * @param {string} selector - The selector for the input element
- * @param {string} value - The value to set
- */
 const setValue = (selector, value) => {
-  // Selecting the input element by its selector
-  const inputElement = document.querySelector(selector);
-
-  // Checking if the input element exists before attempting to set its value
-  if (inputElement) {
-    // Setting the new value
-    inputElement.value = value;
-
-    // Triggering the input event to inform React about the change
-    const inputEvent = new Event('input', { bubbles: true });
-    inputElement.dispatchEvent(inputEvent);
-  } else {
-    console.error('Input element not found');
-  }
+    const inputElement = document.querySelector(selector);
+    if (inputElement) {
+        const nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value").set;
+        nativeInputValueSetter.call(inputElement, value);
+        
+        const inputEvent = new Event('input', { bubbles: true });
+        inputElement.dispatchEvent(inputEvent);
+        
+        const changeEvent = new Event('change', { bubbles: true });
+        inputElement.dispatchEvent(changeEvent);
+    } else {
+        console.error('Input element not found');
+    }
 };
 
-// Function to simulate a click event
 const simulateClick = (selector) => {
-  // Selecting the element by its id
-  const element = document.querySelector(selector);
-
-  // Checking if the element exists before attempting to trigger the click event
-  if (element) {
-    // Creating and initializing a MouseEvent to simulate a user click
-    const clickEvent = new MouseEvent('click', {
-      view: window,
-      bubbles: true,
-      cancelable: true,
-    });
-
-    // Dispatching the click event on the element
-    element.dispatchEvent(clickEvent);
-  } else {
-    console.error('Element not found');
-  }
+    const element = document.querySelector(selector);
+    if (element) {
+        const clickEvent = new MouseEvent('click', {
+            view: window,
+            bubbles: true,
+            cancelable: true,
+        });
+        element.dispatchEvent(clickEvent);
+    } else {
+        console.error('Element not found');
+    }
 };
 `;
 
@@ -113,6 +94,7 @@ export const questionnaire_surgeon = async (
       console.info("PS-script:", script);
       return methods + "\n" + script + script_tail;
     } catch (err) {
+      console.error("Failed to parse res:", err);
       console.info("Fixing response.");
       response = await query(
         `Please return a fixed version of the following JSON: ${response}`
