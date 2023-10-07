@@ -13,7 +13,7 @@ const basic_data = JSON.stringify(basic_info);
 const legal_data = JSON.stringify(legal_info);
 
 const instructions =
-  "Instructions: Given the HTML snippet of a job application form below, generate JavaScript code that will automatically fill in the form fields when run in the console of the original webpage. Each form field should be filled based on the provided personal, legal, and basic information. Use the function `setValue(selector, value)` to set the value of text fields and the function `simulateClick(selector)` to trigger a click event for non-text fields like radio buttons. The generated code should be formatted such that each `setValue` or `simulateClick` function call corresponds to a single form field, with the selector argument matching the id attribute of the form field, and the value argument matching the respective piece of provided information. Compile all the function calls into a string, and place this string into a JSON object with the key 'code'. Return only this JSON object.";
+  "Instructions: Given the HTML snippet of a job application form below, generate JavaScript code that will automatically fill in the form fields when run in the console of the original webpage. Each form field should be filled based on the provided personal, legal, and basic information. Use the function `setValue(selector, value)` to set the value of text fields and the function `simulateClick(selector)` to trigger a click event for non-text fields like radio buttons. When using the `setValue` and `simulateClick` functions, the `selector` argument should match the id attribute of the form field but with the '#' symbol. Inject your response into a JSON object, within the 'code' key. {\"code\": \"...\"}";
 const system_prompt = `As an HTML query expert, your task is to analyze the HTML snippet below and generate code to automatically fill out the forms.`;
 
 /**
@@ -47,11 +47,21 @@ export const questionnaire_surgeon = async (
   HTML_snippet: ${HTML_snippet}
   `;
   console.info("Prompt:", prompt);
-  const response = await query(prompt, 4);
-
-  const { code: script } = JSON.parse(response);
-
-  return script;
+  let response = await query(prompt, 4);
+  console.info("SUR-RES:", response);
+  while (true) {
+    try {
+      const { code: script } = JSON.parse(response);
+      console.info("script:", script);
+      return script;
+    } catch (err) {
+      console.info("Fixing response.");
+      response = await query(
+        `Please return a fixed version of the following JSON: ${response}`
+      );
+      console.info("FR:", response);
+    }
+  }
 };
 
 /**
