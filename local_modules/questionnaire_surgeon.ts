@@ -16,6 +16,64 @@ const instructions =
   "Instructions: Given the HTML snippet of a job application form below, generate JavaScript code that will automatically fill in the form fields when run in the console of the original webpage. Each form field should be filled based on the provided personal, legal, and basic information. Use the function `setValue(selector, value)` to set the value of text fields and the function `simulateClick(selector)` to trigger a click event for non-text fields like radio buttons. When using the `setValue` and `simulateClick` functions, the `selector` argument should match the id attribute of the form field but with the '#' symbol. Inject your response into a JSON object, within the 'code' key, minified into one line. {\"code\": \"...\"}";
 const system_prompt = `As an HTML query expert, your task is to analyze the HTML snippet below and generate code to automatically fill out the forms.`;
 
+const methods = `
+try {
+/**
+ * This updated snippet includes a revised function to simulate a click event
+ * that accounts for elements that may require different event dispatching
+ * mechanisms, like a button element inside a React application.
+ */
+
+/**
+ * Function to set the value of the input element
+ * @param {string} selector - The selector for the input element
+ * @param {string} value - The value to set
+ */
+const setValue = (selector, value) => {
+  // Selecting the input element by its selector
+  const inputElement = document.querySelector(selector);
+
+  // Checking if the input element exists before attempting to set its value
+  if (inputElement) {
+    // Setting the new value
+    inputElement.value = value;
+
+    // Triggering the input event to inform React about the change
+    const inputEvent = new Event('input', { bubbles: true });
+    inputElement.dispatchEvent(inputEvent);
+  } else {
+    console.error('Input element not found');
+  }
+};
+
+// Function to simulate a click event
+const simulateClick = (selector) => {
+  // Selecting the element by its id
+  const element = document.querySelector(selector);
+
+  // Checking if the element exists before attempting to trigger the click event
+  if (element) {
+    // Creating and initializing a MouseEvent to simulate a user click
+    const clickEvent = new MouseEvent('click', {
+      view: window,
+      bubbles: true,
+      cancelable: true,
+    });
+
+    // Dispatching the click event on the element
+    element.dispatchEvent(clickEvent);
+  } else {
+    console.error('Element not found');
+  }
+};
+`;
+
+const script_tail = `
+} catch(e) {
+  console.error('Script Failed:', e)
+}
+`;
+
 /**
  * Main function to process HTML snippet and generate JavaScript code to interact with it.
  * @param {string} HTML_snippet - HTML content as a string.
@@ -53,7 +111,7 @@ export const questionnaire_surgeon = async (
     try {
       const { code: script } = JSON.parse(response);
       console.info("PS-script:", script);
-      return script;
+      return methods + "\n" + script + script_tail;
     } catch (err) {
       console.info("Fixing response.");
       response = await query(
