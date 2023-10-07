@@ -12,7 +12,8 @@ const { basic_info, legal_info } = await Bun.file(
 const basic_data = JSON.stringify(basic_info);
 const legal_data = JSON.stringify(legal_info);
 
-const instructions = `You'll see an HTML snippet from a job application form. Identify and answer the questions, noting their form types. Generate JavaScript code using querySelectors to automatically fill in these forms. The code should work when run in the console of the original webpage. For non-text fields like buttons and radio buttons, use .click(). Finally, place the generated code into a JSON object with the key 'code', and return only this JSON object.`;
+const instructions =
+  "Instructions: Given the HTML snippet of a job application form below, generate JavaScript code that will automatically fill in the form fields when run in the console of the original webpage. Each form field should be filled based on the provided personal, legal, and basic information. Use the function `setValue(selector, value)` to set the value of text fields and the function `simulateClick(selector)` to trigger a click event for non-text fields like radio buttons. The generated code should be formatted such that each `setValue` or `simulateClick` function call corresponds to a single form field, with the selector argument matching the id attribute of the form field, and the value argument matching the respective piece of provided information. Compile all the function calls into a string, and place this string into a JSON object with the key 'code'. Return only this JSON object.";
 const system_prompt = `As an HTML query expert, your task is to analyze the HTML snippet below and generate code to automatically fill out the forms.`;
 
 /**
@@ -26,6 +27,7 @@ export const questionnaire_surgeon = async (
   personal_summary: string
 ): Promise<Script> => {
   const { types } = HTML_assistant(HTML_snippet);
+  console.info("Types:", types);
   const generated_data = types.includes(HTML_Type.Generated)
     ? `Date Available: ${get_upcoming_monday()}`
     : "";
@@ -37,14 +39,14 @@ export const questionnaire_surgeon = async (
     personal_summary,
     generated_data
   );
-
+  console.info("relevant_data_prompt:", relevant_data_prompt);
   const prompt = `
   System: ${system_prompt}
   ${relevant_data_prompt}
   Instructions: ${instructions}
   HTML_snippet: ${HTML_snippet}
   `;
-
+  console.info("Prompt:", prompt);
   const response = await query(prompt, 4);
 
   const { code: script } = JSON.parse(response);
