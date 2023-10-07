@@ -29,20 +29,20 @@ export const HTML_assistant = (HTML_snippet: HTML): Report => {
     types: [],
   };
 
-  const legalPattern = /<input type="(?:radio|checkbox)"[^>]*>/g;
-  const basicPattern = /<input type="(?:email|tel|url|time)"[^>]*>/g;
-  const personalPattern = /<input type="text"[^>]*>|<textarea[^>]*>/g;
+  const legalPattern = /<input.+type="(?:radio|checkbox)"[^>]*>/g;
+  const basicPattern = /<input.+type="(?:email|tel|url|time|text)"[^>]*>/g;
+  const personalPattern = /<textarea[^>]*>/g;
   const generatedPattern =
-    /<input type="(?:week|month|date|datetime-local)"[^>]*>/g;
+    /<input.+type="(?:week|month|date|datetime-local)"[^>]*>/g;
 
   if (legalPattern.test(HTML_snippet)) {
     report.types.push(HTML_Type.Legal);
   }
-  if (basicPattern.test(HTML_snippet)) {
-    report.types.push(HTML_Type.Basic);
-  }
   if (personalPattern.test(HTML_snippet)) {
     report.types.push(HTML_Type.Personal);
+  }
+  if (basicPattern.test(HTML_snippet)) {
+    report.types.push(HTML_Type.Basic);
   }
   if (generatedPattern.test(HTML_snippet)) {
     report.types.push(HTML_Type.Generated);
