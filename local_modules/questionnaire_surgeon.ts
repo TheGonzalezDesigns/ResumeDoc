@@ -88,13 +88,23 @@ export const questionnaire_surgeon = async (
   console.info("Prompt:", prompt);
   let response = await query(prompt, 4);
   console.info("SUR-RES:", response);
+
+  const extractCodeValue = (str: string) => {
+    const regex = /"code"\s*:\s*"((?:[^"\\]|\\.)*)"/;
+    const match = str.match(regex);
+    return match ? match[1] : null;
+  };
+
   while (true) {
     try {
-      const { code: script } = JSON.parse(response);
+      // Extract the script code using regex instead of JSON.parse
+      const script = extractCodeValue(response);
+      if (!script) throw new Error("Failed to extract code using regex.");
+
       console.info("PS-script:", script);
       return methods + "\n" + script + script_tail;
     } catch (err) {
-      console.error("Failed to parse res:", err);
+      console.error("Failed to parse/extract res:", err);
       console.info("Fixing response.");
       response = await query(
         `Please return a fixed version of the following JSON: ${response}`
