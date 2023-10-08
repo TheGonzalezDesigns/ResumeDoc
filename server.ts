@@ -4,6 +4,7 @@ import {
   questionnaire_surgeon,
   Script,
 } from "./local_modules/questionnaire_surgeon";
+import { publish_documents } from "./local_modules/publish_documents";
 
 /**
  * Initialize a new Hono instance.
@@ -55,15 +56,18 @@ app.post("/generate", async (c) => {
       resume: "",
       cover_letter: "",
     },
+    content: "",
     status: false,
   };
 
   try {
     log = await generate_documents(job_profile);
     if (!log.status) throw "Generation Error";
+    await publish_documents();
   } catch (error) {
     console.error("Generation failed:", error);
   }
+  console.info({ log });
   return c.json({ log });
 });
 
@@ -111,7 +115,7 @@ app.post("/simulate", async (c) => {
         return c.text("Error executing command", 500);
       }
     }
-
+    console.info("Commands:", commands);
     return c.json({ status: "success" });
   } catch (error) {
     return c.text("Unexpected Error", 500);
@@ -124,19 +128,26 @@ app.post("/simulate", async (c) => {
  * @returns {Promise<any>} - Response object.
  */
 app.post("/questionnaire", async (c) => {
+  console.info("questionnaire_surgeon starting...");
   try {
-    const { html_snippet, personal_summary } = (await c.req.json()) ?? {};
-    if (!html_snippet || !personal_summary) {
+    const res = (await c.req.json()) ?? {};
+    const { HTML_snippet, personal_summary } = res;
+    if (!HTML_snippet || !personal_summary) {
+      console.error("Invalid start:", res);
       throw "Invalid input";
     }
     console.time("Testing_QS");
     const script: Script = await questionnaire_surgeon(
-      html_snippet,
+      HTML_snippet,
       personal_summary
     );
+    console.info("script:", script);
     console.timeEnd("Testing_QS");
-    return c.json({ metadata: { status: true, script } });
+    const payload = { metadata: { status: true, script } };
+    console.info("payload");
+    return c.json(payload);
   } catch (error) {
+    console.error(error);
     return c.json({ metadata: { status: false, script: "" } });
   }
 });
@@ -146,4 +157,4 @@ export default {
   fetch: app.fetch,
 };
 
-console.info("Server started");
+console.info("Server stated");
