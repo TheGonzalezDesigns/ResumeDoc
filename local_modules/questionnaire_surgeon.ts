@@ -63,11 +63,29 @@ try {
         }
     };
 
+    const setSelectValue = (selector, optionIndex) => {
+        const selectElement = document.querySelector(selector);
+        if (selectElement && selectElement.tagName.toLowerCase() === 'select') {
+            const options = selectElement.options;
+            if (options && optionIndex >= 0 && optionIndex < options.length) {
+                selectElement.selectedIndex = optionIndex;
+                const changeEvent = new Event('change', { bubbles: true });
+                selectElement.dispatchEvent(changeEvent);
+            } else {
+                console.error('Invalid option index');
+            }
+        } else {
+            console.error('Select element not found or invalid element type');
+        }
+    };
+
     // Example Usage:
     setValue('#input-q_-2e138272db938e2631299784231b57d1', 'Desired Value');  // If it's a textarea
     setValue('#input-selector', 'New Value');  // If it's an input
     simulateClick('#button-selector');
+    setSelectValue('#input-q_5afc52ea0f5194f847107f736e5885d7', 6);  // Selecting "High School Diploma" option
 `;
+
 const script_tail = `
 } catch(e) {
   console.error('Script Failed:', e)
