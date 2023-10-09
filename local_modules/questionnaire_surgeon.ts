@@ -18,37 +18,60 @@ const system_prompt = `As an HTML query expert, your task is to analyze the HTML
 
 const methods = `
 try {
-const setValue = (selector, value) => {
-    const inputElement = document.querySelector(selector);
-    if (inputElement) {
-        const nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value").set;
-        nativeInputValueSetter.call(inputElement, value);
-        
-        const inputEvent = new Event('input', { bubbles: true });
-        inputElement.dispatchEvent(inputEvent);
-        
-        const changeEvent = new Event('change', { bubbles: true });
-        inputElement.dispatchEvent(changeEvent);
-    } else {
-        console.error('Input element not found');
-    }
-};
+    const setValue = (selector, value) => {
+        const element = document.querySelector(selector);
+        if (element) {
+            const enforceTextareaValue = (textarea, value) => {
+                const enforceValue = () => {
+                    if (textarea.value !== value) {
+                        textarea.value = value;
+                        const inputEvent = new Event('input', { bubbles: true });
+                        textarea.dispatchEvent(inputEvent);
+                        const changeEvent = new Event('change', { bubbles: true });
+                        textarea.dispatchEvent(changeEvent);
+                    }
+                };
+                const intervalId = setInterval(enforceValue, 100);  // Adjust interval as needed
+                // Optionally, store intervalId somewhere to clear it later if needed
+            };
 
-const simulateClick = (selector) => {
-    const element = document.querySelector(selector);
-    if (element) {
-        const clickEvent = new MouseEvent('click', {
-            view: window,
-            bubbles: true,
-            cancelable: true,
-        });
-        element.dispatchEvent(clickEvent);
-    } else {
-        console.error('Element not found');
-    }
-};
-`;
+            if (element.tagName.toLowerCase() === 'textarea') {
+                enforceTextareaValue(element, value);
+            } else {
+                const nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value").set;
+                nativeInputValueSetter.call(element, value);
+                const inputEvent = new Event('input', { bubbles: true });
+                element.dispatchEvent(inputEvent);
+                const changeEvent = new Event('change', { bubbles: true });
+                element.dispatchEvent(changeEvent);
+            }
+        } else {
+            console.error('Element not found');
+        }
+    };
 
+    const simulateClick = (selector) => {
+        const element = document.querySelector(selector);
+        if (element) {
+            const clickEvent = new MouseEvent('click', {
+                view: window,
+                bubbles: true,
+                cancelable: true,
+            });
+            element.dispatchEvent(clickEvent);
+        } else {
+            console.error('Element not found');
+        }
+    };
+
+    // Example Usage:
+    setValue('#input-q_-2e138272db938e2631299784231b57d1', 'Desired Value');  // If it's a textarea
+    setValue('#input-selector', 'New Value');  // If it's an input
+    simulateClick('#button-selector');
+    
+} catch (error) {
+    console.error('Error:', error);
+}`;
 const script_tail = `
 } catch(e) {
   console.error('Script Failed:', e)
