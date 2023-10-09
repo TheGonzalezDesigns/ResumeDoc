@@ -68,10 +68,7 @@ try {
     setValue('#input-q_-2e138272db938e2631299784231b57d1', 'Desired Value');  // If it's a textarea
     setValue('#input-selector', 'New Value');  // If it's an input
     simulateClick('#button-selector');
-    
-} catch (error) {
-    console.error('Error:', error);
-}`;
+`;
 const script_tail = `
 } catch(e) {
   console.error('Script Failed:', e)
