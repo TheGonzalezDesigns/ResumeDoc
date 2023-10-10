@@ -12,11 +12,16 @@ const { basic_info, legal_info } = await Bun.file(
 const basic_data = JSON.stringify(basic_info);
 const legal_data = JSON.stringify(legal_info);
 
-const instructions = `Instructions: Given the HTML snippet of a job application form below, generate JavaScript code that will automatically fill in the form fields when run in the console of the original webpage. Each form field should be filled based on the provided personal, legal, and basic information. Use the function \`setValue(selector, value)\` to set the value of text fields and the function \`simulateClick(selector)\` to trigger a click event for non-text fields like radio buttons. For select fields, use the function \`setSelectValue(selector, optionIndex)\` to select an option, where \`optionIndex\` is the index of the option to be selected, starting from 0 for the first option. When using the \`setValue\`, \`setSelectValue\`, and \`simulateClick\` functions, the \`selector\` argument should match the id attribute of the form field but with the '#' symbol. Inject your response into a JSON object, within the 'code' key, minified into one line. {"code": "..."}`;
+const instructions = `Instructions: Given the HTML snippet of a job application form below, generate JavaScript code that will automatically fill in the form fields when run in the console of the original webpage. Each form field should be filled based on the provided personal, legal, and basic information. Use the function \`setValue(selector, value)\` to set the value of text fields and the function \`simulateClick(selector)\` to trigger a click event for non-text fields like radio buttons. For select fields, use the function \`setSelectValueByText(selector, text)\` to select an option based on its text, where \`text\` is the text of the option to be selected. When using the \`setValue\`, \`setSelectValueByText\`, and \`simulateClick\` functions, the \`selector\` argument should match the id attribute of the form field but with the '#' symbol. Inject your response into a JSON object, within the 'code' key, minified into one line. {"code": "..."}`;
 const system_prompt = `As an HTML query expert, your task is to analyze the HTML snippet below and generate code to automatically fill out the forms.`;
 
 const methods = `
 try {
+    /**
+     * Sets the value of an input field or textarea
+     * @param {string} selector - The selector for the input field or textarea
+     * @param {string} value - The value to be set
+     */
     const setValue = (selector, value) => {
         const element = document.querySelector(selector);
         if (element) {
@@ -49,6 +54,10 @@ try {
         }
     };
 
+    /**
+     * Simulates a click event on a specified element
+     * @param {string} selector - The selector for the element to be clicked
+     */
     const simulateClick = (selector) => {
         const element = document.querySelector(selector);
         if (element) {
@@ -63,6 +72,11 @@ try {
         }
     };
 
+    /**
+     * Sets the selected value of a select element based on the option index
+     * @param {string} selector - The selector for the select element
+     * @param {number} optionIndex - The index of the option to be selected
+     */
     const setSelectValue = (selector, optionIndex) => {
         const selectElement = document.querySelector(selector);
         if (selectElement && selectElement.tagName.toLowerCase() === 'select') {
@@ -79,11 +93,61 @@ try {
         }
     };
 
+    /**
+     * Calculates the similarity between two strings using Jaro-Winkler similarity algorithm
+     * @param {string} s1 - The first string
+     * @param {string} s2 - The second string
+     * @return {number} The similarity score between 0 and 1
+     */
+    const similarity = (str1, str2) => {
+      const length1 = str1.length;
+      const length2 = str2.length;
+      const maxLength = Math.max(length1, length2);
+      let distance = 0;
+
+      for (let i = 0; i < maxLength; i++) {
+        if (str1[i] !== str2[i]) {
+          distance++;
+        }
+      }
+
+      console.log(\`Similarity between "\${str1}" and "\${str2}": \${1 - (distance / maxLength)}\`);
+      return 1 - (distance / maxLength);
+    };
+    /**
+     * Sets the selected value of a select element based on the option text
+     * @param {string} selector - The selector for the select element
+     * @param {string} text - The text of the option to be selected
+     */
+    const setSelectValueByText = (selector, text) => {
+        const selectElement = document.querySelector(selector);
+        if selectElement && selectElement.tagName.toLowerCase() === 'select') {
+            const options = selectElement.options;
+            let bestMatchIndex = -1;
+            let bestMatchScore = 0;
+            for (let i = 0; i < options.length; i++) {
+                const optionText = options[i].textContent || options[i].innerText;
+                const score = similarity(text, optionText);
+                if (score > bestMatchScore) {
+                    bestMatchScore = score;
+                    bestMatchIndex = i;
+                }
+            }
+            if (bestMatchIndex !== -1) {
+                setSelectValue(selector, bestMatchIndex);
+            } else {
+                console.error('No suitable option found');
+            }
+        } else {
+            console.error('Select element not found or invalid element type');
+        }
+    };
+
     // Example Usage:
     setValue('#input-q_-2e138272db938e2631299784231b57d1', 'Desired Value');  // If it's a textarea
     setValue('#input-selector', 'New Value');  // If it's an input
     simulateClick('#button-selector');
-    setSelectValue('#input-q_5afc52ea0f5194f847107f736e5885d7', 6);  // Selecting "High School Diploma" option
+    setSelectValueByText('#input-q_5afc52ea0f5194f847107f736e5885d7', 'Associate\'s Degree');  // Selecting closest match to "Associate's Degree" option
 `;
 
 const script_tail = `
