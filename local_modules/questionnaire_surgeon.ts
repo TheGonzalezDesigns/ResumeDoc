@@ -142,12 +142,6 @@ try {
             console.error('Select element not found or invalid element type');
         }
     };
-
-    // Example Usage:
-    setValue('#input-q_-2e138272db938e2631299784231b57d1', 'Desired Value');  // If it's a textarea
-    setValue('#input-selector', 'New Value');  // If it's an input
-    simulateClick('#button-selector');
-    setSelectValueByText('#input-q_5afc52ea0f5194f847107f736e5885d7', 'Associate\'s Degree');  // Selecting closest match to "Associate's Degree" option
 `;
 
 const script_tail = `
