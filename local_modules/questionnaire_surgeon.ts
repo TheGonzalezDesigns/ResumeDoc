@@ -121,7 +121,7 @@ try {
      */
     const setSelectValueByText = (selector, text) => {
         const selectElement = document.querySelector(selector);
-        if selectElement && selectElement.tagName.toLowerCase() === 'select') {
+        if (selectElement && selectElement.tagName.toLowerCase() === 'select') {
             const options = selectElement.options;
             let bestMatchIndex = -1;
             let bestMatchScore = 0;
