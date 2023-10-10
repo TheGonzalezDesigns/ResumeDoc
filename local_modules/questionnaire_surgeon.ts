@@ -52,6 +52,7 @@ try {
         } else {
             console.error('Element not found');
         }
+        console.log(\`setValue: Set value of \${selector} to \${value}\`);
     };
 
     /**
@@ -70,6 +71,7 @@ try {
         } else {
             console.error('Element not found');
         }
+        console.log(\`simulateClick: Simulated click on \${selector}\`);
     };
 
     /**
@@ -85,13 +87,13 @@ try {
                 selectElement.selectedIndex = optionIndex;
                 const changeEvent = new Event('change', { bubbles: true });
                 selectElement.dispatchEvent(changeEvent);
-                console.log(\`Selected option \${optionIndex} for \${selector}\`);
             } else {
                 console.error('Invalid option index');
             }
         } else {
             console.error('Select element not found or invalid element type');
         }
+        console.log(\`setSelectValue: Set value of \${selector} to option index \${optionIndex}\`);
     };
 
     /**
@@ -114,6 +116,7 @@ try {
             }
         }
 
+        console.log(\`similarity: Similarity between \${s1} and \${s2} is \${sum / max}\`);
         return sum / max;
     };
 
@@ -144,8 +147,8 @@ try {
         } else {
             console.error('Select element not found or invalid element type');
         }
-    };
-`;
+        console.log(\`setSelectValueByText: Set value of \${selector} to \${text}\`);
+    };`;
 
 const script_tail = `
 } catch(e) {
