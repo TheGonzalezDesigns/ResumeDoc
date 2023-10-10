@@ -10,3 +10,6 @@ logs/
 *.log
 *test*
 *Test*
+_*.js
+_*.ts
+_*.py
