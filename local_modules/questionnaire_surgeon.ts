@@ -96,28 +96,48 @@ try {
         console.log(\`setSelectValue: Set value of \${selector} to option index \${optionIndex}\`);
     };
 
+      /**
+     * Calculates the Levenshtein distance between two strings
+     * @param {string} a - The first string
+     * @param {string} b - The second string
+     * @return {number} The Levenshtein distance
+     */
+    const levenshteinDistance = (a, b) => {
+        const matrix = [];
+
+        for (let i = 0; i <= b.length; i++) {
+            matrix[i] = [i];
+        }
+
+        for (let j = 0; j <= a.length; j++) {
+            matrix[0][j] = j;
+        }
+
+        for (let i = 1; i <= b.length; i++) {
+            for (let j = 1; j <= a.length; j++) {
+                if (b.charAt(i-1) === a.charAt(j-1)) {
+                    matrix[i][j] = matrix[i-1][j-1];
+                } else {
+                    matrix[i][j] = Math.min(matrix[i-1][j-1] + 1, Math.min(matrix[i][j-1] + 1, matrix[i-1][j] + 1));
+                }
+            }
+        }
+
+        return matrix[b.length][a.length];
+    };
+
     /**
-     * Jaro-Winkler string similarity
+     * Calculates the similarity score between two strings based on Levenshtein distance
      * @param {string} s1 - The first string
      * @param {string} s2 - The second string
      * @return {number} The similarity score between 0 and 1
      */
     const similarity = (s1, s2) => {
-        const a = s1 || '';
-        const b = s2 || '';
-        const an = a.length;
-        const bn = b.length;
-        const max = Math.max(an, bn);
-        let sum = 0;
-
-        for(let i = 0; i < max; i++) {
-            if(a[i] === b[i]) {
-                sum++;
-            }
-        }
-
-        console.log(\`similarity: Similarity between \${s1} and \${s2} is \${sum / max}\`);
-        return sum / max;
+        const maxLength = Math.max(s1.length, s2.length);
+        const distance = levenshteinDistance(s1, s2);
+        const score = 1 - (distance / maxLength);
+        console.log(\`similarity: Similarity between \${s1} and \${s2} is \${score}\`);
+        return score;
     };
 
     /**
@@ -148,7 +168,8 @@ try {
             console.error('Select element not found or invalid element type');
         }
         console.log(\`setSelectValueByText: Set value of \${selector} to \${text}\`);
-    };`;
+    };
+`;
 
 const script_tail = `
 } catch(e) {
