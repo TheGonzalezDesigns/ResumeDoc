@@ -96,48 +96,33 @@ try {
         console.log(\`setSelectValue: Set value of \${selector} to option index \${optionIndex}\`);
     };
 
-      /**
-     * Calculates the Levenshtein distance between two strings
-     * @param {string} a - The first string
-     * @param {string} b - The second string
-     * @return {number} The Levenshtein distance
+ /**
+     * Check if the characters of \`query\` appear in order in the \`string\`.
+     * @param {string} query - The query string
+     * @param {string} string - The target string
+     * @return {boolean} Whether the characters of \`query\` appear in order in the \`string\`.
      */
-    const levenshteinDistance = (a, b) => {
-        const matrix = [];
-
-        for (let i = 0; i <= b.length; i++) {
-            matrix[i] = [i];
-        }
-
-        for (let j = 0; j <= a.length; j++) {
-            matrix[0][j] = j;
-        }
-
-        for (let i = 1; i <= b.length; i++) {
-            for (let j = 1; j <= a.length; j++) {
-                if (b.charAt(i-1) === a.charAt(j-1)) {
-                    matrix[i][j] = matrix[i-1][j-1];
-                } else {
-                    matrix[i][j] = Math.min(matrix[i-1][j-1] + 1, Math.min(matrix[i][j-1] + 1, matrix[i-1][j] + 1));
+    const fuzzy_match = (query, string) => {
+        let query_idx = 0;
+        for (let char of string) {
+            if (char == query[query_idx]) {
+                query_idx += 1;
+                if (query_idx == query.length) {
+                    return true;
                 }
             }
         }
-
-        return matrix[b.length][a.length];
+        return false;
     };
 
     /**
-     * Calculates the similarity score between two strings based on Levenshtein distance
-     * @param {string} s1 - The first string
-     * @param {string} s2 - The second string
-     * @return {number} The similarity score between 0 and 1
+     * Perform a fuzzy search for \`query\` in \`data\`.
+     * @param {string} query - The query string
+     * @param {Array<string>} data - An array of strings to search within
+     * @return {Array<string>} An array of matching strings
      */
-    const similarity = (s1, s2) => {
-        const maxLength = Math.max(s1.length, s2.length);
-        const distance = levenshteinDistance(s1, s2);
-        const score = 1 - (distance / maxLength);
-        console.log(\`similarity: Similarity between \${s1} and \${s2} is \${score}\`);
-        return score;
+    const fzf_search = (query, data) => {
+        return data.filter(item => fuzzy_match(query, item));
     };
 
     /**
@@ -153,10 +138,9 @@ try {
             let bestMatchScore = 0;
             for (let i = 0; i < options.length; i++) {
                 const optionText = options[i].textContent || options[i].innerText;
-                const score = similarity(text, optionText);
-                if (score > bestMatchScore) {
-                    bestMatchScore = score;
+                if (fuzzy_match(text, optionText)) {
                     bestMatchIndex = i;
+                    break;  // Exit the loop once a match is found
                 }
             }
             if (bestMatchIndex !== -1) {
@@ -168,8 +152,7 @@ try {
             console.error('Select element not found or invalid element type');
         }
         console.log(\`setSelectValueByText: Set value of \${selector} to \${text}\`);
-    };
-`;
+    };`;
 
 const script_tail = `
 } catch(e) {
