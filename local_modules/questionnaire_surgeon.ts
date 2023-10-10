@@ -85,6 +85,7 @@ try {
                 selectElement.selectedIndex = optionIndex;
                 const changeEvent = new Event('change', { bubbles: true });
                 selectElement.dispatchEvent(changeEvent);
+                console.log(\`Selected option \${optionIndex} for \${selector}\`);
             } else {
                 console.error('Invalid option index');
             }
@@ -94,26 +95,28 @@ try {
     };
 
     /**
-     * Calculates the similarity between two strings using Jaro-Winkler similarity algorithm
+     * Jaro-Winkler string similarity
      * @param {string} s1 - The first string
      * @param {string} s2 - The second string
      * @return {number} The similarity score between 0 and 1
      */
-    const similarity = (str1, str2) => {
-      const length1 = str1.length;
-      const length2 = str2.length;
-      const maxLength = Math.max(length1, length2);
-      let distance = 0;
+    const similarity = (s1, s2) => {
+        const a = s1 || '';
+        const b = s2 || '';
+        const an = a.length;
+        const bn = b.length;
+        const max = Math.max(an, bn);
+        let sum = 0;
 
-      for (let i = 0; i < maxLength; i++) {
-        if (str1[i] !== str2[i]) {
-          distance++;
+        for(let i = 0; i < max; i++) {
+            if(a[i] === b[i]) {
+                sum++;
+            }
         }
-      }
 
-      console.log(\`Similarity between "\${str1}" and "\${str2}": \${1 - (distance / maxLength)}\`);
-      return 1 - (distance / maxLength);
+        return sum / max;
     };
+
     /**
      * Sets the selected value of a select element based on the option text
      * @param {string} selector - The selector for the select element
