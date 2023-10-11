@@ -13,7 +13,8 @@
     "clipboardy": "^3.0.0",
     "ejs": "^3.1.9",
     "hono": "^3.7.3",
-    "langchain": "^0.0.145"
+    "langchain": "^0.0.145",
+    "openai-gpt-token-counter": "^1.1.0"
   },
   "devDependencies": {
     "@types/ejs": "^3.1.2",
