@@ -26,7 +26,7 @@ try {
         const element = document.querySelector(selector);
         if (element) {
             const placeholderValue = 'N/A';  // Generic placeholder value
-            const finalValue = value || placeholderValue;  // Use placeholderValue if value is empty
+            const finalValue = value.length > 0 ? value : placeholderValue;  // Use placeholderValue if value is empty
 
             const enforceTextareaValue = (textarea, value) => {
                 const enforceValue = () => {
