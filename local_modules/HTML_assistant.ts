@@ -31,7 +31,7 @@ export const HTML_assistant = (HTML_snippet: HTML): Report => {
 
   const legalPattern = /<input[^>]+type=["']?(?:radio|checkbox)["']?[^>]*>/g;
   const basicPattern =
-    /<input type="(?:email|tel|url|time)"[^>]*>|<select[^>]*>.*?<\/select>/g;
+    /<input type="(?:email|tel|url|time|text)"[^>]*>|<select[^>]*>.*?<\/select>/g;
   const personalPattern = /<textarea[^>]*>/g;
   const generatedPattern =
     /<input[^>]+type=["']?(?:week|month|date|datetime-local)["']?[^>]*>/g;
