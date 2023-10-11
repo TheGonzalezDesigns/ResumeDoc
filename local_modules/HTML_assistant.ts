@@ -29,35 +29,31 @@ export const HTML_assistant = (HTML_snippet: HTML): Report => {
     types: [],
   };
 
-  const legalPattern = /<input[^>]+type=["']?(?:radio|checkbox)["']?[^>]*>/g;
+  const legalPattern = /<input[^>]+type=["']?(?:radio|checkbox)["']?[^>]*>/;
   const basicPattern =
-    /<input type="(?:email|tel|url|time|text)"[^>]*>|<select[^>]*>.*?<\/select>/g;
-  const personalPattern = /<textarea[^>]*>/g;
+    /<input type="(?:email|tel|url|time|text)"[^>]*>|<select[^>]*>.*?<\/select>/;
+  const personalPattern = /<textarea[^>]*>/;
   const generatedPattern =
-    /<input[^>]+type=["']?(?:week|month|date|datetime-local)["']?[^>]*>/g;
+    /<input[^>]+type=["']?(?:week|month|date|datetime-local)["']?[^>]*>/;
 
-  legalPattern.lastIndex = 0;
   if (legalPattern.test(HTML_snippet)) {
     report.types.push(HTML_Type.Legal);
   } else {
     console.info("Legal pattern failed.");
   }
 
-  personalPattern.lastIndex = 0;
   if (personalPattern.test(HTML_snippet)) {
     report.types.push(HTML_Type.Personal);
   } else {
     console.info("Personal pattern failed.");
   }
 
-  basicPattern.lastIndex = 0;
   if (basicPattern.test(HTML_snippet)) {
     report.types.push(HTML_Type.Basic);
   } else {
     console.info("Basic pattern failed.");
   }
 
-  generatedPattern.lastIndex = 0;
   if (generatedPattern.test(HTML_snippet)) {
     report.types.push(HTML_Type.Generated);
   } else {
