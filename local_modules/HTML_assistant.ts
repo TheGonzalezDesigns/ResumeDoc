@@ -36,17 +36,32 @@ export const HTML_assistant = (HTML_snippet: HTML): Report => {
   const generatedPattern =
     /<input[^>]+type=["']?(?:week|month|date|datetime-local)["']?[^>]*>/g;
 
+  legalPattern.lastIndex = 0;
   if (legalPattern.test(HTML_snippet)) {
     report.types.push(HTML_Type.Legal);
+  } else {
+    console.info("Legal pattern failed.");
   }
+
+  personalPattern.lastIndex = 0;
   if (personalPattern.test(HTML_snippet)) {
     report.types.push(HTML_Type.Personal);
+  } else {
+    console.info("Personal pattern failed.");
   }
+
+  basicPattern.lastIndex = 0;
   if (basicPattern.test(HTML_snippet)) {
     report.types.push(HTML_Type.Basic);
+  } else {
+    console.info("Basic pattern failed.");
   }
+
+  generatedPattern.lastIndex = 0;
   if (generatedPattern.test(HTML_snippet)) {
     report.types.push(HTML_Type.Generated);
+  } else {
+    console.info("Generated pattern failed.");
   }
 
   return report;
