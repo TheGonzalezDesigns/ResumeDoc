@@ -196,7 +196,11 @@ export const questionnaire_surgeon = async (
   HTML_snippet: ${HTML_snippet}
   `;
   console.info("Prompt:", prompt);
-  let response = await query(prompt, 4);
+
+  const clean_response = (str: string): string => str.replace(/\n/g, " ");
+
+  let response = clean_response(await query(prompt, 4));
+
   console.info("SUR-RES:", response);
 
   const extractCodeValue = (str: string) => {
