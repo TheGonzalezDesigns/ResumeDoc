@@ -18,45 +18,44 @@ const system_prompt = `As an HTML query expert, your task is to analyze the HTML
 const methods = `
 try {
     /**
-     * Sets the value of an input field or textarea, or simulates a click if the element is a radio button.
-     * @param {string} selector - The selector for the input field, textarea, or radio button
+     * Sets the value of an input field or textarea
+     * @param {string} selector - The selector for the input field or textarea
      * @param {string} value - The value to be set
      */
     const setValue = (selector, value) => {
         const element = document.querySelector(selector);
         if (element) {
-            if (element.type === 'radio') {
-                simulateClick(selector);
-            } else {
-                const enforceTextareaValue = (textarea, value) => {
-                    const enforceValue = () => {
-                        if (textarea.value !== value) {
-                            textarea.value = value;
-                            const inputEvent = new Event('input', { bubbles: true });
-                            textarea.dispatchEvent(inputEvent);
-                            const changeEvent = new Event('change', { bubbles: true });
-                            textarea.dispatchEvent(changeEvent);
-                        }
-                    };
-                    const intervalId = setInterval(enforceValue, 100);  // Adjust interval as needed
-                    // Optionally, store intervalId somewhere to clear it later if needed
-                };
+            const placeholderValue = 'N/A';  // Generic placeholder value
+            const finalValue = value || placeholderValue;  // Use placeholderValue if value is empty
 
-                if (element.tagName.toLowerCase() === 'textarea') {
-                    enforceTextareaValue(element, value);
-                } else {
-                    const nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value").set;
-                    nativeInputValueSetter.call(element, value);
-                    const inputEvent = new Event('input', { bubbles: true });
-                    element.dispatchEvent(inputEvent);
-                    const changeEvent = new Event('change', { bubbles: true });
-                    element.dispatchEvent(changeEvent);
-                }
+            const enforceTextareaValue = (textarea, value) => {
+                const enforceValue = () => {
+                    if (textarea.value !== value) {
+                        textarea.value = value;
+                        const inputEvent = new Event('input', { bubbles: true });
+                        textarea.dispatchEvent(inputEvent);
+                        const changeEvent = new Event('change', { bubbles: true });
+                        textarea.dispatchEvent(changeEvent);
+                    }
+                };
+                const intervalId = setInterval(enforceValue, 100);  // Adjust interval as needed
+                // Optionally, store intervalId somewhere to clear it later if needed
+            };
+
+            if (element.tagName.toLowerCase() === 'textarea') {
+                enforceTextareaValue(element, finalValue);
+            } else {
+                const nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value").set;
+                nativeInputValueSetter.call(element, finalValue);
+                const inputEvent = new Event('input', { bubbles: true });
+                element.dispatchEvent(inputEvent);
+                const changeEvent = new Event('change', { bubbles: true });
+                element.dispatchEvent(changeEvent);
             }
         } else {
             console.error('Element not found');
         }
-        console.log(\`setValue: Set value of \${selector} to \${value}\`);
+        console.log(\`setValue: Set value of \${selector} to \${finalValue}\`);
     };
 
     /**
