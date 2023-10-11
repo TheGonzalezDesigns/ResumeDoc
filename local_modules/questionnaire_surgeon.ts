@@ -13,41 +13,46 @@ const basic_data = JSON.stringify(basic_info);
 const legal_data = JSON.stringify(legal_info);
 
 const instructions = `Instructions: Given the HTML snippet of a job application form below, generate JavaScript code that will automatically fill in the form fields when run in the console of the original webpage. Each form field should be filled based on the provided personal, legal, and basic information. Use the function \`setValue(selector, value)\` to set the value of text fields and the function \`simulateClick(selector)\` to trigger a click event for non-text fields like radio buttons. For select fields, use the function \`setSelectValueByText(selector, text)\` to select an option based on its text, where \`text\` is the text of the option to be selected. When using the \`setValue\`, \`setSelectValueByText\`, and \`simulateClick\` functions, the \`selector\` argument should match the id attribute of the form field but with the '#' symbol. Inject your response into a JSON object, within the 'code' key, minified into one line. {"code": "..."}`;
+//const instructions = `Instructions: Given the HTML snippet of a job application form below, generate JavaScript code that will automatically fill in the form fields when run in the console of the original webpage. Each form field should be filled based on the provided personal, legal, and basic information. Use the function \`setValue(selector, value)\` to set the value of text fields. If the field is a radio button, \`setValue\` will simulate a click on the specified selector. For select fields, use the function \`setSelectValueByText(selector, text)\` to select an option based on its text, where \`text\` is the text of the option to be selected. When using the \`setValue\`, \`setSelectValueByText\`, and \`simulateClick\` functions, the \`selector\` argument should match the id attribute of the form field but with the '#' symbol. Inject your response into a JSON object, within the 'code' key, minified into one line. {"code": "..."}`;
 const system_prompt = `As an HTML query expert, your task is to analyze the HTML snippet below and generate code to automatically fill out the forms.`;
 
 const methods = `
 try {
     /**
-     * Sets the value of an input field or textarea
-     * @param {string} selector - The selector for the input field or textarea
+     * Sets the value of an input field or textarea, or simulates a click if the element is a radio button.
+     * @param {string} selector - The selector for the input field, textarea, or radio button
      * @param {string} value - The value to be set
      */
     const setValue = (selector, value) => {
         const element = document.querySelector(selector);
         if (element) {
-            const enforceTextareaValue = (textarea, value) => {
-                const enforceValue = () => {
-                    if (textarea.value !== value) {
-                        textarea.value = value;
-                        const inputEvent = new Event('input', { bubbles: true });
-                        textarea.dispatchEvent(inputEvent);
-                        const changeEvent = new Event('change', { bubbles: true });
-                        textarea.dispatchEvent(changeEvent);
-                    }
-                };
-                const intervalId = setInterval(enforceValue, 100);  // Adjust interval as needed
-                // Optionally, store intervalId somewhere to clear it later if needed
-            };
-
-            if (element.tagName.toLowerCase() === 'textarea') {
-                enforceTextareaValue(element, value);
+            if (element.type === 'radio') {
+                simulateClick(selector);
             } else {
-                const nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value").set;
-                nativeInputValueSetter.call(element, value);
-                const inputEvent = new Event('input', { bubbles: true });
-                element.dispatchEvent(inputEvent);
-                const changeEvent = new Event('change', { bubbles: true });
-                element.dispatchEvent(changeEvent);
+                const enforceTextareaValue = (textarea, value) => {
+                    const enforceValue = () => {
+                        if (textarea.value !== value) {
+                            textarea.value = value;
+                            const inputEvent = new Event('input', { bubbles: true });
+                            textarea.dispatchEvent(inputEvent);
+                            const changeEvent = new Event('change', { bubbles: true });
+                            textarea.dispatchEvent(changeEvent);
+                        }
+                    };
+                    const intervalId = setInterval(enforceValue, 100);  // Adjust interval as needed
+                    // Optionally, store intervalId somewhere to clear it later if needed
+                };
+
+                if (element.tagName.toLowerCase() === 'textarea') {
+                    enforceTextareaValue(element, value);
+                } else {
+                    const nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value").set;
+                    nativeInputValueSetter.call(element, value);
+                    const inputEvent = new Event('input', { bubbles: true });
+                    element.dispatchEvent(inputEvent);
+                    const changeEvent = new Event('change', { bubbles: true });
+                    element.dispatchEvent(changeEvent);
+                }
             }
         } else {
             console.error('Element not found');
