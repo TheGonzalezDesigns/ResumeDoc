@@ -169,17 +169,33 @@ export const questionnaire_surgeon = async (
     generated_data
   );
   console.info("relevant_data_prompt:", relevant_data_prompt);
-  const prompt = `
+  let _ = `
   System: ${system_prompt}
   ${relevant_data_prompt}
   Instructions: ${instructions}
   HTML_snippet: ${HTML_snippet}
   `;
+
+  let prompt = `Identify every question in the html. Extract details regarding the question in this format:
+  {
+    'question': '...',
+    'form_type': '...',
+    'input CSS ID': '...' //This should be the ID of the html element that will be selected as the response or where to input the response.
+  }
+  You can group all of the JSON objects into an array.
+
+  HTML_snippet: ${HTML_snippet}
+  `;
   console.info("Prompt:", prompt);
+  let response = await query(prompt);
+  //console.info("SUR-RES:", response);
+  return response;
+  throw "Testing...";
+  //console.info("Prompt:", prompt);
 
   const clean_response = (str: string): string => str.replace(/\n/g, " ");
 
-  let response = clean_response(await query(prompt, 4));
+  //let response = clean_response(await query(prompt, 4));
 
   console.info("SUR-RES:", response);
 
