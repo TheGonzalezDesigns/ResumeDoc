@@ -35,7 +35,8 @@ const models = {
 export const query = async (
   prompt: string,
   model_type: GPT = GPT.GPT3
-): Promise<string> => {
+): Promise<string | undefined> => {
+  console.time("query");
   let model_name = model_names[model_type] as ModelType;
 
   // Count tokens in the prompt
@@ -48,15 +49,30 @@ export const query = async (
   }
 
   try {
+    console.info("Querying...");
     // Obtain the model instance and call it with the prompt
     const model = models[model_type];
     const res = await model.call(prompt);
+    console.timeEnd("query");
     return res;
   } catch (error) {
-    // If an error occurs, promote to the 16k model and retry
-    model_type = GPT.GPT4;
-    const model = models[model_type];
-    const res = await model.call(prompt);
-    return res;
+    try {
+      console.info("Promoted query...");
+      console.error("Error", error);
+      // If an error occurs, promote to the 16k model and retry
+      model_type = GPT.GPT4;
+      const model = models[model_type];
+      const res = await model.call(prompt);
+      console.timeEnd("query");
+      return res;
+    } catch (e) {
+      console.error(
+        "-----------------------------Query Failed-----------------------------------"
+      );
+      console.info(e);
+      console.error(
+        "-----------------------------Query Failed-----------------------------------"
+      );
+    }
   }
 };
