@@ -1,5 +1,6 @@
 import { query } from "./query";
 import { HTML_assistant, HTML_Type } from "./HTML_assistant";
+import { extract_questions, form_question } from "./prompt_nurse";
 
 export type Script = string | string[];
 
@@ -176,20 +177,10 @@ export const questionnaire_surgeon = async (
   HTML_snippet: ${HTML_snippet}
   `;
 
-  let prompt = `Identify every question in the html. Extract details regarding the question in this format:
-  {
-    'question': '...',
-    'form_type': '...',
-    'input CSS ID': '...' //This should be the ID of the html element that will be selected as the response or where to input the response.
-  }
-  You can group all of the JSON objects into an array.
-
-  HTML_snippet: ${HTML_snippet}
-  `;
-  console.info("Prompt:", prompt);
-  let response = await query(prompt);
+  let response = await extract_questions(HTML_snippet);
   //console.info("SUR-RES:", response);
-  return response;
+  return JSON.stringify(response);
+  /*
   throw "Testing...";
   //console.info("Prompt:", prompt);
 
@@ -222,6 +213,7 @@ export const questionnaire_surgeon = async (
       console.info("FR:", response);
     }
   }
+  */
 };
 
 /**
