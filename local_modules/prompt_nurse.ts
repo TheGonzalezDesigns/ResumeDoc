@@ -1,43 +1,64 @@
 import { query } from "./query";
 
+// Define the array of valid form types
+const VALID_FORM_TYPES = [
+  "button",
+  "checkbox",
+  "color",
+  "date",
+  "datetime-local",
+  "email",
+  "file",
+  "hidden",
+  "image",
+  "month",
+  "number",
+  "password",
+  "radio",
+  "range",
+  "reset",
+  "search",
+  "submit",
+  "tel",
+  "text",
+  "time",
+  "url",
+  "week",
+  "datalist",
+  "output",
+  "progress",
+  "select",
+  "textarea",
+] as const;
+
+// Derive the TypeScript type from the array
+type FormType = typeof VALID_FORM_TYPES[number];
+
 /**
  * Represents a question item in the form.
  *
  * @property {string} question - The text of the question.
- * @property {"button" | "checkbox" | "color" | "date" | "datetime-local" | "email" | "file" | "hidden" | "image" | "month" | "number" | "password" | "radio" | "range" | "reset" | "search" | "submit" | "tel" | "text" | "time" | "url" | "week" | "datalist" | "output" | "progress" | "select" | "textarea"} form_type - The type of input for the question.
+ * @property {FormType} form_type - The type of input for the question.
  * @property {string} input_css_id - The CSS ID for the input element.
  */
 type FormQuestion = {
   question: string;
-  form_type:
-    | "button"
-    | "checkbox"
-    | "color"
-    | "date"
-    | "datetime-local"
-    | "email"
-    | "file"
-    | "hidden"
-    | "image"
-    | "month"
-    | "number"
-    | "password"
-    | "radio"
-    | "range"
-    | "reset"
-    | "search"
-    | "submit"
-    | "tel"
-    | "text"
-    | "time"
-    | "url"
-    | "week"
-    | "datalist"
-    | "output"
-    | "progress"
-    | "select"
-    | "textarea";
+  form_type: FormType;
   input_css_id: string;
+};
+
+/**
+ * Validates if the object is of type FormQuestion
+ *
+ * @param {any} object - The object to validate.
+ * @returns {boolean} - True if the object is of type FormQuestion, false otherwise.
+ */
+const is_form_question = (object: any): object is FormQuestion => {
+  return (
+    typeof object.question === "string" &&
+    VALID_FORM_TYPES.includes(object.form_type) &&
+    typeof object.input_css_id === "string"
+  );
 };
 
 /**
@@ -67,16 +88,25 @@ export const extract_questions = async (
   while (retry_count < max_retries) {
     try {
       const response = await query(prompt);
-      return JSON.parse(response) as FormQuestion[];
+      const parsed_response = JSON.parse(response);
+
+      if (
+        Array.isArray(parsed_response) &&
+        parsed_response.every(is_form_question)
+      ) {
+        return parsed_response;
+      }
+
+      throw new Error("Response does not match the FormQuestion type.");
     } catch (error) {
       retry_count++;
       console.warn(
-        `Failed to parse response. Retrying... (${retry_count}/${max_retries})`
+        `Failed to parse or validate response. Retrying... (${retry_count}/${max_retries})`
       );
     }
   }
 
   throw new Error(
-    "Maximum retry attempts reached. Failed to parse the response."
+    "Maximum retry attempts reached. Failed to parse or validate the response."
   );
 };
