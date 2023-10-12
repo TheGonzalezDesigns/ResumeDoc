@@ -32,18 +32,18 @@ const VALID_FORM_TYPES = [
 ] as const;
 
 // Derive the TypeScript type from the array
-type FormType = typeof VALID_FORM_TYPES[number];
+type form_type = typeof VALID_FORM_TYPES[number];
 
 /**
  * Represents a question item in the form.
  *
  * @property {string} question - The text of the question.
- * @property {FormType} form_type - The type of input for the question.
+ * @property {form_type} form_type - The type of input for the question.
  * @property {string} input_css_id - The CSS ID for the input element.
  */
-type form_question = {
+export type form_question = {
   question: string;
-  form_type: FormType;
+  form_type: form_type;
   input_css_id: string;
 };
 
@@ -84,16 +84,19 @@ export const extract_questions = async (
 
   HTML_snippet: ${html_snippet}
   `;
-
+  console.time("extract_questions");
   while (retry_count < max_retries) {
     try {
-      const response = await query(prompt);
+      const response = await query(prompt, 4);
+      if (!response) throw "No Response";
       const parsed_response = JSON.parse(response);
-
+      console.time("is_form_question");
       if (
         Array.isArray(parsed_response) &&
         parsed_response.every(is_form_question)
       ) {
+        console.timeEnd("is_form_question");
+        console.timeEnd("extract_questions");
         return parsed_response;
       }
 
