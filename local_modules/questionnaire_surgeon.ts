@@ -18,15 +18,15 @@ const system_prompt = `As an HTML query expert, your task is to analyze the HTML
 const methods = `
 try {
     /**
-     * Sets the value of an input field or textarea
-     * @param {string} selector - The selector for the input field or textarea
-     * @param {string} value - The value to be set
+     * Sets the value of an input field or textarea.
+     * @param {string} selector - The CSS selector for the input field or textarea.
+     * @param {string} value - The value to set.
      */
     const setValue = (selector, value) => {
         const element = document.querySelector(selector);
         if (element) {
-            const placeholderValue = 'N/A';  // Generic placeholder value
-            const finalValue = value.length > 0 ? value : placeholderValue;  // Use placeholderValue if value is empty
+            const placeholderValue = 'N/A';
+            const finalValue = value.length > 0 ? value : placeholderValue;
 
             const enforceTextareaValue = (textarea, value) => {
                 const enforceValue = () => {
@@ -38,8 +38,7 @@ try {
                         textarea.dispatchEvent(changeEvent);
                     }
                 };
-                const intervalId = setInterval(enforceValue, 100);  // Adjust interval as needed
-                // Optionally, store intervalId somewhere to clear it later if needed
+                setInterval(enforceValue, 100);
             };
 
             if (element.tagName.toLowerCase() === 'textarea') {
@@ -52,15 +51,12 @@ try {
                 const changeEvent = new Event('change', { bubbles: true });
                 element.dispatchEvent(changeEvent);
             }
-        } else {
-            console.error('Element not found');
         }
-        console.log(\`setValue: Set value of \${selector} to \${finalValue}\`);
     };
 
     /**
-     * Simulates a click event on a specified element
-     * @param {string} selector - The selector for the element to be clicked
+     * Simulates a click event on a specified element.
+     * @param {string} selector - The CSS selector for the element to click.
      */
     const simulateClick = (selector) => {
         const element = document.querySelector(selector);
@@ -71,16 +67,13 @@ try {
                 cancelable: true,
             });
             element.dispatchEvent(clickEvent);
-        } else {
-            console.error('Element not found');
         }
-        console.log(\`simulateClick: Simulated click on \${selector}\`);
     };
 
     /**
-     * Sets the selected value of a select element based on the option index
-     * @param {string} selector - The selector for the select element
-     * @param {number} optionIndex - The index of the option to be selected
+     * Sets the selected value of a select element based on the option index.
+     * @param {string} selector - The CSS selector for the select element.
+     * @param {number} optionIndex - The index of the option to select.
      */
     const setSelectValue = (selector, optionIndex) => {
         const selectElement = document.querySelector(selector);
@@ -90,27 +83,22 @@ try {
                 selectElement.selectedIndex = optionIndex;
                 const changeEvent = new Event('change', { bubbles: true });
                 selectElement.dispatchEvent(changeEvent);
-            } else {
-                console.error('Invalid option index');
             }
-        } else {
-            console.error('Select element not found or invalid element type');
         }
-        console.log(\`setSelectValue: Set value of \${selector} to option index \${optionIndex}\`);
     };
 
- /**
-     * Check if the characters of \`query\` appear in order in the \`string\`.
-     * @param {string} query - The query string
-     * @param {string} string - The target string
-     * @return {boolean} Whether the characters of \`query\` appear in order in the \`string\`.
+    /**
+     * Checks if the characters of the query appear in order in the target string.
+     * @param {string} query - The query string.
+     * @param {string} string - The target string.
+     * @return {boolean} True if query appears in the target string, false otherwise.
      */
-    const fuzzy_match = (query, string) => {
-        let query_idx = 0;
+    const fuzzyMatch = (query, string) => {
+        let queryIdx = 0;
         for (let char of string) {
-            if (char == query[query_idx]) {
-                query_idx += 1;
-                if (query_idx == query.length) {
+            if (char === query[queryIdx]) {
+                queryIdx++;
+                if (queryIdx === query.length) {
                     return true;
                 }
             }
@@ -119,44 +107,38 @@ try {
     };
 
     /**
-     * Perform a fuzzy search for \`query\` in \`data\`.
-     * @param {string} query - The query string
-     * @param {Array<string>} data - An array of strings to search within
-     * @return {Array<string>} An array of matching strings
+     * Performs a fuzzy search for the query in the provided data array.
+     * @param {string} query - The query string.
+     * @param {Array<string>} data - An array of strings to search within.
+     * @return {Array<string>} An array of matching strings.
      */
-    const fzf_search = (query, data) => {
-        return data.filter(item => fuzzy_match(query, item));
+    const fzfSearch = (query, data) => {
+        return data.filter(item => fuzzyMatch(query, item));
     };
 
     /**
-     * Sets the selected value of a select element based on the option text
-     * @param {string} selector - The selector for the select element
-     * @param {string} text - The text of the option to be selected
+     * Sets the selected value of a select element based on the option text.
+     * @param {string} selector - The CSS selector for the select element.
+     * @param {string} text - The text of the option to select.
      */
     const setSelectValueByText = (selector, text) => {
         const selectElement = document.querySelector(selector);
         if (selectElement && selectElement.tagName.toLowerCase() === 'select') {
             const options = selectElement.options;
             let bestMatchIndex = -1;
-            let bestMatchScore = 0;
             for (let i = 0; i < options.length; i++) {
                 const optionText = options[i].textContent || options[i].innerText;
-                if (fuzzy_match(text, optionText)) {
+                if (fuzzyMatch(text, optionText)) {
                     bestMatchIndex = i;
-                    break;  // Exit the loop once a match is found
+                    break;
                 }
             }
             if (bestMatchIndex !== -1) {
                 setSelectValue(selector, bestMatchIndex);
-            } else {
-                console.error('No suitable option found');
             }
-        } else {
-            console.error('Select element not found or invalid element type');
         }
-        console.log(\`setSelectValueByText: Set value of \${selector} to \${text}\`);
-    };`;
-
+    };
+`;
 const script_tail = `
 } catch(e) {
   console.error('Script Failed:', e)
