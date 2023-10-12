@@ -41,19 +41,19 @@ type FormType = typeof VALID_FORM_TYPES[number];
  * @property {FormType} form_type - The type of input for the question.
  * @property {string} input_css_id - The CSS ID for the input element.
  */
-type FormQuestion = {
+type form_question = {
   question: string;
   form_type: FormType;
   input_css_id: string;
 };
 
 /**
- * Validates if the object is of type FormQuestion
+ * Validates if the object is of type form_question
  *
  * @param {any} object - The object to validate.
- * @returns {boolean} - True if the object is of type FormQuestion, false otherwise.
+ * @returns {boolean} - True if the object is of type form_question, false otherwise.
  */
-const is_form_question = (object: any): object is FormQuestion => {
+const is_form_question = (object: any): object is form_question => {
   return (
     typeof object.question === "string" &&
     VALID_FORM_TYPES.includes(object.form_type) &&
@@ -62,14 +62,14 @@ const is_form_question = (object: any): object is FormQuestion => {
 };
 
 /**
- * Extracts questions from an HTML snippet and returns them as an array of FormQuestion objects.
+ * Extracts questions from an HTML snippet and returns them as an array of form_question objects.
  *
  * @param {string} html_snippet - The HTML snippet from which to extract questions.
- * @returns {Promise<FormQuestion[]>} - A promise that resolves to an array of FormQuestion objects.
+ * @returns {Promise<form_question[]>} - A promise that resolves to an array of form_question objects.
  */
 export const extract_questions = async (
   html_snippet: string
-): Promise<FormQuestion[]> => {
+): Promise<form_question[]> => {
   let max_retries = 3;
   let retry_count = 0;
 
@@ -97,7 +97,7 @@ export const extract_questions = async (
         return parsed_response;
       }
 
-      throw new Error("Response does not match the FormQuestion type.");
+      throw new Error("Response does not match the form_question type.");
     } catch (error) {
       retry_count++;
       console.warn(
