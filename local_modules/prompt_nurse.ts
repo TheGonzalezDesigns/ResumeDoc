@@ -47,6 +47,11 @@ export type form_question = {
   input_css_id: string;
 };
 
+export type form_answer = {
+  question: string;
+  answer: string;
+};
+
 /**
  * Validates if the object is of type form_question
  *
@@ -112,4 +117,45 @@ export const extract_questions = async (
   throw new Error(
     "Maximum retry attempts reached. Failed to parse or validate the response."
   );
+};
+
+/**
+ * form_answer the questions based on relevant data.
+ *
+ * @param {form_question[]} questions - Array of questions to be answered.
+ * @param {string} relevant_data_prompt - Relevant data as a string.
+ * @returns {Promise<form_answer[]>} - A promise that resolves to an array of answers.
+ */
+export const answer_questions = async (
+  questions: form_question[],
+  relevant_data_prompt: string
+): Promise<form_answer[]> => {
+  // Parse the relevant data
+  const relevant_data_lines = relevant_data_prompt.split("\n  ");
+  const relevant_data: { [key: string]: string } = {};
+  for (const line of relevant_data_lines) {
+    const [key, value] = line.split(": ");
+    if (key && value) {
+      relevant_data[key] = value;
+    }
+  }
+
+  // Initialize an array to store the answers
+  const answers: form_answer[] = [];
+
+  // Loop through each question to generate an answer
+  for (const question of questions) {
+    let answer: string = "";
+
+    // Logic to generate an answer based on the question and relevant data
+    // This is just a placeholder; replace with your actual logic
+    if (question.form_type === "text" && relevant_data["basic_info"]) {
+      answer = relevant_data["basic_info"];
+    }
+
+    // Add the question and answer to the answers array
+    answers.push({ question: question.question, answer });
+  }
+
+  return answers;
 };
