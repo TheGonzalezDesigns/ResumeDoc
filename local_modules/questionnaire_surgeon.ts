@@ -1,6 +1,11 @@
 import { query } from "./query";
 import { HTML_assistant, HTML_Type } from "./HTML_assistant";
-import { extract_questions, form_question } from "./prompt_nurse";
+import {
+  extract_questions,
+  form_question,
+  answer_questions,
+  form_answer,
+} from "./prompt_nurse";
 
 export type Script = string | string[];
 
@@ -177,9 +182,12 @@ export const questionnaire_surgeon = async (
   HTML_snippet: ${HTML_snippet}
   `;
 
-  let response = await extract_questions(HTML_snippet);
+  const questions = await extract_questions(HTML_snippet);
+  if (!questions) throw `Coudn't form any questions.`;
+  const answers = await answer_questions(questions, relevant_data_prompt);
+  if (!answers) throw `Coudn't give any answers.`;
   //console.info("SUR-RES:", response);
-  return JSON.stringify(response);
+  return JSON.stringify(answers);
   /*
   throw "Testing...";
   //console.info("Prompt:", prompt);
